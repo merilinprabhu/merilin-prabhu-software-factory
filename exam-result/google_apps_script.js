@@ -1,6 +1,6 @@
 /**
  * =========================================================================
- * Exam Result Software - Google Apps Script Backend
+ * Exam Result Software - Google Apps Script Backend (v2.0 Official OMR)
  * =========================================================================
  * 
  * ಹಂತಗಳು (Setup Instructions):
@@ -8,13 +8,12 @@
  * 2. Extensions (ವಿಸ್ತರಣೆಗಳು) -> Apps Script ಕ್ಲಿಕ್ ಮಾಡಿ.
  * 3. ಅಲ್ಲಿರುವ ಕೋಡ್ ತೆಗೆದು, ಈ ಸಂಪೂರ್ಣ ಕೋಡ್ ಅನ್ನು ಪೇಸ್ಟ್ (Paste) ಮಾಡಿ.
  * 4. Save (Ctrl+S) ಮಾಡಿ.
- * 5. ಮೇಲಿರುವ ಮೆನುವಿನಲ್ಲಿ 'setupSheets' ಫಂಕ್ಷನ್ ಆಯ್ಕೆ ಮಾಡಿ 'Run' ಕ್ಲಿಕ್ ಮಾಡಿ (ಇದು ಶೀಟ್‌ಗಳನ್ನು ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ರಚಿಸುತ್ತದೆ).
- * 6. Deploy -> New deployment ಕ್ಲಿಕ್ ಮಾಡಿ.
+ * 5. Deploy -> New deployment ಕ್ಲಿಕ್ ಮಾಡಿ:
  *    - Select type: Web app
- *    - Description: Exam Result API
+ *    - Description: Exam Result Multi-App API
  *    - Execute as: Me
  *    - Who has access: Anyone (ಯಾರಾದರೂ)
- * 7. 'Deploy' ಕ್ಲಿಕ್ ಮಾಡಿ ಬಂದ Web App URL ಅನ್ನು ಕಾಪಿ ಮಾಡಿ ನಮ್ಮ ಸಾಫ್ಟ್‌ವೇರ್‌ನಲ್ಲಿ ಹಾಕಿ.
+ * 6. 'Deploy' ಕ್ಲಿಕ್ ಮಾಡಿ ಬಂದ Web App URL ಅನ್ನು ಕಾಪಿ ಮಾಡಿ ಸಾಫ್ಟ್‌ವೇರ್‌ನಲ್ಲಿ ಹಾಕಿ.
  * =========================================================================
  */
 
@@ -25,7 +24,7 @@ function setupSheets() {
   let examsSheet = ss.getSheetByName('Exams');
   if (!examsSheet) {
     examsSheet = ss.insertSheet('Exams');
-    examsSheet.appendRow(['Exam_ID', 'Exam_Name', 'Total_Questions', 'Negative_Marking', 'Negative_Ratio', 'Created_At']);
+    examsSheet.appendRow(['Exam_ID', 'Exam_Name', 'Exam_Date', 'Total_Questions', 'Marks_Per_Q', 'Negative_Marking', 'Negative_Ratio', 'Versions', 'Created_At']);
     formatHeader(examsSheet);
   }
 
@@ -33,7 +32,7 @@ function setupSheets() {
   let keysSheet = ss.getSheetByName('Key_Answers');
   if (!keysSheet) {
     keysSheet = ss.insertSheet('Key_Answers');
-    keysSheet.appendRow(['Exam_ID', 'Version', 'Total_Questions', 'Keys_JSON', 'Updated_At']);
+    keysSheet.appendRow(['Exam_ID', 'Version_Code', 'Total_Questions', 'Keys_JSON', 'Updated_At']);
     formatHeader(keysSheet);
   }
 
@@ -41,7 +40,7 @@ function setupSheets() {
   let candSheet = ss.getSheetByName('Candidates_OMR');
   if (!candSheet) {
     candSheet = ss.insertSheet('Candidates_OMR');
-    candSheet.appendRow(['Candidate_ID', 'Roll_No', 'Candidate_Name', 'Exam_ID', 'Version', 'Responses_JSON', 'Submitted_At']);
+    candSheet.appendRow(['Candidate_ID', 'Reg_No', 'Candidate_Name', 'Exam_ID', 'Exam_Date', 'Version_Code', 'QP_Serial_No', 'Responses_JSON', 'Submitted_At']);
     formatHeader(candSheet);
   }
 
@@ -49,7 +48,7 @@ function setupSheets() {
   let resSheet = ss.getSheetByName('Results');
   if (!resSheet) {
     resSheet = ss.insertSheet('Results');
-    resSheet.appendRow(['Rank', 'Roll_No', 'Candidate_Name', 'Exam_Name', 'Version', 'Total_Q', 'Attempted', 'Correct', 'Wrong', 'Blank', 'Negative_Marks', 'Total_Score', 'Percentage', 'Calculated_At']);
+    resSheet.appendRow(['Rank', 'Reg_No', 'Candidate_Name', 'Exam_Name', 'Exam_Date', 'Version_Code', 'QP_Serial_No', 'Total_Q', 'Attempted', 'Correct', 'Wrong', 'Not_Response_NR', 'Negative_Marks', 'Total_Score', 'Percentage', 'Calculated_At']);
     formatHeader(resSheet);
   }
 
@@ -94,7 +93,6 @@ function doPost(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
 
     if (action === 'syncAll') {
-      // Setup sheets if they don't exist
       setupSheets();
 
       const { exam, keyAnswers, candidates, results } = contents.payload;
@@ -105,9 +103,12 @@ function doPost(e) {
         examsSheet.appendRow([
           exam.id,
           exam.name,
+          exam.date || '',
           exam.totalQuestions,
+          exam.marksPerCorrect || 1.0,
           exam.hasNegative ? 'YES' : 'NO',
           exam.negativeRatio || 0.25,
+          (exam.versions || []).join(', '),
           new Date().toISOString()
         ]);
       }
@@ -126,7 +127,7 @@ function doPost(e) {
         });
       }
 
-      // 3. Save Candidates
+      // 3. Save Candidates OMR
       if (candidates && Array.isArray(candidates)) {
         const candSheet = ss.getSheetByName('Candidates_OMR');
         candidates.forEach(c => {
@@ -135,18 +136,21 @@ function doPost(e) {
             c.rollNo,
             c.name,
             c.examId,
+            c.date || '',
             c.version,
+            c.qpSerial || '-',
             JSON.stringify(c.responses),
             new Date().toISOString()
           ]);
         });
       }
 
-      // 4. Save Calculated Results
+      // 4. Save Results
       if (results && Array.isArray(results)) {
         const resSheet = ss.getSheetByName('Results');
-        // Clear old results for fresh write or just append
-        resSheet.getRange(2, 1, Math.max(resSheet.getLastRow() - 1, 1), resSheet.getLastColumn()).clearContent();
+        if (resSheet.getLastRow() > 1) {
+          resSheet.getRange(2, 1, resSheet.getLastRow() - 1, resSheet.getLastColumn()).clearContent();
+        }
         
         results.forEach(r => {
           resSheet.appendRow([
@@ -154,7 +158,9 @@ function doPost(e) {
             r.rollNo,
             r.name,
             r.examName,
+            r.date || '',
             r.version,
+            r.qpSerial || '-',
             r.totalQuestions,
             r.attempted,
             r.correct,
