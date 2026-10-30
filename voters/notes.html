@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLO ನೋಟ್ಸ್ & To-Do | BLO ಪೋರ್ಟಲ್ 5.0</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media(max-width:900px){ .workspace-grid { grid-template-columns: 1fr; } }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      background: var(--bg-body);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.65rem;
+    }
+    .todo-item.done span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .note-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-layout">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="asd.html"><i class="fa-solid fa-user-slash"></i> <span>ASDD ಪೋರ್ಟಲ್</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html" class="active"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Personal Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Container -->
+    <div class="portal-body">
+
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-primary">Personal Workspace</span>
+          <h1>BLO ದಿನಚರಿ ನೋಟ್ಸ್ & To-Do ಕಾರ್ಯಸೂಚಿ</h1>
+        <div class="header-controls">
+          <a href="admin.html" class="btn btn-sm btn-success" style="font-weight:800; background:#10b981; color:#fff; border:none; padding:0.4rem 0.75rem; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;" title="Open Admin Live User Portal">
+            <i class="fa-solid fa-user-shield"></i> 👑 ಅಡ್ಮಿನ್ (Admin)
+          </a>
+          <button class="btn btn-sm btn-outline" style="font-weight:700; color:var(--primary); border-color:var(--primary);" onclick="openGlobalSearchModal()" title="Press Ctrl + K to search anywhere">
+            <i class="fa-solid fa-magnifying-glass"></i> ಶೋಧಿಸಿ <kbd style="background:#0f172a; color:#fff; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.7rem;">Ctrl+K</kbd>
+          </button>
+          <button class="btn btn-sm" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile, School Name & Password Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <main class="portal-content">
+
+        <!-- Hero Section -->
+        <div class="page-hero">
+          <div>
+            <h2><i class="fa-solid fa-clipboard-list"></i> BLO ಸ್ಥಳೀಯ ಪರಿಶೀಲನಾ ನೋಟ್ಸ್ & Task Checklist</h2>
+            <p>ಕ್ಷೇತ್ರ ಭೇಟಿ (Field Visit), ಮನೆ ಮನೆ ಪರಿಶೀಲನೆ ಹಾಗೂ ಸೂಪರ್‌ವೈಸರ್ ಸೂಚನೆಗಳ ಟಿಪ್ಪಣಿ ಪೋರ್ಟಲ್.</p>
+          </div>
+        </div>
+
+        <div class="workspace-grid">
+          <!-- Left Column: To-Do Checklist -->
+          <div class="toolbar-card" style="flex-direction:column; align-items:stretch;">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <i class="fa-solid fa-list-check" style="color:var(--primary);"></i> ಕ್ಷೇತ್ರ ಭೇಟಿ To-Do ಪರಿಶೀಲನಾ ಪಟ್ಟಿ
+            </h3>
+
+            <div style="display:flex; gap:0.5rem; margin-bottom:1.25rem;">
+              <input type="text" id="todoInput" class="form-control" placeholder="ಹೊಸ ಕಾರ್ಯ ಭೇಟಿ ಸೇರಿಸಿ (ಉದಾ: ಮನೆ #2-1 ಪರಿಶೀಲನೆ)...">
+              <button class="btn btn-primary" onclick="addTodo()"><i class="fa-solid fa-plus"></i> ಸೇರಿಸಿ</button>
+            </div>
+
+            <div id="todoListContainer"></div>
+          </div>
+
+          <!-- Right Column: Quick Notes -->
+          <div class="toolbar-card" style="flex-direction:column; align-items:stretch;">
+            <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <i class="fa-solid fa-note-sticky" style="color:var(--verified);"></i> BLO ದಿನಚರಿ ಟಿಪ್ಪಣಿಗಳು (Notes)
+            </h3>
+
+            <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.25rem;">
+              <input type="text" id="noteTitleInput" class="form-control" placeholder="ಟಿಪ್ಪಣಿ ಶೀರ್ಷಿಕೆ (Subject)...">
+              <textarea id="noteContentInput" class="form-control" rows="3" placeholder="ಟಿಪ್ಪಣಿ ವಿವರಗಳು..."></textarea>
+              <button class="btn btn-success" onclick="addNote()"><i class="fa-solid fa-floppy-disk"></i> ಟಿಪ್ಪಣಿ ಉಳಿಸಿ</button>
+            </div>
+
+            <div id="notesContainer"></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    let todos = [];
+    let notes = [];
+
+    function loadWorkspace() {
+      const savedTodos = localStorage.getItem(`blo_v5_todos_${currentPartNo}`);
+      if (savedTodos) {
+        try { todos = JSON.parse(savedTodos); } catch(e){}
+      }
+      const savedNotes = localStorage.getItem(`blo_v5_notes_${currentPartNo}`);
+      if (savedNotes) {
+        try { notes = JSON.parse(savedNotes); } catch(e){}
+      }
+
+      renderTodos();
+      renderNotes();
+    }
+
+    function addTodo() {
+      const input = document.getElementById('todoInput');
+      const txt = input.value.trim();
+      if (!txt) return;
+
+      todos.push({ id: Date.now(), text: txt, done: false });
+      localStorage.setItem(`blo_v5_todos_${currentPartNo}`, JSON.stringify(todos));
+      input.value = '';
+      renderTodos();
+      showToast("To-Do ಕಾರ್ಯ ಸೇರಿಸಲಾಗಿದೆ!", "success");
+    }
+
+    function toggleTodo(id) {
+      const t = todos.find(x => x.id === id);
+      if (t) {
+        t.done = !t.done;
+        localStorage.setItem(`blo_v5_todos_${currentPartNo}`, JSON.stringify(todos));
+        renderTodos();
+      }
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(x => x.id !== id);
+      localStorage.setItem(`blo_v5_todos_${currentPartNo}`, JSON.stringify(todos));
+      renderTodos();
+    }
+
+    function renderTodos() {
+      const container = document.getElementById('todoListContainer');
+      if (todos.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:1rem;">ಯಾವುದೇ ಕಾರ್ಯಗಳಿಲ್ಲ. ಮೇಲಿನ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಸೇರಿಸಿ.</p>`;
+        return;
+      }
+      container.innerHTML = todos.map(t => `
+        <div class="todo-item ${t.done ? 'done' : ''}">
+          <div style="display:flex; align-items:center; gap:0.75rem; cursor:pointer;" onclick="toggleTodo(${t.id})">
+            <i class="fa-regular ${t.done ? 'fa-square-check' : 'fa-square'}" style="font-size:1.1rem; color:${t.done?'var(--verified)':'var(--text-muted)'};"></i>
+            <span>${t.text}</span>
+          </div>
+          <button class="btn btn-sm btn-outline" style="color:var(--death);" onclick="deleteTodo(${t.id})"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function addNote() {
+      const title = document.getElementById('noteTitleInput').value.trim();
+      const content = document.getElementById('noteContentInput').value.trim();
+      if (!title && !content) return;
+
+      notes.unshift({ id: Date.now(), title: title || 'ಟಿಪ್ಪಣಿ', content: content, date: new Date().toLocaleDateString() });
+      localStorage.setItem(`blo_v5_notes_${currentPartNo}`, JSON.stringify(notes));
+      document.getElementById('noteTitleInput').value = '';
+      document.getElementById('noteContentInput').value = '';
+      renderNotes();
+      showToast("ಟಿಪ್ಪಣಿ ಉಳಿಸಲಾಗಿದೆ!", "success");
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(x => x.id !== id);
+      localStorage.setItem(`blo_v5_notes_${currentPartNo}`, JSON.stringify(notes));
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const container = document.getElementById('notesContainer');
+      if (notes.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:1rem;">ಯಾವುದೇ ನೋಟ್ಸ್‌ಗಳಿಲ್ಲ.</p>`;
+        return;
+      }
+      container.innerHTML = notes.map(n => `
+        <div class="note-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-main);">${n.title}</h4>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <small class="text-muted" style="font-size:0.75rem;">${n.date}</small>
+              <button class="btn btn-sm btn-outline" style="color:var(--death); padding:0.2rem 0.4rem;" onclick="deleteNote(${n.id})">✕</button>
+            </div>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); white-space:pre-wrap;">${n.content}</p>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadWorkspace);
+  </script>
+</body>
+</html>

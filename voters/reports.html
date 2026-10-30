@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ವರದಿಗಳ ಹಬ್ (Report ASDD) - BLO Smart Portal V5.0</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="portal-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html" class="active"><i class="fa-solid fa-file-contract"></i> <span>ವರದಿಗಳ ಹಬ್ (Report ASDD)</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Personal Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Area -->
+    <div class="portal-body">
+
+      <!-- Header Bar -->
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-primary" id="headerPartBadge">ಭಾಗ 87</span>
+          <h1>ಅಧಿಕೃತ ಚುನಾವಣಾ ವರದಿಗಳ ಕೇಂದ್ರ (Report ASDD Hub)</h1>
+        </div>
+        <div class="header-controls">
+          <a href="admin.html" class="btn btn-sm btn-success" style="font-weight:800; background:#10b981; color:#fff; border:none; padding:0.4rem 0.75rem; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;" title="Open Admin Live User Portal">
+            <i class="fa-solid fa-user-shield"></i> 👑 ಅಡ್ಮಿನ್ (Admin)
+          </a>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="headerPartSelect" style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">
+              <i class="fa-solid fa-building-flag"></i> ಬೂತ್ ಭಾಗ:
+            </label>
+            <select id="headerPartSelect" class="form-control" onchange="switchReportsPart(this.value)" style="width:auto; font-weight:700;">
+              <option value="87">ಭಾಗ 87 (ಮಚೇಡಬೂಲ)</option>
+              <option value="88">ಭಾಗ 88</option>
+              <option value="89">ಭಾಗ 89</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-outline" style="font-weight:700; color:var(--primary); border-color:var(--primary);" onclick="openGlobalSearchModal()" title="Press Ctrl + K to search anywhere">
+            <i class="fa-solid fa-magnifying-glass"></i> ಶೋಧಿಸಿ <kbd style="background:#0f172a; color:#fff; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.7rem;">Ctrl+K</kbd>
+          </button>
+          <button class="btn btn-sm" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile, School Name & Password Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್ (Settings)
+          </button>
+          <div class="btn-print-group" style="display:flex; gap:0.5rem;">
+            <button class="btn btn-success btn-sm" onclick="exportReportCsv()"><i class="fa-solid fa-file-excel"></i> CSV</button>
+            <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="fa-solid fa-print"></i> ಪ್ರಿಂಟ್ (Print)</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="portal-content">
+
+        <!-- Hero Section -->
+        <div class="page-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#fff;">
+          <div>
+            <span class="badge badge-outline" style="color:#38bdf8; border-color:#38bdf8; margin-bottom:0.4rem;">ECI OFFICIAL REPORTS ENGINE</span>
+            <h2 style="color:#f8fafc;"><i class="fa-solid fa-file-contract"></i> ASDD & ಪರಿಶೀಲನಾ ವರದಿಗಳ ಹಬ್ (Report ASDD)</h2>
+            <p style="color:#94a3b8;">ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಿಂದ ನವೀಕೃತಗೊಂಡ ಎಲ್ಲಾ ASDD (Absent, Shifted, Death, Double), Unverified, Verified ಹಾಗೂ ಮ್ಯಾಪಿಂಗ್ ವರದಿಗಳನ್ನು ಪ್ರಿಂಟ್ ಮಾಡಿ</p>
+          </div>
+        </div>
+
+        <!-- Animated Stats Grid -->
+        <section class="dashboard-grid" style="margin-bottom:1.5rem;">
+          <div class="stat-card total" onclick="selectSingleReportTab('all')">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಒಟ್ಟು ಮತದಾರರು</span>
+              <h2 id="repTotal">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-left:4px solid #64748b;" onclick="selectSingleReportTab('Unverified')">
+            <div class="stat-icon" style="background:rgba(100,116,139,0.15); color:#64748b;"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಅಪರಿಶೀಲಿತ (UNVERIFIED)</span>
+              <h2 id="repUnverified" style="color:#64748b;">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card verified" onclick="selectSingleReportTab('Verified')">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಖಚಿತಪಟ್ಟರು (VERIFIED)</span>
+              <h2 id="repVerified">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card absent" onclick="selectSingleReportTab('Absent')">
+            <div class="stat-icon" style="background:rgba(239,68,68,0.15); color:#ef4444;"><i class="fa-solid fa-user-slash"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಗೈರುಹಾಜರಿ (ABSENT)</span>
+              <h2 id="repAbsent" style="color:#ef4444;">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card shifted" onclick="selectSingleReportTab('Shifted')">
+            <div class="stat-icon"><i class="fa-solid fa-truck-moving"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಸ್ಥಳಾಂತರ (SHIFTED)</span>
+              <h2 id="repShifted">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card death" onclick="selectSingleReportTab('Death')">
+            <div class="stat-icon"><i class="fa-solid fa-skull"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಮೃತರಾದವರು (DEATH)</span>
+              <h2 id="repDeath">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card duplicate" onclick="selectSingleReportTab('Double')">
+            <div class="stat-icon"><i class="fa-solid fa-clone"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಡಬಲ್ (DOUBLE)</span>
+              <h2 id="repDouble">0</h2>
+            </div>
+          </div>
+        </section>
+
+        <!-- Multi-Status Selection Control Bar -->
+        <div class="toolbar-card" style="margin-bottom:1rem; padding:0.85rem 1.1rem; background:#ffffff; border-left:5px solid var(--primary); border-radius:12px;">
+          <div style="display:flex; flex-direction:column; gap:0.6rem; width:100%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+              <span style="font-weight:800; font-size:0.9rem; color:var(--text-main); display:flex; align-items:center; gap:0.4rem;">
+                <i class="fa-solid fa-sliders" style="color:var(--primary);"></i> ಬಹು-ಆಯ್ಕೆ ASDD ವರದಿ ಶೋಧಕ (Select Statuses for Print & Export):
+              </span>
+              <div style="display:flex; gap:0.5rem;">
+                <button class="btn btn-sm btn-outline" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="setAllReportCheckboxes(true)">Select All</button>
+                <button class="btn btn-sm btn-outline" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="setAllReportCheckboxes(false)">Clear All</button>
+              </div>
+            </div>
+
+            <!-- Checkboxes for Multi-Status -->
+            <div style="display:flex; gap:0.85rem; flex-wrap:wrap; align-items:center;">
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Unverified" onchange="renderReportPage()"> ⏳ Unverified
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; color:var(--verified); cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Verified" onchange="renderReportPage()"> ✅ Verified
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; color:var(--absent); cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Absent" onchange="renderReportPage()"> 🛑 Absent
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; color:var(--shifted); cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Shifted" onchange="renderReportPage()"> 🚚 Shifted
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; color:var(--death); cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Death" onchange="renderReportPage()"> 💀 Death
+              </label>
+              <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; font-weight:700; color:var(--duplicate); cursor:pointer;">
+                <input type="checkbox" class="rep-chk" value="Double" onchange="renderReportPage()"> 👯 Double
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Table Container -->
+        <div class="voters-table-wrap" style="background:#fff; border-radius:12px; box-shadow:var(--shadow-md);">
+          <table class="voters-table">
+            <thead>
+              <tr style="background:#0f172a; color:#fff;">
+                <th style="width:45px; text-align:center;">No.</th>
+                <th style="width:75px;">Voter Sl</th>
+                <th style="width:120px;">EPIC No</th>
+                <th>ಮತದಾರರ ಹೆಸರು</th>
+                <th>ಸಂಬಂಧಿ ಹೆಸರು</th>
+                <th style="width:90px;">ಮನೆ ನಂ</th>
+                <th style="width:80px;">ವಯಸ್ಸು/ಲಿಂಗ</th>
+                <th>2002 / Progeny</th>
+                <th>ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ (Status)</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Official ECI PDF Print Container (Hidden on Screen, Visible on Print) -->
+  <div id="officialPrintArea" class="official-print-area">
+    <div style="border:2px solid #000; padding:15px; margin-bottom:15px; background:#fff;">
+      <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:10px;">
+        <h2 style="font-size:16pt; font-weight:800; text-transform:uppercase; margin:0; font-family:'Noto Sans Kannada', sans-serif;">ಭಾರತ ಚುನಾವಣಾ ಆಯೋಗ (ELECTION COMMISSION OF INDIA)</h2>
+        <h3 style="font-size:12pt; font-weight:700; margin:4px 0 0 0;">ವಿಶೇಷ ಸಂಕ್ಷಿಪ್ತ ಪರಿಷ್ಕರಣೆ - ಅಧಿಕೃತ ಮತದಾರರ ಪಟ್ಟಿ ವರದಿ</h3>
+        <p style="font-size:9.5pt; margin:4px 0 0 0; font-weight:600;">
+          ರಾಜ್ಯ: <strong>ಕರ್ನಾಟಕ (S10)</strong> | ಜಿಲ್ಲೆ: <strong>ರಾಯಚೂರು (10)</strong> | ವಿಧಾನಸಭೆ ಕ್ಷೇತ್ರ: <strong>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ (SC)</strong>
+        </p>
+        <p style="font-size:9.5pt; margin:2px 0 0 0; font-weight:600;">
+          ಮತಗಟ್ಟೆ ವಿವರ: <strong>ಭಾಗ <span id="printPartNoText">87</span> - ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ</strong>
+        </p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid #000; padding:6px 12px; margin-bottom:12px; font-size:9.5pt; font-weight:bold; background:#f1f5f9;">
+        <div>ವರದಿ ಪ್ರಕಾರ: <span id="printReportTitleText" style="color:#0284c7;">ಸಂಪೂರ್ಣ ಮತದಾರರ ಪಟ್ಟಿ ವರದಿ</span></div>
+        <div>BLO ಅಧಿಕಾರಿ: <strong>ರಾಮಚಂದ್ರ ಕೆ.</strong></div>
+        <div>ದಿನಾಂಕ: <span id="printDateText"></span></div>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+        <thead>
+          <tr style="background:#e2e8f0; color:#000;">
+            <th style="border:1px solid #000; padding:5px; width:35px; text-align:center;">No.</th>
+            <th style="border:1px solid #000; padding:5px; width:65px;">Voter Sl</th>
+            <th style="border:1px solid #000; padding:5px;">EPIC No (ಪ್ರಸ್ತುತ)</th>
+            <th style="border:1px solid #000; padding:5px;">ಮತದಾರರ ಹೆಸರು (Voter Name)</th>
+            <th style="border:1px solid #000; padding:5px;">ಸಂಬಂಧಿಯ ಹೆಸರು (Relative)</th>
+            <th style="border:1px solid #000; padding:5px;">ಮನೆ ನಂ</th>
+            <th style="border:1px solid #000; padding:5px;">ವಯಸ್ಸು/ಲಿಂಗ</th>
+            <th style="border:1px solid #000; padding:5px;">2002 ಮ್ಯಾಪಿಂಗ್ & Progeny</th>
+            <th style="border:1px solid #000; padding:5px;">ಪ್ರಸ್ತುತ ಸ್ಥಿತಿ (Status)</th>
+          </tr>
+        </thead>
+        <tbody id="eciPrintTableBody">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+
+      <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:flex-end; font-size:9pt;">
+        <div>
+          <p style="margin:0;">* ಈ ವರದಿಯು ಚುನಾವಣಾ ಆಯೋಗದ ಮಾನದಂಡದಂತೆ ಅಧಿಕೃತ ಪರಿಶೀಲನೆಗಾಗಿ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ.</p>
+          <p style="margin:2px 0 0 0;">ವರದಿ ಮುದ್ರಿತ ಸಮಯ: <span id="printTimestampText"></span></p>
+        </div>
+        <div style="text-align:center; border-top:1px solid #000; padding-top:4px; width:220px;">
+          <strong>ಮತಗಟ್ಟೆ ಮಟ್ಟದ ಅಧಿಕಾರಿ (BLO)</strong><br>
+          <small>ಸಹಿ ಹಾಗೂ ಮೊಹರು</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body * { visibility: hidden !important; }
+      #officialPrintArea, #officialPrintArea * { visibility: visible !important; }
+      #officialPrintArea {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        display: block !important;
+      }
+      .official-print-area { display: block !important; }
+    }
+    @media screen {
+      .official-print-area { display: none; }
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    let reportVotersList = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const session = JSON.parse(sessionStorage.getItem("blo_session_v5") || "{}");
+      if (session.partNo) currentPartNo = session.partNo;
+
+      if (document.getElementById("headerPartSelect")) document.getElementById("headerPartSelect").value = currentPartNo;
+      if (document.getElementById("headerPartBadge")) document.getElementById("headerPartBadge").textContent = `ಭಾಗ ${currentPartNo}`;
+
+      await loadReportPageData();
+    });
+
+    async function switchReportsPart(partNo) {
+      currentPartNo = partNo;
+      if (document.getElementById("headerPartBadge")) document.getElementById("headerPartBadge").textContent = `ಭಾಗ ${currentPartNo}`;
+      sessionStorage.setItem("blo_session_v5", JSON.stringify({ bloName: "ರಾಮಚಂದ್ರ ಕೆ.", partNo: currentPartNo }));
+      await loadReportPageData();
+    }
+
+    async function loadReportPageData() {
+      if (typeof initFirebaseEngine === 'function') {
+        initFirebaseEngine();
+      }
+
+      reportVotersList = await getVotersForPart(currentPartNo);
+
+      // Realtime subscription from Firebase Cloud
+      if (typeof subscribeToVotersFirebase === 'function') {
+        subscribeToVotersFirebase(currentPartNo, async (cloudList) => {
+          reportVotersList = cloudList;
+          renderReportPage();
+        });
+      }
+
+      renderReportPage();
+    }
+
+    function renderReportPage() {
+      calculateReportStats();
+
+      const tbody = document.getElementById("reportTableBody");
+      const checkedVals = Array.from(document.querySelectorAll(".rep-chk:checked")).map(c => c.value);
+
+      let filtered = reportVotersList.filter(v => {
+        const st = (v.status || "Unverified").toLowerCase();
+
+        if (checkedVals.length > 0) {
+          return checkedVals.some(chk => {
+            const chkLower = chk.toLowerCase();
+            if (chkLower === 'unverified') return (!v.status || st === 'unverified');
+            if (chkLower === 'double') return (st === 'double' || st === 'duplicate');
+            return st === chkLower;
+          });
+        }
+        return true;
+      });
+
+      if (!tbody) return;
+
+      tbody.innerHTML = filtered.map((v, idx) => `
+        <tr>
+          <td style="text-align:center; font-weight:800; color:var(--text-muted); font-size:0.85rem;">${idx + 1}</td>
+          <td><strong>#${v.slNo}</strong></td>
+          <td><span class="epic-badge">${v.epicNo}</span></td>
+          <td><strong>${v.nameKn}</strong></td>
+          <td>${v.relNameKn || '-'} <small>(${v.relType || 'Father'})</small></td>
+          <td>${v.houseNo || '-'}</td>
+          <td>${v.age}Y / ${v.gender==='F'?'ಸ್ತ್ರೀ':'ಗಂಡು'}</td>
+          <td>
+            <div style="display:flex; gap:0.25rem;">
+              ${v.isMapDone ? `<span class="badge badge-mapped" style="font-size:0.7rem;">2002 Mapped</span>` : ''}
+              ${v.isProgenyDone ? `<span class="badge badge-progeny" style="font-size:0.7rem;">Progeny</span>` : ''}
+            </div>
+          </td>
+          <td><span class="badge ${v.status==='Verified'?'badge-success':(v.status==='Absent'?'badge-absent':(v.status==='Shifted'?'badge-shifted':(v.status==='Death'?'badge-death':(v.status==='Double'||v.status==='Duplicate'?'badge-duplicate':'badge-outline'))))}">${v.status || 'Unverified'}</span></td>
+        </tr>
+      `).join('');
+
+      populateEciPrintTable(filtered, checkedVals);
+    }
+
+    function calculateReportStats() {
+      const total = reportVotersList.length;
+      const unverified = reportVotersList.filter(v => !v.status || v.status.toLowerCase() === "unverified").length;
+      const verified = reportVotersList.filter(v => v.status && v.status.toLowerCase() === "verified").length;
+      const absent = reportVotersList.filter(v => v.status && v.status.toLowerCase() === "absent").length;
+      const shifted = reportVotersList.filter(v => v.status && v.status.toLowerCase() === "shifted").length;
+      const death = reportVotersList.filter(v => v.status && v.status.toLowerCase() === "death").length;
+      const double = reportVotersList.filter(v => v.status && (v.status.toLowerCase() === "double" || v.status.toLowerCase() === "duplicate")).length;
+
+      if (document.getElementById("repTotal")) document.getElementById("repTotal").textContent = total;
+      if (document.getElementById("repUnverified")) document.getElementById("repUnverified").textContent = unverified;
+      if (document.getElementById("repVerified")) document.getElementById("repVerified").textContent = verified;
+      if (document.getElementById("repAbsent")) document.getElementById("repAbsent").textContent = absent;
+      if (document.getElementById("repShifted")) document.getElementById("repShifted").textContent = shifted;
+      if (document.getElementById("repDeath")) document.getElementById("repDeath").textContent = death;
+      if (document.getElementById("repDouble")) document.getElementById("repDouble").textContent = double;
+    }
+
+    function setAllReportCheckboxes(doCheck) {
+      const chks = document.querySelectorAll(".rep-chk");
+      chks.forEach(c => c.checked = doCheck);
+      renderReportPage();
+    }
+
+    function selectSingleReportTab(statusName) {
+      const chks = document.querySelectorAll(".rep-chk");
+      chks.forEach(c => c.checked = false);
+
+      if (statusName !== 'all') {
+        const matching = Array.from(chks).find(c => c.value.toLowerCase() === statusName.toLowerCase());
+        if (matching) matching.checked = true;
+      }
+      renderReportPage();
+    }
+
+    function populateEciPrintTable(voterList, checkedVals = []) {
+      if (document.getElementById("printPartNoText")) document.getElementById("printPartNoText").textContent = currentPartNo;
+      
+      let reportTitle = "ಸಂಪೂರ್ಣ ಅಧಿಕೃತ ಮತದಾರರ ಪಟ್ಟಿ ವರದಿ";
+      if (checkedVals && checkedVals.length > 0) {
+        reportTitle = `ಅಧಿಕೃತ ಬಹು-ಆಯ್ಕೆ ಸಂಯೋಜಿತ ASDD ವರದಿ (${checkedVals.join(' + ').toUpperCase()})`;
+      }
+
+      if (document.getElementById("printReportTitleText")) document.getElementById("printReportTitleText").textContent = reportTitle;
+      const now = new Date();
+      if (document.getElementById("printDateText")) document.getElementById("printDateText").textContent = now.toLocaleDateString();
+      if (document.getElementById("printTimestampText")) document.getElementById("printTimestampText").textContent = now.toLocaleString();
+
+      const printBody = document.getElementById("eciPrintTableBody");
+      if (!printBody) return;
+
+      printBody.innerHTML = voterList.map((v, idx) => {
+        let details2002 = [];
+        if (v.isMapDone || v.ref2002Epic) details2002.push(`🟢 2002 Ref: ${v.ref2002Epic || 'Mapped'}`);
+        if (v.isProgenyDone) details2002.push(`🟣 Progeny Verified`);
+        if (details2002.length === 0) details2002.push(`-`);
+
+        return `
+          <tr>
+            <td style="border:1px solid #000; padding:5px; text-align:center; font-weight:bold;">${idx + 1}</td>
+            <td style="border:1px solid #000; padding:5px; font-weight:bold;">#${v.slNo}</td>
+            <td style="border:1px solid #000; padding:5px; font-weight:bold;">${v.epicNo}</td>
+            <td style="border:1px solid #000; padding:5px; font-weight:bold;">${v.nameKn}</td>
+            <td style="border:1px solid #000; padding:5px;">${v.relNameKn || '-'} (${v.relType || 'Father'})</td>
+            <td style="border:1px solid #000; padding:5px;">${v.houseNo || '-'}</td>
+            <td style="border:1px solid #000; padding:5px;">${v.age}Y / ${v.gender==='F'?'ಸ್ತ್ರೀ':'ಗಂಡು'}</td>
+            <td style="border:1px solid #000; padding:5px; font-size:8.5pt;">${details2002.join('<br>')}</td>
+            <td style="border:1px solid #000; padding:5px; font-weight:bold;">${v.status || 'Unverified'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportReportCsv() {
+      if (!reportVotersList || reportVotersList.length === 0) return alert("ಯಾವುದೇ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ!");
+      let rows = [["SL_NO", "CURRENT_EPIC", "VOTER_NAME", "RELATION_NAME", "REL_TYPE", "HOUSE_NO", "AGE", "GENDER", "STATUS", "IS_2002_MAPPED", "2002_EPIC_REF"]];
+      
+      reportVotersList.forEach(v => {
+        rows.push([v.slNo, v.epicNo, v.nameKn, v.relNameKn, v.relType, v.houseNo, v.age, v.gender, v.status, v.isMapDone?'YES':'NO', v.ref2002Epic||'']);
+      });
+
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `ECI_Report_ASDD_Part_${currentPartNo}.csv`);
+      document.body.appendChild(link);
+      link.click();
+    }
+  </script>
+</body>
+</html>

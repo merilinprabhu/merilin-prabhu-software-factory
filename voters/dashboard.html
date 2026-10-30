@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಚುನಾವಣಾ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (Analytics & Profile) - BLO Smart Portal V5.0</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="portal-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (Analytics)</span></a>
+        <a href="voterlist.html"><i class="fa-solid fa-users-gear"></i> <span>ಮತದಾರರ ಪಟ್ಟಿ (Voter List)</span></a>
+        <a href="admin.html"><i class="fa-solid fa-user-shield" style="color:#10b981;"></i> <span style="font-weight:800; color:#10b981;">ಅಡ್ಮಿನ್ (Live Users)</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html"><i class="fa-solid fa-file-contract"></i> <span>ವರದಿಗಳ ಹಬ್ (Report ASDD)</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Personal Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Area -->
+    <div class="portal-body">
+
+      <!-- Header Bar -->
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-primary" id="headerPartBadge">ಭಾಗ 87</span>
+          <h1>ಚುನಾವಣಾ ವಿಶ್ಲೇಷಣೆ ಹಾಗೂ BLO ಪ್ರೊಫೈಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</h1>
+        </div>
+        <div class="header-controls">
+          <a href="admin.html" class="btn btn-sm btn-success" style="font-weight:800; background:#10b981; color:#fff; border:none; padding:0.4rem 0.75rem; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;" title="Open Admin Live User Portal">
+            <i class="fa-solid fa-user-shield"></i> 👑 ಅಡ್ಮಿನ್ (Admin)
+          </a>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="headerPartSelect" style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">
+              <i class="fa-solid fa-building-flag"></i> ಬೂತ್ ಭಾಗ:
+            </label>
+            <select id="headerPartSelect" class="form-control" onchange="switchPartNumber(this.value)" style="width:auto; font-weight:700;">
+              <option value="87">ಭಾಗ 87 (ಮಚೇಡಬೂಲ)</option>
+              <option value="88">ಭಾಗ 88</option>
+              <option value="89">ಭಾಗ 89</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-outline" style="font-weight:700; color:var(--primary); border-color:var(--primary);" onclick="openGlobalSearchModal()" title="Press Ctrl + K to search anywhere">
+            <i class="fa-solid fa-magnifying-glass"></i> ಶೋಧಿಸಿ <kbd style="background:#0f172a; color:#fff; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.7rem;">Ctrl+K</kbd>
+          </button>
+          <button class="btn btn-sm" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile, School Name & Password Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್ (Settings)
+          </button>
+          <span class="badge badge-outline" id="firebaseStatusBadge" style="cursor:pointer;" onclick="openFirebaseSetupModal()" title="Click to setup Firebase Cloud Database">
+            <i class="fa-solid fa-database"></i> Local Database Mode
+          </span>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="portal-content">
+
+        <!-- BLO Full Profile Card Banner -->
+        <div class="page-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#fff; padding:1.75rem; border-radius:16px; margin-bottom:1.5rem; box-shadow:var(--shadow-md);">
+          <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; width:100%; justify-content:space-between;">
+            <div style="display:flex; gap:1.25rem; align-items:center;">
+              <div style="width:65px; height:65px; border-radius:50%; background:#0284c7; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.75rem; font-weight:800; border:3px solid #38bdf8;">
+                <i class="fa-solid fa-id-badge"></i>
+              </div>
+              <div>
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                  <span class="badge badge-success" style="font-size:0.75rem;">ಅಧಿಕೃತ BLO ಪ್ರೊಫೈಲ್</span>
+                  <span class="badge badge-outline" style="color:#38bdf8; border-color:#38bdf8; font-size:0.75rem;">S10 - KARNATAKA</span>
+                </div>
+                <h2 style="font-size:1.4rem; font-weight:800; color:#f8fafc; margin:0; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                  <span id="dashBloFullName">BLO ಅಧಿಕಾರಿ</span>
+                  <button class="btn btn-sm" style="background:#fbbf24; color:#0f172a; font-weight:800; font-size:0.8rem; padding:0.25rem 0.65rem; border:none; border-radius:6px; cursor:pointer;" onclick="openBloProfileSettingsModal()" title="Click to edit BLO Profile, School Name & Password">
+                    <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್ (Settings & Edit School Name)
+                  </button>
+                </h2>
+                <p style="color:#94a3b8; font-size:0.88rem; margin:0.3rem 0 0 0;">
+                  ಜಿಲ್ಲೆ: <strong>ರಾಯಚೂರು (10)</strong> | ಕ್ಷೇತ್ರ: <strong>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ (SC)</strong> | ಮತಗಟ್ಟೆ ಭಾಗ: <strong>87</strong>
+                </p>
+                <p style="color:#cbd5e1; font-size:0.82rem; margin:0.2rem 0 0 0;">
+                  <i class="fa-solid fa-school"></i> ಮತಗಟ್ಟೆ ಕೇಂದ್ರ: <strong id="dashSchoolNameDisp">ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ (ಕೊಠಡಿ ನಂ. 1)</strong>
+                </p>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:0.75rem;">
+              <a href="voterlist.html" class="btn btn-primary" style="padding:0.75rem 1.25rem; font-size:0.95rem; font-weight:700;"><i class="fa-solid fa-list-check"></i> ಮತದಾರರ ಪಟ್ಟಿಗೆ ಹೋಗಿ (Voter List)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Animated Stats Grid -->
+        <section class="dashboard-grid" style="margin-bottom:1.5rem;">
+          <div class="stat-card total" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಒಟ್ಟು ಮತದಾರರು</span>
+              <h2 id="statTotal">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-left:4px solid #64748b;" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon" style="background:rgba(100,116,139,0.15); color:#64748b;"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಅಪರಿಶೀಲಿತ (UNVERIFIED)</span>
+              <h2 id="statUnverified" style="color:#64748b;">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card verified" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಖಚಿತಪಟ್ಟರು (VERIFIED)</span>
+              <h2 id="statVerified">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card absent" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-user-slash"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಗೈರುಹಾಜರಿ (ABSENT)</span>
+              <h2 id="statAbsent">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card shifted" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-truck-moving"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಸ್ಥಳಾಂತರ (SHIFTED)</span>
+              <h2 id="statShifted">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card death" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-skull"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಮೃತರಾದವರು (DEATH)</span>
+              <h2 id="statDeath">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card duplicate" onclick="window.location.href='voterlist.html'">
+            <div class="stat-icon"><i class="fa-solid fa-clone"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಡಬಲ್ (DOUBLE)</span>
+              <h2 id="statDouble">0</h2>
+            </div>
+          </div>
+        </section>
+
+        <!-- Graphic Visual Analytics Section -->
+        <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-main); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> ಬೂತ್ ಚುನಾವಣಾ ಅನಾಲಿಟಿಕ್ಸ್ & ವಯಸ್ಸಿನ ಪೈ ಬಾರ್ ಗ್ರಾಫ್ (Graphic Demographics Report)
+        </h3>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem; margin-bottom:1.5rem;">
+          
+          <!-- Gender Analytics Card -->
+          <div class="analytics-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h4 style="margin:0; font-size:1rem; font-weight:800; color:#0f172a;"><i class="fa-solid fa-venus-mars" style="color:#0284c7;"></i> ಲಿಂಗ ಅನುಪಾತ (Gender Ratio)</h4>
+              <span class="badge badge-primary" id="analyticsGenderRatioBadge">1000:980</span>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">
+                <span style="color:#0284c7;"><i class="fa-solid fa-mars"></i> ಗಂಡು ಮತದಾರರು (Male): <strong id="valMaleCount">0</strong></span>
+                <span id="valMalePct" style="color:#0284c7;">0%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="barMaleFill" style="width:0%; background:#0284c7;"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">
+                <span style="color:#ec4899;"><i class="fa-solid fa-venus"></i> ಸ್ತ್ರೀ ಮತದಾರರು (Female): <strong id="valFemaleCount">0</strong></span>
+                <span id="valFemalePct" style="color:#ec4899;">0%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="barFemaleFill" style="width:0%; background:#ec4899;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Age Demographics Card -->
+          <div class="analytics-card">
+            <h4 style="margin:0 0 1rem 0; font-size:1rem; font-weight:800; color:#0f172a;"><i class="fa-solid fa-chart-column" style="color:#8b5cf6;"></i> ವಯಸ್ಸಿನ ಗುಂಪು ಶ್ರೇಣಿ (Age Groups Bar Chart)</h4>
+            
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+                  <span>🟢 ಪ್ರಥಮ ಬಾರಿಯ ಮತದಾರರು (18-21 Yrs): <strong id="valAge18_21">0</strong></span>
+                </div>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" id="barAge18Fill" style="width:0%; background:#10b981;"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+                  <span>🔵 ಯುವ ಮತದಾರರು (22-35 Yrs): <strong id="valAge22_35">0</strong></span>
+                </div>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" id="barAge22Fill" style="width:0%; background:#0284c7;"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+                  <span>🟠 ಪ್ರಬುದ್ಧ ಮತದಾರರು (36-59 Yrs): <strong id="valAge36_59">0</strong></span>
+                </div>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" id="barAge36Fill" style="width:0%; background:#f59e0b;"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+                  <span>🟣 ಹಿರಿಯ ನಾಗರಿಕರು (60+ Senior Citizens): <strong id="valAge60Plus">0</strong></span>
+                </div>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" id="barAge60Fill" style="width:0%; background:#8b5cf6;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ASDD Progress Completion Card -->
+          <div class="analytics-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <h4 style="margin:0 0 1rem 0; font-size:1rem; font-weight:800; color:#0f172a;"><i class="fa-solid fa-list-check" style="color:#10b981;"></i> ASDD ಪರಿಶೀಲನಾ ಪೂರ್ಣಗೊಂಡ ಶೇಕಡಾವಾರು</h4>
+              <div style="text-align:center; padding:1rem 0;">
+                <h1 style="font-size:2.5rem; font-weight:800; color:#10b981; margin:0;" id="valAsddPctText">0%</h1>
+                <p style="color:#64748b; font-size:0.85rem; margin:0.3rem 0 0 0;">ಪರಿಶೀಲನೆ ಪೂರ್ಣಗೊಂಡ ಮತದಾರರು</p>
+              </div>
+            </div>
+            <a href="reports.html" class="btn btn-success" style="width:100%; text-align:center;"><i class="fa-solid fa-file-contract"></i> ASDD ವರದಿ ಪ್ರಿಂಟ್ ಮಾಡಿ (Print Report)</a>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    async function loadDashboardAnalytics(partNo) {
+      if (typeof initFirebaseEngine === 'function') {
+        initFirebaseEngine();
+      }
+      voters = await getVotersForPart(partNo);
+
+      renderDashboardStats();
+      renderVisualAnalyticsGraphics();
+
+      if (typeof subscribeToVotersFirebase === 'function') {
+        subscribeToVotersFirebase(partNo, async (cloudList) => {
+          voters = cloudList;
+          windowVoterMemoryCache[partNo] = cloudList;
+          renderDashboardStats();
+          renderVisualAnalyticsGraphics();
+        });
+      }
+    }
+
+    function renderVisualAnalyticsGraphics() {
+      if (typeof calculateDemographics !== 'function') return;
+      const d = calculateDemographics(voters);
+
+      if (document.getElementById("valMaleCount")) document.getElementById("valMaleCount").textContent = d.male;
+      if (document.getElementById("valFemaleCount")) document.getElementById("valFemaleCount").textContent = d.female;
+      if (document.getElementById("valMalePct")) document.getElementById("valMalePct").textContent = `${d.malePct}%`;
+      if (document.getElementById("valFemalePct")) document.getElementById("valFemalePct").textContent = `${d.femalePct}%`;
+
+      if (document.getElementById("barMaleFill")) document.getElementById("barMaleFill").style.width = `${d.malePct}%`;
+      if (document.getElementById("barFemaleFill")) document.getElementById("barFemaleFill").style.width = `${d.femalePct}%`;
+
+      if (document.getElementById("valAge18_21")) document.getElementById("valAge18_21").textContent = d.firstTime;
+      if (document.getElementById("valAge22_35")) document.getElementById("valAge22_35").textContent = d.youth;
+      if (document.getElementById("valAge36_59")) document.getElementById("valAge36_59").textContent = d.adults;
+      if (document.getElementById("valAge60Plus")) document.getElementById("valAge60Plus").textContent = d.seniors;
+
+      const total = d.total || 1;
+      if (document.getElementById("barAge18Fill")) document.getElementById("barAge18Fill").style.width = `${Math.round((d.firstTime/total)*100)}%`;
+      if (document.getElementById("barAge22Fill")) document.getElementById("barAge22Fill").style.width = `${Math.round((d.youth/total)*100)}%`;
+      if (document.getElementById("barAge36Fill")) document.getElementById("barAge36Fill").style.width = `${Math.round((d.adults/total)*100)}%`;
+      if (document.getElementById("barAge60Fill")) document.getElementById("barAge60Fill").style.width = `${Math.round((d.seniors/total)*100)}%`;
+
+      if (document.getElementById("valAsddPctText")) document.getElementById("valAsddPctText").textContent = `${d.asddPct}%`;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadDashboardAnalytics(currentPartNo);
+    });
+  </script>
+</body>
+</html>

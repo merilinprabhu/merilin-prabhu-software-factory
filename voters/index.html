@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel (Macro) & PDF ಅಪ್‌ಲೋಡ್ | BLO ಪೋರ್ಟಲ್ 5.0</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .upload-box-card {
+      background: var(--bg-card);
+      border: 3px dashed var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+    .upload-box-card:hover, .upload-box-card.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .status-log-panel {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      margin-top: 1.5rem;
+      text-align: left;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: var(--shadow-md);
+    }
+    .status-log-line { margin-bottom: 0.35rem; }
+    .status-log-line.success { color: #4ade80; font-weight: bold; }
+    .status-log-line.error { color: #f87171; font-weight: bold; }
+    .status-log-line.info { color: #38bdf8; }
+
+    .preview-table-wrap {
+      margin-top: 2rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      display: none;
+      box-shadow: var(--shadow-sm);
+    }
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .preview-table th, .preview-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .preview-table th { background: var(--bg-body); font-weight: 700; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <div class="portal-layout">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</span></a>
+        <a href="index.html" class="active"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html"><i class="fa-solid fa-chart-pie"></i> <span>ವರದಿಗಳ ಹಬ್ (All Reports)</span></a>
+        <a href="asd.html"><i class="fa-solid fa-user-slash"></i> <span>ASDD ಪೋರ್ಟಲ್</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Personal Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Container -->
+    <div class="portal-body">
+
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-primary">Excel & PDF Hub</span>
+          <h1>ಮತದಾರರ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ ಪೋರ್ಟಲ್</h1>
+        </div>
+        <div class="header-controls">
+          <a href="admin.html" class="btn btn-sm btn-success" style="font-weight:800; background:#10b981; color:#fff; border:none; padding:0.4rem 0.75rem; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;" title="Open Admin Live User Portal">
+            <i class="fa-solid fa-user-shield"></i> 👑 ಅಡ್ಮಿನ್ (Admin)
+          </a>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="partNoInput" style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">
+              <i class="fa-solid fa-building-flag"></i> ಬೂತ್ ಭಾಗ:
+            </label>
+            <input type="text" id="partNoInput" class="form-control" value="87" style="width:75px; text-align:center; font-weight:700;">
+          </div>
+          <button class="btn btn-sm btn-outline" style="font-weight:700; color:var(--primary); border-color:var(--primary);" onclick="openGlobalSearchModal()" title="Press Ctrl + K to search anywhere">
+            <i class="fa-solid fa-magnifying-glass"></i> ಶೋಧಿಸಿ <kbd style="background:#0f172a; color:#fff; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.7rem;">Ctrl+K</kbd>
+          </button>
+          <button class="btn btn-sm" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile, School Name & Password Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <main class="portal-content">
+
+        <!-- Hero Section -->
+        <div class="page-hero">
+          <div>
+            <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Excel Macro (.xlsm), XLSX & ECI PDF ಅಪ್‌ಲೋಡ್</h2>
+            <p>ನಿಮ್ಮ Excel, Macro ಅಥವಾ ECI PDF ಮತದಾರರ ಪಟ್ಟಿ ಆಯ್ಕೆ ಮಾಡಿ, ತಕ್ಷಣವೇ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಡೇಟಾ ಲೋಡ್ ಆಗುತ್ತದೆ.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; z-index:1;">
+            <button class="btn btn-success btn-sm" onclick="downloadSampleExcelTemplate()"><i class="fa-solid fa-file-download"></i> Excel ಮಾದರಿ ಟೆಂಪ್ಲೇಟ್ ಡೌನ್‌ಲೋಡ್</button>
+            <button class="btn btn-danger btn-sm" onclick="clearAllPortalData()"><i class="fa-solid fa-trash-can"></i> ಡೇಟಾ ರಿಸೆಟ್</button>
+          </div>
+        </div>
+
+        <!-- Excel Column Structure Format Guide Card -->
+        <div class="toolbar-card" style="margin-bottom:1.5rem; background:linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);">
+          <div style="width:100%;">
+            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+              <i class="fa-solid fa-table-columns" style="color:var(--primary);"></i> Excel ಶೀಟ್ ಅಂಕಣಗಳ ರಚನೆ (Column Structure Format)
+            </h3>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.85rem;">
+              ನಿಮ್ಮ Excel ಫೈಲ್‌ನಲ್ಲಿ ಕೆಳಗಿನ <strong>ಇಂಗ್ಲಿಷ್</strong> ಅಥವಾ <strong>ಕನ್ನಡ</strong> ಹೆಡರ್‌ಗಳು (Header Row) ಇರಬೇಕು:
+            </p>
+            <div style="overflow-x:auto;">
+              <table class="preview-table" style="font-size:0.82rem; background:#fff;">
+                <thead>
+                  <tr style="background:#1e293b; color:#fff;">
+                    <th>Col A (1)</th>
+                    <th>Col B (2)</th>
+                    <th>Col C (3)</th>
+                    <th>Col D (4)</th>
+                    <th>Col E (5)</th>
+                    <th>Col F (6)</th>
+                    <th>Col G (7)</th>
+                    <th>Col H (8)</th>
+                    <th>Col I (9)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>SlNo</strong><br><small class="text-muted">ಅನುಕ್ರಮ</small></td>
+                    <td><strong>EPIC</strong><br><small class="text-muted">ಎಪಿಕ್ ಸಂಖ್ಯೆ</small></td>
+                    <td><strong>Name</strong><br><small class="text-muted">ಮತದಾರರ ಹೆಸರು</small></td>
+                    <td><strong>Relative_Name</strong><br><small class="text-muted">ಸಂಬಂಧಿಯ ಹೆಸರು</small></td>
+                    <td><strong>Relation</strong><br><small class="text-muted">ಸಂಬಂಧ (Father/Husband)</small></td>
+                    <td><strong>House_No</strong><br><small class="text-muted">ಮನೆ ಸಂಖ್ಯೆ</small></td>
+                    <td><strong>Age</strong><br><small class="text-muted">ವಯಸ್ಸು</small></td>
+                    <td><strong>Gender</strong><br><small class="text-muted">ಲಿಂಗ (M/F)</small></td>
+                    <td><strong>Mobile</strong><br><small class="text-muted">ಮೊಬೈಲ್</small></td>
+                  </tr>
+                  <tr style="color:var(--text-muted); background:#f8fafc;">
+                    <td>1</td>
+                    <td>YFO4500001</td>
+                    <td>ಮಲ್ಲಿಕಾರ್ಜುನ</td>
+                    <td>ಬಸವರಾಜ</td>
+                    <td>Father</td>
+                    <td>12-A</td>
+                    <td>45</td>
+                    <td>M</td>
+                    <td>9876543210</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Upload Target Selection Cards -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; margin-bottom:1.5rem;">
+
+          <!-- Card 1: Current Voter Roll Upload -->
+          <div class="toolbar-card" style="background:#fff; border-top:4px solid var(--primary); display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <span class="badge badge-primary" style="font-size:0.85rem;"><i class="fa-solid fa-users"></i> Target 1</span>
+                <span style="font-size:0.8rem; font-weight:700; color:var(--primary);">Current Roll</span>
+              </div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-bottom:0.35rem;">
+                ಪ್ರಸ್ತುತ ಮತದಾರರ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ (Current Electoral Roll)
+              </h3>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+                ನಿಮ್ಮ ಬೂತ್‌ನ ಸದ್ಯದ ಮತದಾರರ ಪಟ್ಟಿ (Excel / PDF / Macro) ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary" style="width:100%; padding:0.75rem;" onclick="triggerUploadForTarget('current')">
+                <i class="fa-solid fa-cloud-arrow-up"></i> ಪ್ರಸ್ತುತ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (Choose File)
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: 2002 Master Reference Roll Upload -->
+          <div class="toolbar-card" style="background:#fff; border-top:4px solid #8b5cf6; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <span class="badge badge-progeny" style="font-size:0.85rem;"><i class="fa-solid fa-sitemap"></i> Target 2</span>
+                <span style="font-size:0.8rem; font-weight:700; color:#8b5cf6;">Reference Roll 2002</span>
+              </div>
+              <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-bottom:0.35rem;">
+                2002 ಮಾಸ್ಟರ್ ಮತದಾರರ ಪಟ್ಟಿ (SIR 2002 Master Roll)
+              </h3>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+                1999-2002 ರಾಯಚೂರು/ಕರ್ನಾಟಕ ಮಾಸ್ಟರ್ ರಫರೆನ್ಸ್ ಪಟ್ಟಿ (Excel/PDF) ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-sm" style="width:100%; padding:0.75rem; background:#8b5cf6; color:#fff; font-weight:700;" onclick="triggerUploadForTarget('2002')">
+                <i class="fa-solid fa-file-excel"></i> 2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (Choose 2002 File)
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden Main File Picker & Target Input -->
+        <input type="file" id="filePicker" accept=".xlsx,.xlsm,.xls,.csv,.pdf,.json" style="display:none;">
+        <input type="hidden" id="activeUploadTarget" value="current">
+
+        <!-- Unified Dropzone Card -->
+        <div class="upload-box-card" id="dropzoneCard">
+
+          <div style="font-size:3rem; color:var(--primary); margin-bottom:0.75rem; opacity:0.85;">
+            <i class="fa-solid fa-file-arrow-up"></i>
+          </div>
+
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:0.35rem; color:var(--text-main);" id="dropzoneTitle">
+            Excel / Macro (.xlsm, .xlsx) ಅಥವಾ PDF ಫೈಲ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡಿ
+          </h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+            ಇಲ್ಲಿ ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಮೇಲಿನ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ
+          </p>
+
+          <!-- Target Selector Radio Bar -->
+          <div style="max-width:480px; margin:0 auto 1rem auto; display:flex; gap:1rem; justify-content:center; background:#f1f5f9; padding:0.5rem; border-radius:30px;" onclick="event.stopPropagation();">
+            <label style="font-size:0.82rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+              <input type="radio" name="uploadTargetRadio" value="current" checked onchange="setUploadTarget(this.value)"> <span>ಪ್ರಸ್ತುತ ಮತದಾರರ ಪಟ್ಟಿ</span>
+            </label>
+            <label style="font-size:0.82rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+              <input type="radio" name="uploadTargetRadio" value="2002" onchange="setUploadTarget(this.value)"> <span>2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿ</span>
+            </label>
+          </div>
+
+          <!-- Upload Mode Selector -->
+          <div style="max-width:420px; margin:0 auto 1rem auto; text-align:left; background:#fff; padding:0.75rem 1rem; border-radius:var(--radius-md); border:1px solid var(--border);" onclick="event.stopPropagation();">
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:0.35rem;">
+              <i class="fa-solid fa-code-merge"></i> ಅಪ್‌ಲೋಡ್ ಮೋಡ್ (Duplicate ತಡೆಗಟ್ಟುವಿಕೆ):
+            </label>
+            <select id="uploadModeSelect" class="form-control" style="width:100%; font-weight:700; color:var(--primary);">
+              <option value="merge">⚡ Smart Merge & Update (ಬುದ್ಧಿವಂತ ಮರ್ಜ್ - No Duplicates!)</option>
+              <option value="replace">⚠️ Replace All (ಹಳೆಯದನ್ನು ಅಳಿಸಿ ಹೊಸದು ಹಾಕಿ)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" style="padding:0.75rem 2rem; font-size:1rem;" onclick="event.stopPropagation(); document.getElementById('filePicker').click();">
+            <i class="fa-solid fa-folder-open"></i> ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ (Choose File)
+          </button>
+
+          <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:1.25rem; flex-wrap:wrap;">
+            <span class="badge badge-success" style="font-size:0.82rem;"><i class="fa-solid fa-file-excel"></i> Excel Macro (.xlsm)</span>
+            <span class="badge badge-success" style="font-size:0.82rem;"><i class="fa-solid fa-file-excel"></i> Excel (.xlsx / .csv)</span>
+            <span class="badge badge-primary" style="font-size:0.82rem;"><i class="fa-solid fa-file-pdf"></i> ECI PDF</span>
+          </div>
+        </div>
+        <!-- Auto Detected Useful Headers Card -->
+        <div class="toolbar-card" id="autoHeadersDetectedCard" style="display:none; margin-top:1.5rem; background:#0f172a; color:#fff; border-radius:12px; padding:1.25rem; border-left:5px solid #38bdf8;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:0.75rem; margin-bottom:1rem;">
+            <h3 style="font-size:1.05rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:0.5rem; margin:0;">
+              <i class="fa-solid fa-list-check"></i> ಸ್ವಯಂಚಾಲಿತ ಅಂಕಣ ಶೀರ್ಷಿಕೆ ಪತ್ತೆ (Auto Detected Useful Column Headers)
+            </h3>
+            <span class="badge badge-success" id="usefulHeadersCountBadge">9 Useful Fields Detected</span>
+          </div>
+
+          <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">
+            ನಿಮ್ಮ Excel / PDF ಫೈಲ್‌ನಲ್ಲಿರುವ ಉಪಯುಕ್ತ ಅಂಕಣಗಳನ್ನು (Useful Columns Only) ಪತ್ತೆಹಚ್ಚಿ ಮ್ಯಾಪ್ ಮಾಡಲಾಗಿದೆ:
+          </p>
+
+          <div id="usefulHeadersGrid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:0.75rem;">
+          </div>
+        </div>
+
+        <!-- Live Terminal Processing Log -->
+        <div class="status-log-panel" id="statusLogPanel">
+          <div style="font-weight:bold; border-bottom:1px solid #334155; padding-bottom:0.5rem; margin-bottom:0.5rem; color:#f8fafc;">
+            <i class="fa-solid fa-terminal"></i> Processing Log Status:
+          </div>
+          <div id="logContent"></div>
+        </div>
+
+        <!-- Dashboard Direct Launch Action -->
+        <div id="dashboardActionBar" style="display:none; margin-top:1.5rem; text-align:center;">
+          <a href="dashboard.html" class="btn btn-success" style="padding:0.85rem 2.5rem; font-size:1.1rem; box-shadow:0 4px 15px rgba(22,163,74,0.3);">
+            <i class="fa-solid fa-gauge-high"></i> ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಲ್ಲಿ ಮತದಾರರನ್ನು ವೀಕ್ಷಿಸಿ (Go to Dashboard) <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Extracted Data Live Preview Table -->
+        <div class="preview-table-wrap" id="previewTableWrap">
+          <div style="padding:1rem 1.25rem; background:var(--bg-body); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="font-size:1rem; font-weight:700;"><i class="fa-solid fa-table"></i> ಅಪ್‌ಲೋಡ್ ಆದ ಮತದಾರರ ವಿವರಗಳು (Preview)</h3>
+            <span class="badge badge-primary" id="voterCountBadge">0 ಮತದಾರರು</span>
+          </div>
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th>ಅನು.ಸಂ.</th>
+                <th>EPIC ಸಂಖ್ಯೆ</th>
+                <th>ಮತದಾರರ ಹೆಸರು (ಕನ್ನಡ)</th>
+                <th>ತಂದೆ / ಗಂಡನ ಹೆಸರು</th>
+                <th>ಮನೆ ನಂ.</th>
+                <th>ವಯಸ್ಸು / ಲಿಂಗ</th>
+                <th>ಮೊಬೈಲ್</th>
+                <th>ಫೋಟೋ</th>
+              </tr>
+            </thead>
+            <tbody id="previewTableBody"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="excel-pdf-parser.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    const dropzoneCard = document.getElementById('dropzoneCard');
+    const filePicker = document.getElementById('filePicker');
+    const partNoInput = document.getElementById('partNoInput');
+    const statusLogPanel = document.getElementById('statusLogPanel');
+    const logContent = document.getElementById('logContent');
+    const previewTableWrap = document.getElementById('previewTableWrap');
+    const previewTableBody = document.getElementById('previewTableBody');
+    const voterCountBadge = document.getElementById('voterCountBadge');
+    const dashboardActionBar = document.getElementById('dashboardActionBar');
+
+    function addLog(msg, type = 'info') {
+      statusLogPanel.style.display = 'block';
+      const div = document.createElement('div');
+      div.className = `status-log-line ${type}`;
+      const time = new Date().toLocaleTimeString();
+      div.textContent = `[${time}] ${msg}`;
+      logContent.appendChild(div);
+      statusLogPanel.scrollTop = statusLogPanel.scrollHeight;
+    }
+
+    function clearLogs() { logContent.innerHTML = ''; }
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+      dropzoneCard.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }, false);
+    });
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzoneCard.addEventListener(evt, () => dropzoneCard.classList.add('dragover'), false);
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzoneCard.addEventListener(evt, () => dropzoneCard.classList.remove('dragover'), false);
+    });
+
+    dropzoneCard.addEventListener('drop', e => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        startFileProcess(e.dataTransfer.files[0]);
+      }
+    }, false);
+
+    dropzoneCard.addEventListener('click', e => {
+      if (e.target.closest('.btn') || e.target.closest('select')) return;
+      filePicker.click();
+    });
+
+    filePicker.addEventListener('change', e => {
+      if (e.target.files && e.target.files.length > 0) {
+        startFileProcess(e.target.files[0]);
+      }
+    });
+
+    function setUploadTarget(target) {
+      const activeTargetInput = document.getElementById("activeUploadTarget");
+      if (activeTargetInput) activeTargetInput.value = target;
+
+      const radios = document.getElementsByName("uploadTargetRadio");
+      radios.forEach(r => { if (r.value === target) r.checked = true; });
+
+      const title = document.getElementById("dropzoneTitle");
+      if (title) {
+        if (target === '2002') {
+          title.innerHTML = `🏛️ <strong>2002 ಮಾಸ್ಟರ್ ಮತದಾರರ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ (SIR 2002 Master Roll)</strong>`;
+        } else {
+          title.innerHTML = `📋 <strong>ಪ್ರಸ್ತುತ ಮತದಾರರ ಪಟ್ಟಿ ಅಪ್‌ಲೋಡ್ (Current Electoral Roll)</strong>`;
+        }
+      }
+    }
+
+    function triggerUploadForTarget(target) {
+      setUploadTarget(target);
+      document.getElementById('filePicker').click();
+    }
+
+    async function startFileProcess(file) {
+      if (!file) return;
+      currentPartNo = partNoInput.value.trim() || '87';
+      const uploadMode = document.getElementById('uploadModeSelect').value;
+      const target = document.getElementById("activeUploadTarget")?.value || 'current';
+
+      clearLogs();
+      dashboardActionBar.style.display = 'none';
+      previewTableWrap.style.display = 'none';
+
+      addLog(`ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ (${target === '2002' ? '2002 Master Roll' : 'Current Roll'}): ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, 'info');
+
+      const fileName = (file.name || '').toLowerCase();
+      const ext = fileName.includes('.') ? fileName.split('.').pop() : '';
+
+      try {
+        let result = null;
+        if (ext === 'pdf' || file.type.includes('pdf')) {
+          result = await processPDFFileEngine(file, currentPartNo, null, addLog);
+        } else {
+          result = await processExcelFileEngine(file, currentPartNo, null, addLog);
+        }
+
+        if (result && result.voters && result.voters.length > 0) {
+          if (result.detectedHeaders) {
+            renderDetectedHeadersUI(result.detectedHeaders, result.rawHeaders);
+          }
+
+          if (target === '2002') {
+            await save2002RollForPart(currentPartNo, result.voters);
+            addLog(`✅ ಯಶಸ್ಸು! 2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿಯ ${result.voters.length} ಮತದಾರರು ಅಪ್‌ಲೋಡ್ ಆಗಿದ್ದಾರೆ!`, 'success');
+            showToast(`2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿಯ ${result.voters.length} ಮತದಾರರ ವಿವರಗಳು ಅಪ್‌ಲೋಡ್ ಆಗಿವೆ!`, 'success');
+            renderPreview(result.voters);
+          } else {
+            const existingVoters = await getVotersForPart(currentPartNo);
+
+            let finalVoters = result.voters;
+            if (uploadMode === 'merge' && existingVoters && existingVoters.length > 0) {
+              addLog(`ಹಳೆಯ ಡೇಟಾ (${existingVoters.length} ಮತದಾರರು) ನೊಂದಿಗೆ Smart Merge ಚಾಲನೆಯಲ್ಲಿದೆ...`, 'info');
+              const merged = mergeVoterLists(existingVoters, result.voters);
+              finalVoters = merged.mergedList;
+              addLog(`🔄 ಮರ್ಜ್ ಯಶಸ್ವಿಯಾಗಿದೆ! ${merged.updatedCount} ಅಪ್‌ಡೇಟ್‌ಗಳು, ${merged.insertedCount} ಹೊಸ ಮತದಾರರು (ಯಾವುದೇ Duplicate ಇಲ್ಲ!)`, 'success');
+            } else {
+              addLog(`ಬೂತ್ ಭಾಗ ${currentPartNo} ಗೆ ${result.voters.length} ಮತದಾರರ ಹೊಸ ಪಟ್ಟಿಯನ್ನು ಉಳಿಸಲಾಗುತ್ತಿದೆ...`, 'info');
+            }
+
+            await saveVotersForPart(currentPartNo, finalVoters);
+            sessionStorage.setItem("blo_session_v5", JSON.stringify({ bloName: currentBloName, partNo: currentPartNo }));
+
+            addLog(`✅ ಯಶಸ್ಸು! ಒಟ್ಟು ${finalVoters.length} ಮತದಾರರ ಡೇಟಾ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಅಪ್‌ಲೋಡ್ ಆಗಿದೆ!`, 'success');
+            renderPreview(finalVoters);
+          }
+        }
+      } catch (err) {
+        console.error('Processing Error:', err);
+        addLog(`❌ ದೋಷ ಸಂಭವಿಸಿದೆ: ${err.message}`, 'error');
+        showToast(`ಅಪ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ: ${err.message}`, 'error');
+      } finally {
+        filePicker.value = '';
+      }
+    }
+
+    function renderDetectedHeadersUI(detectedHeaders, rawHeaders) {
+      const card = document.getElementById("autoHeadersDetectedCard");
+      const grid = document.getElementById("usefulHeadersGrid");
+      const badge = document.getElementById("usefulHeadersCountBadge");
+
+      if (!card || !grid) return;
+
+      const fieldLabels = {
+        slNo: { label: "SL.NO (ಅನುಕ್ರಮ)", icon: "fa-hashtag" },
+        psNo: { label: "PS. NO. (ಬೂತ್ ಭಾಗ)", icon: "fa-building-flag" },
+        epicNo: { label: "EPIC NUMBER (ಎಪಿಕ್)", icon: "fa-id-card" },
+        nameKn: { label: "NAME (ಮತದಾರರ ಹೆಸರು)", icon: "fa-user" },
+        relType: { label: "RELATION TYPE (ಸಂಬಂಧ)", icon: "fa-people-arrows" },
+        relNameKn: { label: "RELATION NAME (ಸಂಬಂಧಿ ಹೆಸರು)", icon: "fa-user-tag" },
+        houseNo: { label: "HOUSE NO (ಮನೆ ಸಂಖ್ಯೆ)", icon: "fa-house" },
+        age: { label: "AGE (ವಯಸ್ಸು)", icon: "fa-cake-candles" },
+        gender: { label: "GENDER (ಲಿಂಗ)", icon: "fa-venus-mars" }
+      };
+
+      let foundCount = 0;
+      let html = "";
+
+      Object.keys(fieldLabels).forEach(key => {
+        const info = fieldLabels[key];
+        const headerName = detectedHeaders && detectedHeaders[key] ? detectedHeaders[key] : null;
+
+        if (headerName) {
+          foundCount++;
+          html += `
+            <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:0.65rem 0.85rem; display:flex; align-items:center; gap:0.65rem;">
+              <i class="fa-solid ${info.icon}" style="color:#38bdf8; font-size:1rem;"></i>
+              <div>
+                <div style="font-size:0.72rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">${info.label}</div>
+                <div style="font-size:0.85rem; color:#f8fafc; font-weight:800;">✅ ${headerName}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="background:#1e293b; border:1px dashed #475569; border-radius:8px; padding:0.65rem 0.85rem; display:flex; align-items:center; gap:0.65rem; opacity:0.6;">
+              <i class="fa-solid ${info.icon}" style="color:#64748b; font-size:1rem;"></i>
+              <div>
+                <div style="font-size:0.72rem; color:#64748b; text-transform:uppercase; font-weight:700;">${info.label}</div>
+                <div style="font-size:0.85rem; color:#94a3b8; font-weight:700;">⚠️ Auto-Generated</div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      grid.innerHTML = html;
+      if (badge) badge.textContent = `${foundCount}/9 Useful Fields Mapped`;
+      card.style.display = "block";
+    }
+
+    function renderPreview(voterList) {
+      dashboardActionBar.style.display = 'block';
+      previewTableWrap.style.display = 'block';
+      voterCountBadge.textContent = `${voterList.length} ಮತದಾರರು`;
+
+      previewTableBody.innerHTML = voterList.slice(0, 25).map(v => {
+        const photoSrc = v.photoUrl && !v.photoUrl.startsWith('idb:')
+          ? v.photoUrl
+          : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSIyMCIgZmlsbD0iI2UyZThmMCIvPjx0ZXh0IHg9IjIwIiB5PSIyNSIgZmlsbD0iIzk0YTNiOCIgZm9udC1zaXplPSIxMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPlBGPC90ZXh0Pjwvc3ZnPg==';
+
+        return `
+          <tr>
+            <td><strong>#${v.slNo}</strong></td>
+            <td><span class="epic-badge">${v.epicNo}</span></td>
+            <td><strong>${v.nameKn}</strong></td>
+            <td>${v.relNameKn || '-'} <small class="text-muted">(${v.relType})</small></td>
+            <td><span class="badge badge-outline">${v.houseNo}</span></td>
+            <td>${v.age}Y / ${v.gender === 'F' ? 'ಸ್ತ್ರೀ' : 'ಗಂಡು'}</td>
+            <td>${v.mobile || '-'}</td>
+            <td><img src="${photoSrc}" style="width:36px; height:42px; border-radius:4px; object-fit:cover; border:1px solid var(--border);" alt="P"></td>
+          </tr>
+        `;
+      }).join('');
+
+      showToast(`${voterList.length} ಮತದಾರರ ಡೇಟಾ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಆಗಿದೆ!`, 'success');
+    }
+
+    function downloadSampleExcelTemplate() {
+      if (typeof XLSX === 'undefined') {
+        showToast("SheetJS ಲೈಬ್ರರಿ ಲೋಡ್ ಆಗಿಲ್ಲ!", "error");
+        return;
+      }
+      const data = [
+        ["SlNo", "EPIC", "Name", "Relative_Name", "Relation", "House_No", "Age", "Gender", "Mobile"],
+        [1, "YFO4500001", "ಪೂಜಾರಿ ಮಲ್ಲಿಕಾರ್ಜುನ", "ಬಸವರಾಜ", "Father", "12-A", 45, "M", "9876543210"],
+        [2, "YFO4500002", "ಲಕ್ಷ್ಮಿ ಪೂಜಾರಿ", "ಮಲ್ಲಿಕಾರ್ಜುನ", "Husband", "12-A", 38, "F", "9876543211"],
+        [3, "YFO4500003", "ರಾಜೇಶ್ ಕುಮಾರ್", "ವೆಂಕಟೇಶ", "Father", "14/B", 29, "M", "9876543212"]
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "VoterList_Sample");
+      XLSX.writeFile(wb, "BLO_Voter_List_Sample_Template.xlsx");
+      showToast("Excel ಮಾದರಿ ಟೆಂಪ್ಲೇಟ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!", "success");
+    }
+  </script>
+</body>
+</html>

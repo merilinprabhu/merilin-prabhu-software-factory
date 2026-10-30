@@ -1,0 +1,2727 @@
+<!DOCTYPE html>
+<html lang="kn" class="theme-cream">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KARTET / GPT Roster Vacancy Analyzer 2026-27 | ರೋಸ್ಟರ್ ವಿಶ್ಲೇಷಣೆ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#fdfcf9',
+              100: '#f9f6f0',
+              200: '#f3ede2',
+              300: '#e8dfce',
+              400: '#d7c7af',
+              800: '#4a3f35',
+              900: '#2b231d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tiro+Kannada:ital@0;1&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', 'Tiro Kannada', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .kannada-font {
+      font-family: 'Tiro Kannada', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Cream Theme Styling */
+    .theme-cream body {
+      background-color: #f7f4ed;
+      color: #1e293b;
+    }
+    .theme-cream .panel-bg {
+      background-color: #ffffff;
+      border-color: #e5dfd3;
+      box-shadow: 0 4px 20px -2px rgba(120, 90, 40, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    }
+    .theme-cream .card-bg {
+      background-color: #fdfbf7;
+      border-color: #ede7dc;
+    }
+    .theme-cream .dropdown-bg {
+      background-color: #ffffff;
+      border-color: #dcd4c5;
+      box-shadow: 0 14px 40px -4px rgba(60, 40, 10, 0.16);
+    }
+    .theme-cream .table-header {
+      background-color: #f3ede2;
+      color: #475569;
+    }
+
+    /* Dark Theme Fallback */
+    .theme-dark body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    .theme-dark .panel-bg {
+      background-color: rgba(17, 24, 39, 0.85);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+    .theme-dark .card-bg {
+      background-color: rgba(31, 41, 55, 0.6);
+      border-color: rgba(255, 255, 255, 0.07);
+    }
+    .theme-dark .dropdown-bg {
+      background-color: #111827;
+      border-color: #374151;
+      box-shadow: 0 14px 40px -4px rgba(0, 0, 0, 0.6);
+    }
+    .theme-dark .table-header {
+      background-color: #111827;
+      color: #94a3b8;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .theme-dark ::-webkit-scrollbar-thumb {
+      background: #374151;
+    }
+
+    /* Dropdown menu animation */
+    .dropdown-menu {
+      display: none;
+      animation: fadeIn 0.15s ease-out forwards;
+      z-index: 9999 !important;
+    }
+    .dropdown-menu.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Interactive Map styling */
+    .map-district {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .map-district:hover {
+      fill: #d97706 !important;
+      filter: drop-shadow(0 4px 10px rgba(217, 119, 6, 0.4));
+    }
+
+    @media print {
+      header, .no-print, #heroFilterPanel, .tab-nav-bar {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .panel-bg {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-white pb-20">
+
+  <!-- TOP NAVIGATION / HEADER -->
+  <header class="sticky top-0 z-50 panel-bg border-b px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 flex items-center justify-center shadow-md shadow-amber-500/20 text-white font-black text-lg">
+        <i data-lucide="award" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h1 class="text-base lg:text-lg font-extrabold tracking-tight flex items-center gap-2 text-stone-900 dark:text-white">
+          ROSTER VACANCY ANALYZER
+          <span class="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-700/50">2026-27</span>
+        </h1>
+        <p class="text-xs text-stone-500 dark:text-stone-400 kannada-font font-medium">ಕರ್ನಾಟಕ ಶಾಲಾ ಶಿಕ್ಷಣ ಇಲಾಖೆ • ಹುದ್ದೆಗಳ ಮೀಸಲಾತಿ, ಪೈಪೋಟಿ ಹಾಗೂ ಗರಿಷ್ಠ ಹುದ್ದೆ ಶೋಧಕ</p>
+      </div>
+    </div>
+
+    <!-- Actions, Sync Status & Theme Switcher -->
+    <div class="flex items-center gap-2 flex-wrap">
+      <!-- Developer Credit Badge in Header -->
+      <a href="tel:7848036744" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-100/70 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 text-xs font-bold text-amber-900 dark:text-amber-300 hover:bg-amber-200/80 transition" title="Contact Developer">
+        <i data-lucide="code-2" class="w-3.5 h-3.5 text-amber-700 dark:text-amber-400"></i>
+        <span>Dev: <span class="font-extrabold">MRERILIN PRABHU</span> (7848036744)</span>
+      </a>
+      <!-- Visitor Counter Badge in Header -->
+      <div id="visitorBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 text-xs font-bold shadow-sm" title="Total Portal Page Visitors">
+        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
+        <span>Visitors: <span id="visitorCount" class="font-black text-blue-900 dark:text-white">1,842</span></span>
+      </div>
+
+      <div id="syncStatus" class="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/50 font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="syncText">276 Records Loaded</span>
+      </div>
+
+      <button onclick="fetchSheetData()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition shadow-sm cursor-pointer">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span>Sync Live Sheet</span>
+      </button>
+
+      <!-- Share WhatsApp -->
+      <button onclick="shareOnWhatsApp()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm cursor-pointer" title="Share current analysis on WhatsApp">
+        <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+        <span>Share</span>
+      </button>
+
+      <!-- Print Report -->
+      <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg card-bg text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Print / PDF</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button onclick="toggleTheme()" id="themeToggleBtn" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg card-bg text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer" title="Toggle Theme">
+        <i data-lucide="sun" id="themeIcon" class="w-3.5 h-3.5 text-amber-600"></i>
+        <span id="themeLabel">Cream</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 pt-5 space-y-6">
+
+    <!-- ⚠️ IMPORTANT USER DISCLAIMER NOTICE BANNER -->
+    <div id="disclaimerNoticeBanner" class="p-3.5 rounded-2xl bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700 text-amber-950 dark:text-amber-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-start gap-2.5 text-xs">
+        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0"></i>
+        <div>
+          <span class="font-extrabold uppercase tracking-wide text-[11px] bg-amber-200 dark:bg-amber-900/80 px-2 py-0.5 rounded text-amber-900 dark:text-amber-200 mr-1.5">⚠️ ಮುಖ್ಯ ಸೂಚನೆ (Important Disclaimer)</span>
+          <span class="font-medium leading-relaxed">
+            ಈ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿರುವ ಮಾಹಿತಿಯನ್ನು ಅಭ್ಯರ್ಥಿಗಳ ಅಧ್ಯಯನ ಹಾಗೂ ಉಲ್ಲೇಖಕ್ಕಾಗಿ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ. <strong>ಡೇಟಾದಲ್ಲಿ ಅನಿರೀಕ್ಷಿತ ದೋಷಗಳಿರುವ ಸಾಧ್ಯತೆ ಇರುವುದರಿಂದ, ಅಂತಿಮ ನಿರ್ಧಾರ ಅಥವಾ ಅರ್ಜಿ ಸಲ್ಲಿಸುವ ಮುನ್ನ ಸರ್ಕಾರದ ಅಧಿಕೃತ ಇಲಾಖಾ ಅಧಿಸೂಚನೆ (Official Govt Notification & Roster) ಯೊಂದಿಗೆ 1-2 ಬಾರಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ (Ensure & verify before final decision).</strong>
+          </span>
+        </div>
+      </div>
+      <button onclick="document.getElementById('disclaimerNoticeBanner').style.display='none'" class="text-xs font-bold px-3 py-1 rounded-xl bg-amber-200 hover:bg-amber-300 dark:bg-amber-900/80 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-200 flex-shrink-0 transition cursor-pointer self-end sm:self-center">
+        ✓ ಸರಿ (Got it)
+      </button>
+    </div>
+
+    <!-- HERO MULTI-SELECT FILTER PANEL -->
+    <div id="heroFilterPanel" class="relative z-40 rounded-2xl panel-bg p-5 lg:p-6 border overflow-visible">
+      <div class="space-y-4">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2.5 py-0.5 rounded border border-amber-200 dark:border-amber-700/50">
+                ⚡ Multi-Selection Filter Engine
+              </span>
+              <span class="text-xs text-stone-500 dark:text-stone-400">All dropdowns allow selecting multiple items</span>
+            </div>
+            <h2 class="text-lg md:text-xl font-bold text-stone-900 dark:text-white mt-1 kannada-font">
+              ಯಾವ ಜಿಲ್ಲೆಯಲ್ಲಿ ನಿಮ್ಮ ಪ್ರವರ್ಗಕ್ಕೆ / ವಿಷಯಕ್ಕೆ ಅತಿ ಹೆಚ್ಚು ಹುದ್ದೆಗಳಿವೆ?
+            </h2>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="selectAllAllFilters()" class="text-xs text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 px-3 py-1.5 rounded-lg border border-amber-300 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition font-semibold">
+              Select All
+            </button>
+            <button onclick="resetAllFilters()" class="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 transition">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- 6 MULTI-SELECT DROPDOWNS GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 pt-1">
+          
+          <!-- 1. POST NAME (Column A) -->
+          <div class="relative" id="ms-container-postName">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="briefcase" class="w-3 h-3 text-amber-600"></i>
+              <span>1. Post (ಹುದ್ದೆ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('postName', event)" id="btn-postName" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-postName">All Posts</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-postName" class="dropdown-menu dropdown-bg absolute left-0 top-full mt-1.5 w-64 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('postName', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('postName', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-postName" class="max-h-52 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 2. DISTRICT (Column B) -->
+          <div class="relative" id="ms-container-district">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="map" class="w-3 h-3 text-emerald-600"></i>
+              <span>2. District (ಜಿಲ್ಲೆ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('district', event)" id="btn-district" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-district">All Districts</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-district" class="dropdown-menu dropdown-bg absolute left-0 top-full mt-1.5 w-64 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('district', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('district', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-district" class="max-h-52 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 3. QUOTA / COTA (Column C) -->
+          <div class="relative" id="ms-container-quota">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="map-pin" class="w-3 h-3 text-purple-600"></i>
+              <span>3. Quota / COTA (ವೃಂದ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('quota', event)" id="btn-quota" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-quota">All Quotas</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-quota" class="dropdown-menu dropdown-bg absolute left-0 top-full mt-1.5 w-64 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('quota', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('quota', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-quota" class="max-h-52 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 4. SUBJECT (Column D) -->
+          <div class="relative" id="ms-container-subject">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="book-open" class="w-3 h-3 text-blue-600"></i>
+              <span>4. Subject (ವಿಷಯ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('subject', event)" id="btn-subject" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-subject">All Subjects</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-subject" class="dropdown-menu dropdown-bg absolute left-0 top-full mt-1.5 w-64 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('subject', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('subject', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-subject" class="max-h-52 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 5. CASTE / CATEGORY (Column E) -->
+          <div class="relative" id="ms-container-caste">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="users" class="w-3 h-3 text-orange-600"></i>
+              <span>5. Caste (ಪ್ರವರ್ಗ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('caste', event)" id="btn-caste" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-caste">All Categories</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-caste" class="dropdown-menu dropdown-bg absolute left-0 top-full mt-1.5 w-72 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('caste', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('caste', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-caste" class="max-h-60 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+          <!-- 6. SUB-RESERVATION / COLUMNS (Columns F-N) -->
+          <div class="relative" id="ms-container-subCol">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="layers" class="w-3 h-3 text-rose-600"></i>
+              <span>6. Sub-Quota (ಉಪ-ಮೀಸಲಾತಿ)</span>
+            </label>
+            <button type="button" onclick="toggleDropdown('subCol', event)" id="btn-subCol" class="w-full card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 rounded-xl px-3 py-2 text-xs text-left text-stone-800 dark:text-white flex items-center justify-between transition focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-sm">
+              <span class="truncate" id="label-subCol">Total Posts</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400 shrink-0 ml-1"></i>
+            </button>
+
+            <div id="dd-subCol" class="dropdown-menu dropdown-bg absolute right-0 top-full mt-1.5 w-72 border rounded-xl p-2.5">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-200 dark:border-stone-800 text-[11px]">
+                <button onclick="setAll('subCol', true)" class="text-amber-600 font-semibold hover:underline">Select All</button>
+                <button onclick="setAll('subCol', false)" class="text-stone-400 hover:underline">Clear</button>
+              </div>
+              <div id="items-subCol" class="max-h-60 overflow-y-auto space-y-1 text-xs"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STATS KPI SUMMARY STRIP -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+      
+      <div class="panel-bg p-4 rounded-xl border flex items-center gap-3.5 shadow-sm">
+        <div class="p-2.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded-xl border border-amber-200 dark:border-amber-700/50">
+          <i data-lucide="trophy" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium">Highest Vacancy</p>
+          <h3 id="statTopCount" class="text-lg font-bold text-stone-900 dark:text-white">--</h3>
+          <p id="statTopDetail" class="text-[10px] text-amber-700 dark:text-amber-400 truncate max-w-[150px] font-medium">Calculating...</p>
+        </div>
+      </div>
+
+      <div class="panel-bg p-4 rounded-xl border flex items-center gap-3.5 shadow-sm">
+        <div class="p-2.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-700/50">
+          <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium">Total Matched Vacancies</p>
+          <h3 id="statTotalMatched" class="text-lg font-bold text-stone-900 dark:text-white">--</h3>
+          <p id="statMatchCount" class="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">0 matched rows</p>
+        </div>
+      </div>
+
+      <div class="panel-bg p-4 rounded-xl border flex items-center gap-3.5 shadow-sm">
+        <div class="p-2.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-xl border border-blue-200 dark:border-blue-700/50">
+          <i data-lucide="map" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium">Districts Matched</p>
+          <h3 id="statDistrictsMatched" class="text-lg font-bold text-stone-900 dark:text-white">--</h3>
+          <p id="statDistrictsDetail" class="text-[10px] text-blue-700 dark:text-blue-400 truncate max-w-[150px] font-medium">All Districts</p>
+        </div>
+      </div>
+
+      <div class="panel-bg p-4 rounded-xl border flex items-center gap-3.5 shadow-sm">
+        <div class="p-2.5 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-xl border border-purple-200 dark:border-purple-700/50">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium">Summed Columns</p>
+          <h3 id="statActiveSubCount" class="text-sm font-bold text-stone-900 dark:text-white truncate max-w-[150px]">Total Posts</h3>
+          <p id="statActiveSubDetail" class="text-[10px] text-purple-700 dark:text-purple-400 font-medium">1 column summed</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN TABS NAVIGATION -->
+    <div class="tab-nav-bar flex items-center justify-between border-b border-stone-300 dark:border-stone-800 overflow-x-auto">
+      <div class="flex gap-1 min-w-max">
+        <button onclick="switchTab('tabLeaderboard')" id="btnTabLeaderboard" class="px-3.5 py-2.5 text-xs md:text-sm font-bold border-b-2 border-amber-600 text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
+          <i data-lucide="award" class="w-4 h-4"></i>
+          <span>🏆 Highest Posts Leaderboard</span>
+        </button>
+        <button onclick="switchTab('tabComparison')" id="btnTabComparison" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="arrow-left-right" class="w-4 h-4 text-rose-600"></i>
+          <span>⚔️ Head-to-Head Comparison</span>
+        </button>
+        <button onclick="switchTab('tabPreferenceOrder')" id="btnTabPreferenceOrder" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="list-ordered" class="w-4 h-4 text-emerald-600"></i>
+          <span>🎯 ಜಿಲ್ಲಾ ಆದ್ಯತಾ ಪಟ್ಟಿ (District Priority)</span>
+        </button>
+
+        <button onclick="switchTab('tabMapView')" id="btnTabMapView" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="map-pinned" class="w-4 h-4 text-amber-600"></i>
+          <span>🗺️ Division Map</span>
+        </button>
+        <button onclick="switchTab('tabMatrixView')" id="btnTabMatrixView" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="grid" class="w-4 h-4 text-blue-600"></i>
+          <span>📊 Matrix Heatmap</span>
+        </button>
+        <button onclick="switchTab('tabDivisionSummary')" id="btnTabDivisionSummary" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="pie-chart" class="w-4 h-4 text-purple-600"></i>
+          <span>📈 Sheet3 Summary</span>
+        </button>
+        <button onclick="switchTab('tabFullRoster')" id="btnTabFullRoster" class="px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5">
+          <i data-lucide="table-2" class="w-4 h-4 text-stone-600"></i>
+          <span>📋 All 276 Rows</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: LEADERBOARD / HIGHEST POSTS (DEFAULT) -->
+    <div id="tabLeaderboard" class="space-y-6">
+      <div id="podiumSection" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+      <div class="panel-bg rounded-2xl overflow-hidden border">
+        <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-stone-900 dark:text-white text-sm md:text-base flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+              <span>Ranked Post Availability Matrix</span>
+            </h3>
+            <p class="text-xs text-stone-500 dark:text-stone-400">Sorted from highest vacancies to lowest based on your multi-selection filters</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="text" id="tableSearch" onkeyup="filterTableBySearch()" placeholder="Search in results..." class="card-bg border border-stone-300 dark:border-stone-700 rounded-lg px-3 py-1.5 text-xs text-stone-800 dark:text-white placeholder-stone-400 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-stone-700 dark:text-stone-300">
+            <thead class="table-header uppercase tracking-wider font-bold border-b border-stone-300 dark:border-stone-800 select-none">
+              <tr>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valTarget')">Rank ⬍</th>
+                <th class="py-3 px-3 cursor-pointer hover:text-amber-600" onclick="sortTableBy('postName')">Post ⬍</th>
+                <th class="py-3 px-3 cursor-pointer hover:text-amber-600" onclick="sortTableBy('district')">District ⬍</th>
+                <th class="py-3 px-3 cursor-pointer hover:text-amber-600" onclick="sortTableBy('quota')">Quota ⬍</th>
+                <th class="py-3 px-3 cursor-pointer hover:text-amber-600" onclick="sortTableBy('subject')">Subject ⬍</th>
+                <th class="py-3 px-3 cursor-pointer hover:text-amber-600" onclick="sortTableBy('caste')">Caste ⬍</th>
+                <th class="py-3 px-3 text-center text-amber-800 dark:text-amber-300 font-extrabold bg-amber-100/70 dark:bg-amber-950/40 border-x border-amber-300 dark:border-amber-700/40 cursor-pointer hover:bg-amber-200" onclick="sortTableBy('valTarget')">
+                  Selected Sum ⬍
+                </th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valOthers')">ಇತರೆ ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valWomen')">ಮಹಿಳೆ ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valRural')">ಗ್ರಾಮೀಣ ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valEx')">ಮಾಜಿ ಸೈನಿಕ ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valKannada')">ಕನ್ನಡ ಮಾ. ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valPDP')">PDP ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valPH')">PH ⬍</th>
+                <th class="py-3 px-3 text-center cursor-pointer hover:text-amber-600" onclick="sortTableBy('valTrans')">ತೃತೀಯ ಲಿಂಗ ⬍</th>
+                <th class="py-3 px-3 text-center font-bold text-stone-900 dark:text-white bg-stone-200/60 dark:bg-stone-800/80 cursor-pointer hover:bg-stone-300" onclick="sortTableBy('valTotal')">ಒಟ್ಟು ⬍</th>
+              </tr>
+            </thead>
+            <tbody id="rankedTableBody" class="divide-y divide-stone-200 dark:divide-stone-800/60"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DISTRICT VS DISTRICT COMPARISON TOOL (WITH POST & COTA FILTERS) -->
+    <div id="tabComparison" class="hidden space-y-6">
+      <div class="panel-bg p-5 rounded-2xl border space-y-4">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/40 px-2.5 py-0.5 rounded border border-rose-300 dark:border-rose-700/50">
+            ⚔️ Head-to-Head Comparison
+          </span>
+          <h3 class="text-lg font-bold text-stone-900 dark:text-white mt-1 kannada-font">
+            ಎರಡು ಜಿಲ್ಲೆಗಳ ನಡುವೆ ಹುದ್ದೆ, ವೃಂದ (Quota/COTA) ಹಾಗೂ ವಿಷಯವಾರು ನೇರ ಹೋಲಿಕೆ
+          </h3>
+          <p class="text-xs text-stone-500 dark:text-stone-400">
+            Filter by Post Name (ಹುದ್ದೆ) and COTA (HK / NHK) to compare side-by-side between any two districts.
+          </p>
+        </div>
+
+        <!-- Pick Filters including POST & COTA -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 card-bg rounded-xl border border-stone-200 dark:border-stone-800">
+          
+          <!-- 1. Post Name Filter -->
+          <div>
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="briefcase" class="w-3 h-3 text-amber-600"></i>
+              <span>Post Name (ಹುದ್ದೆ)</span>
+            </label>
+            <select id="compPostName" onchange="runDistrictComparison()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+              <option value="ALL" selected>All Posts (ಎಲ್ಲಾ ಹುದ್ದೆಗಳು - GPT / HSTR / PST)</option>
+              <option value="GPT">GPT (ಪದವೀಧರ ಪ್ರಾಥಮಿಕ ಶಿಕ್ಷಕರು)</option>
+              <option value="HSTR">HSTR (ಪ್ರೌಢಶಾಲಾ ಶಿಕ್ಷಕರು)</option>
+              <option value="PST">PST (ಪ್ರಾಥಮಿಕ ಶಾಲಾ ಶಿಕ್ಷಕರು)</option>
+            </select>
+          </div>
+
+          <!-- 2. Quota / COTA Filter -->
+          <div>
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="map-pin" class="w-3 h-3 text-purple-600"></i>
+              <span>Quota / COTA (ವೃಂದ)</span>
+            </label>
+            <select id="compQuota" onchange="runDistrictComparison()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+              <option value="ALL">🌐 Both HK & NHK (ಒಟ್ಟು)</option>
+              <option value="HK">🏛️ HK (Hyderabad Karnataka 371J)</option>
+              <option value="NHK">🌍 NHK (Non-HK)</option>
+            </select>
+          </div>
+
+          <!-- 3. Subject Filter -->
+          <div>
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="book-open" class="w-3 h-3 text-blue-600"></i>
+              <span>Subject (ವಿಷಯ)</span>
+            </label>
+            <select id="compSubject" onchange="runDistrictComparison()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+              <option value="ALL">All Subjects (ಎಲ್ಲಾ ವಿಷಯಗಳು)</option>
+              <option value="ENGLISH" selected>ENGLISH</option>
+              <option value="SOCIAL">SOCIAL</option>
+              <option value="GENERAL">GENERAL</option>
+              <option value="ENGLISH BACK LOG">ENGLISH BACK LOG</option>
+            </select>
+          </div>
+
+          <!-- 4. District A -->
+          <div>
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="map" class="w-3 h-3 text-emerald-600"></i>
+              <span>District A (ಮೊದಲ ಜಿಲ್ಲೆ)</span>
+            </label>
+            <select id="compDistA" onchange="runDistrictComparison()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+            </select>
+          </div>
+
+          <!-- 5. District B -->
+          <div>
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+              <i data-lucide="map" class="w-3 h-3 text-rose-600"></i>
+              <span>District B (ಎರಡನೇ ಜಿಲ್ಲೆ)</span>
+            </label>
+            <select id="compDistB" onchange="runDistrictComparison()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Comparison Result Rendered Here -->
+        <div id="comparisonResults"></div>
+      </div>
+    </div>
+
+    
+    <!-- TAB 3: CANDIDATE DISTRICT PREFERENCE ORDER GENERATOR -->
+    <div id="tabPreferenceOrder" class="hidden space-y-6">
+      <div class="panel-bg p-5 lg:p-6 rounded-2xl border space-y-5">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>🎯 1-Click Candidate Priority Engine</span>
+            </div>
+            <h3 class="text-xl font-bold text-stone-900 dark:text-white mt-1.5 kannada-font">
+              ನಿಮ್ಮ ಪ್ರವರ್ಗ & ಉಪ-ಮೀಸಲಾತಿಗೆ ಅನುಗುಣವಾಗಿ ಜಿಲ್ಲಾ ಆದ್ಯತಾ ಪಟ್ಟಿ (Preference Order)
+            </h3>
+            <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+              ಅರ್ಜಿ ಸಲ್ಲಿಸುವಾಗ ಯಾವ ಜಿಲ್ಲೆಯನ್ನು 1st Choice, 2nd Choice... ಎಂದು ಆಯ್ಕೆ ಮಾಡಬೇಕೆಂದು ತಕ್ಷಣವೇ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ ಪಟ್ಟಿ ನೀಡುತ್ತದೆ.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="copyPreferenceList()" class="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm cursor-pointer" title="Copy Preference List">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Copy Preference List</span>
+            </button>
+            <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-800 dark:text-white transition">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+              <span>Print Order</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Candidate Input Controls -->
+        <div class="p-4 card-bg rounded-2xl border border-stone-200 dark:border-stone-800 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            
+            <!-- 1. Post -->
+            <div>
+              <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+                <i data-lucide="briefcase" class="w-3 h-3 text-amber-600"></i>
+                <span>1. Post Name (ಹುದ್ದೆ)</span>
+              </label>
+              <select id="prefPostName" onchange="runPreferenceGenerator()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-xl p-2.5 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+                <option value="ALL" selected>All Posts (ಎಲ್ಲಾ ಹುದ್ದೆಗಳು - GPT/HSTR/PST)</option>
+                <option value="GPT">GPT (ಪದವೀಧರ ಪ್ರಾಥಮಿಕ ಶಿಕ್ಷಕರು)</option>
+                <option value="HSTR">HSTR (ಪ್ರೌಢಶಾಲಾ ಶಿಕ್ಷಕರು)</option>
+                <option value="PST">PST (ಪ್ರಾಥಮಿಕ ಶಾಲಾ ಶಿಕ್ಷಕರು)</option>
+              </select>
+            </div>
+
+            <!-- 2. Quota / COTA -->
+            <div>
+              <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-purple-600"></i>
+                <span>2. Quota / COTA (ವೃಂದ)</span>
+              </label>
+              <select id="prefQuota" onchange="runPreferenceGenerator()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-xl p-2.5 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+                <option value="HK" selected>🏛️ HK (Hyderabad Karnataka 371J)</option>
+                <option value="NHK">🌍 NHK (Non-HK)</option>
+                <option value="ALL">🌐 Both HK & NHK (ಒಟ್ಟು)</option>
+              </select>
+            </div>
+
+            <!-- 3. Subject -->
+            <div>
+              <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+                <i data-lucide="book-open" class="w-3 h-3 text-blue-600"></i>
+                <span>3. Subject (ವಿಷಯ)</span>
+              </label>
+              <select id="prefSubject" onchange="runPreferenceGenerator()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-xl p-2.5 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+                <option value="ENGLISH" selected>ENGLISH</option>
+                <option value="SOCIAL">SOCIAL</option>
+                <option value="GENERAL">GENERAL</option>
+                <option value="ENGLISH BACK LOG">ENGLISH BACK LOG</option>
+                <option value="ALL">All Subjects</option>
+              </select>
+            </div>
+
+            <!-- 4. Your Caste -->
+            <div>
+              <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-1">
+                <i data-lucide="users" class="w-3 h-3 text-orange-600"></i>
+                <span>4. Your Caste (ನಿಮ್ಮ ಪ್ರವರ್ಗ)</span>
+              </label>
+              <select id="prefCaste" onchange="runPreferenceGenerator()" class="w-full card-bg border border-stone-300 dark:border-stone-700 rounded-xl p-2.5 text-xs font-bold text-stone-800 dark:text-white outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+                <option value="ALL">All Categories (ಎಲ್ಲಾ ಪ್ರವರ್ಗಗಳು)</option>
+                <option value="2-ಎ" selected>2-ಎ (Category 2A)</option>
+                <option value="2-ಬಿ">2-ಬಿ (Category 2B)</option>
+                <option value="3-ಎ">3-ಎ (Category 3A)</option>
+                <option value="3-ಬಿ">3-ಬಿ (Category 3B)</option>
+                <option value="ಪ್ರ.ಜಾತಿ">ಪ್ರ.ಜಾತಿ (SC)</option>
+                <option value="ಪ್ರ.ಜಾತಿ-ಎ">ಪ್ರ.ಜಾತಿ-ಎ (SC-A)</option>
+                <option value="ಪ್ರ.ಜಾತಿ-ಬಿ">ಪ್ರ.ಜಾತಿ-ಬಿ (SC-B)</option>
+                <option value="ಪ್ರ.ಜಾತಿ-ಸಿ">ಪ್ರ.ಜಾತಿ-ಸಿ (SC-C)</option>
+                <option value="ಪ್ರ.ಪಂಗಡ">ಪ್ರ.ಪಂಗಡ (ST)</option>
+                <option value="ಪ್ರವರ್ಗ-1">ಪ್ರವರ್ಗ-1 (Cat-1)</option>
+                <option value="ಸಾಮಾನ್ಯ">ಸಾಮಾನ್ಯ (General Merit)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- 5. Horizontal Sub-Quota Checkboxes (ಸಮತಲ ಮೀಸಲಾತಿ) -->
+          <div class="pt-2 border-t border-stone-200 dark:border-stone-800">
+            <label class="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1 mb-2">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-rose-600"></i>
+              <span>5. Select Horizontal Sub-Reservations (ಸಮತಲ ಉಪ-ಮೀಸಲಾತಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಿ):</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 text-xs">
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-950/30 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkOthers" onchange="runPreferenceGenerator()" checked class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-900 dark:text-amber-300">👥 ಇತರೆ (Open)</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkWomen" onchange="runPreferenceGenerator()" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">👩 ಮಹಿಳೆ</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkRural" onchange="runPreferenceGenerator()" checked class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">🌾 ಗ್ರಾಮೀಣ</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkKannada" onchange="runPreferenceGenerator()" checked class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">📖 ಕನ್ನಡ ಮಾ.</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkEx" onchange="runPreferenceGenerator()" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">🎖️ ಮಾಜಿ ಸೈನಿಕ</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkPDP" onchange="runPreferenceGenerator()" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">🏗️ PDP</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkPH" onchange="runPreferenceGenerator()" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">♿ PH</span>
+              </label>
+
+              <label class="flex items-center gap-2 p-2 rounded-xl card-bg border border-stone-300 dark:border-stone-700 hover:border-amber-500 cursor-pointer select-none">
+                <input type="checkbox" id="prefChkTrans" onchange="runPreferenceGenerator()" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                <span class="font-bold text-stone-800 dark:text-stone-200">🏳️‍⚧️ ತೃತೀಯ ಲಿಂಗ</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generated Results Rendered Here -->
+        <div id="preferenceResultsContainer"></div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: INTERACTIVE DIVISION MAP -->
+    <div id="tabMapView" class="hidden space-y-6">
+      <div class="panel-bg p-5 rounded-2xl border space-y-4">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2.5 py-0.5 rounded border border-amber-200 dark:border-amber-700/50">
+            🗺️ Interactive Visual Map
+          </span>
+          <h3 class="text-lg font-bold text-stone-900 dark:text-white mt-1 kannada-font">
+            ಕಲಬುರಗಿ ವಿಭಾಗದ ಶೈಕ್ಷಣಿಕ ಜಿಲ್ಲೆಗಳ ನಕ್ಷೆ (Click to Inspect Any District)
+          </h3>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-6 flex justify-center p-4 card-bg rounded-2xl border border-stone-200 dark:border-stone-800">
+            <svg viewBox="0 0 500 450" class="w-full max-w-md h-auto select-none">
+              <!-- Vijayapura -->
+              <g class="map-district" onclick="selectMapDistrict('VIJAYAPURA')">
+                <polygon points="50,110 130,70 180,120 120,190 40,160" fill="#3b82f6" opacity="0.85" stroke="#ffffff" stroke-width="2"/>
+                <text x="100" y="135" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">VIJAYAPURA</text>
+                <text x="100" y="152" fill="#ffffff" font-size="10" text-anchor="middle">125 Posts</text>
+              </g>
+
+              <!-- Kalaburagi -->
+              <g class="map-district" onclick="selectMapDistrict('KALBURGI')">
+                <polygon points="180,120 270,50 340,110 260,170 170,160" fill="#d97706" opacity="0.9" stroke="#ffffff" stroke-width="2"/>
+                <text x="250" y="110" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">KALABURAGI</text>
+                <text x="250" y="128" fill="#ffffff" font-size="10" text-anchor="middle">327 Posts</text>
+              </g>
+
+              <!-- Bidar -->
+              <g class="map-district" onclick="selectMapDistrict('BIDAR')">
+                <polygon points="270,50 330,10 390,60 340,110" fill="#8b5cf6" opacity="0.85" stroke="#ffffff" stroke-width="2"/>
+                <text x="330" y="60" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">BIDAR</text>
+                <text x="330" y="78" fill="#ffffff" font-size="10" text-anchor="middle">239 Posts</text>
+              </g>
+
+              <!-- Yadgir -->
+              <g class="map-district" onclick="selectMapDistrict('YADAGIRI')">
+                <polygon points="260,170 340,110 390,180 320,240 240,210" fill="#10b981" opacity="0.85" stroke="#ffffff" stroke-width="2"/>
+                <text x="310" y="175" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">YADGIR</text>
+                <text x="310" y="193" fill="#ffffff" font-size="10" text-anchor="middle">272 Posts</text>
+              </g>
+
+              <!-- Raichur - HIGHEST VACANCY -->
+              <g class="map-district" onclick="selectMapDistrict('RAICHUR')">
+                <polygon points="170,160 260,170 320,240 240,310 160,260" fill="#b45309" opacity="0.95" stroke="#ffffff" stroke-width="3"/>
+                <text x="230" y="235" fill="#ffffff" font-size="14" font-weight="900" text-anchor="middle">👑 RAICHUR</text>
+                <text x="230" y="255" fill="#fef08a" font-size="11" font-weight="bold" text-anchor="middle">486 Posts (Highest)</text>
+              </g>
+
+              <!-- Koppal -->
+              <g class="map-district" onclick="selectMapDistrict('KOPPALA')">
+                <polygon points="120,190 170,160 160,260 100,320 60,240" fill="#ec4899" opacity="0.85" stroke="#ffffff" stroke-width="2"/>
+                <text x="120" y="240" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">KOPPAL</text>
+                <text x="120" y="258" fill="#ffffff" font-size="10" text-anchor="middle">320 Posts</text>
+              </g>
+
+              <!-- Ballari -->
+              <g class="map-district" onclick="selectMapDistrict('BALLARY')">
+                <polygon points="100,320 160,260 240,310 200,410 120,400" fill="#14b8a6" opacity="0.85" stroke="#ffffff" stroke-width="2"/>
+                <text x="165" y="340" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">BALLARI</text>
+                <text x="165" y="358" fill="#ffffff" font-size="10" text-anchor="middle">282 Posts</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="lg:col-span-6 space-y-4">
+            <div id="mapDistrictSpotlight" class="card-bg p-5 rounded-2xl border border-stone-200 dark:border-stone-800">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-amber-700">District Spotlight</span>
+              <h4 id="mapSpotlightTitle" class="text-2xl font-black text-stone-900 dark:text-white mt-1">RAICHUR</h4>
+              <p id="mapSpotlightDesc" class="text-xs text-stone-500 mt-1">Click on any district polygon in the map to see full breakdown.</p>
+              
+              <div id="mapSpotlightBreakdown" class="mt-4 pt-3 border-t border-stone-200 dark:border-stone-800 space-y-2"></div>
+
+              <button onclick="applyMapDistrictFilter()" id="btnApplyMapFilter" class="mt-4 w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs transition cursor-pointer">
+                Filter Leaderboard for this District
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: DISTRICT VS CASTE MATRIX (WITH POST & COTA FILTERS) -->
+    <div id="tabMatrixView" class="hidden space-y-4">
+      <div class="panel-bg rounded-2xl p-5 border">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="font-bold text-stone-900 dark:text-white text-base">District vs Caste Cross-Tabulation Heatmap</h3>
+            <p class="text-xs text-stone-500 dark:text-stone-400">Total vacancies by District across every reservation category</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <label class="text-xs font-bold text-stone-600 dark:text-stone-300">Post:</label>
+              <select id="matrixPostFilter" onchange="renderMatrixView()" class="card-bg border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-1 text-xs text-stone-800 dark:text-white font-semibold">
+                <option value="ALL">All Posts</option>
+                <option value="GPT" selected>GPT</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <label class="text-xs font-bold text-stone-600 dark:text-stone-300">COTA:</label>
+              <select id="matrixQuotaFilter" onchange="renderMatrixView()" class="card-bg border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-1 text-xs text-stone-800 dark:text-white font-semibold">
+                <option value="ALL">All Quotas</option>
+                <option value="HK">HK (371J)</option>
+                <option value="NHK">NHK</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <label class="text-xs font-bold text-stone-600 dark:text-stone-300">Subject:</label>
+              <select id="matrixSubjectFilter" onchange="renderMatrixView()" class="card-bg border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-1 text-xs text-stone-800 dark:text-white font-semibold">
+                <option value="ALL">All Subjects</option>
+                <option value="ENGLISH">ENGLISH</option>
+                <option value="SOCIAL">SOCIAL</option>
+                <option value="GENERAL">GENERAL</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-center text-xs text-stone-700 dark:text-stone-300">
+            <thead id="matrixThead" class="table-header uppercase font-bold border-b"></thead>
+            <tbody id="matrixTbody" class="divide-y divide-stone-200 dark:divide-stone-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: DIVISION SUMMARY (FROM SHEET3) -->
+    <div id="tabDivisionSummary" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 panel-bg p-5 rounded-2xl border">
+          <h3 class="font-bold text-stone-900 dark:text-white text-sm mb-1 flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-amber-600"></i>
+            <span>District-wise Total Vacancies (Kalaburagi Division 2026-27)</span>
+          </h3>
+          <p class="text-xs text-stone-500 dark:text-stone-400 mb-4">ಕಲಬುರಗಿ ವಿಭಾಗದ ಶೈಕ್ಷಣಿಕ ಜಿಲ್ಲಾವಾರು 80% ನೇಮಕಾತಿ ಹುದ್ದೆಗಳ ಹಂಚಿಕೆ</p>
+          <div class="h-72 w-full">
+            <canvas id="divisionChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel-bg p-5 rounded-2xl border space-y-4">
+          <h3 class="font-bold text-stone-900 dark:text-white text-sm flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+            <span>Subject-wise Total Posts</span>
+          </h3>
+          <div id="subjectSummaryList" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="panel-bg rounded-2xl overflow-hidden border">
+        <div class="p-4 border-b border-stone-200 dark:border-stone-800">
+          <h3 class="font-bold text-stone-900 dark:text-white text-sm">ಅನುಬಂಧ-1: ಕಲಬುರಗಿ ವಿಭಾಗದ ಶೈಕ್ಷಣಿಕ ಜಿಲ್ಲಾವಾರು ಹುದ್ದೆಗಳ ವಿವರ (Summary Matrix)</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-stone-700 dark:text-stone-300">
+            <thead id="sheet3Thead" class="table-header font-bold border-b"></thead>
+            <tbody id="sheet3Tbody" class="divide-y divide-stone-200 dark:divide-stone-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: FULL ROSTER EXPLORER -->
+    <div id="tabFullRoster" class="hidden space-y-4">
+      <div class="panel-bg rounded-2xl p-4 border">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="font-bold text-stone-900 dark:text-white text-sm">Complete Combined Roster Table</h3>
+            <p class="text-xs text-stone-500 dark:text-stone-400">All 276 records loaded directly from Google Sheet</p>
+          </div>
+          <button onclick="exportTableToCSV('Combined_Roster_Export.csv')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg card-bg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-800 dark:text-white border border-stone-300 dark:border-stone-700 transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export CSV</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="fullRosterTable" class="w-full text-left text-xs text-stone-700 dark:text-stone-300">
+            <thead id="fullRosterThead" class="table-header uppercase font-bold border-b"></thead>
+            <tbody id="fullRosterTbody" class="divide-y divide-stone-200 dark:divide-stone-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVERTISE / CONTACT DEVELOPER BANNER -->
+    <div class="relative rounded-2xl overflow-hidden p-6 lg:p-8 bg-gradient-to-r from-amber-600 via-amber-700 to-yellow-600 text-white shadow-xl shadow-amber-900/10 border border-amber-400/40">
+      <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+        
+        <div class="space-y-2 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-extrabold uppercase tracking-wider text-amber-100 border border-white/30">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Web Development & Custom Portal Solutions</span>
+          </div>
+          <h3 class="text-xl lg:text-2xl font-black tracking-tight text-white kannada-font">
+            ನಿಮ್ಮ ಸಂಸ್ಥೆ, ಶಾಲೆ ಅಥವಾ ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗೆ ಸ್ವಂತ ವೆಬ್‌ಸೈಟ್ ಬೇಕೇ?
+          </h3>
+          <p class="text-xs lg:text-sm text-amber-100 max-w-2xl font-medium">
+            Want to build your own Custom Website, Educational Dashboard, Recruitment Portal, or Mobile-Friendly Web App? Get high-speed, interactive, and customized solutions developed by experts.
+          </p>
+          <div class="pt-1 flex items-center justify-center lg:justify-start gap-4 text-xs font-bold text-amber-100">
+            <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-white"></i> Fast Delivery</span>
+            <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-white"></i> Custom Dashboards</span>
+            <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-white"></i> 100% Mobile Ready</span>
+          </div>
+        </div>
+
+        <!-- Contact Actions Box -->
+        <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center shrink-0 w-full sm:w-auto min-w-[280px] shadow-lg">
+          <p class="text-[11px] uppercase tracking-wider font-bold text-amber-200">Developed By</p>
+          <h4 class="text-lg font-black text-white mt-0.5">MRERILIN PRABHU</h4>
+          <p class="text-xs text-amber-100 font-semibold mb-3">Professional Web Developer</p>
+          
+          <div class="flex flex-col sm:flex-row lg:flex-col gap-2">
+            <a href="tel:7848036744" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-stone-900 font-black text-xs hover:bg-amber-50 transition shadow-md">
+              <i data-lucide="phone-call" class="w-4 h-4 text-amber-600"></i>
+              <span>Call: 7848036744</span>
+            </a>
+
+            <a href="https://wa.me/917848036744?text=Hello%20Mrerilin%20Prabhu,%20I%20saw%20the%20Roster%20Portal%20and%20I%20want%20to%20build%20my%20own%20website%20/%20dashboard." target="_blank" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs transition shadow-md">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              <span>WhatsApp: 7848036744</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="pt-6 border-t border-stone-300 dark:border-stone-800 text-center text-xs text-stone-500 dark:text-stone-400 space-y-2">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full card-bg border border-stone-300 dark:border-stone-700 text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+        <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-600"></i>
+        <span>Total Site Visits: <strong id="footerVisitorCount" class="text-amber-700 dark:text-amber-400 font-extrabold">1,842</strong></span>
+      </div>
+      <p class="font-medium">
+        KARTET / GPT Roster Vacancy Analyzer Portal 2026-27 • Developed by <strong class="text-stone-800 dark:text-stone-200">MRERILIN PRABHU</strong> (Ph: <a href="tel:7848036744" class="text-amber-700 dark:text-amber-400 hover:underline font-bold">7848036744</a>)
+      </p>
+      <p class="text-[11px] text-stone-400">
+        For custom website development, dashboards, or school/coaching portals, contact: <strong>7848036744</strong>
+      </p>
+    </footer>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const SPREADSHEET_ID = "1qfKkaxSR2hyjuZmw7OgfQ5oR1b9NIQT99BkYVJ2AH2I";
+    
+    // FULL 276 ROWS EMBEDDED DIRECTLY
+    const fallbackCombinedRoster = [["PST", "RAICHUR", "HK", "GENERAL", "ಸಾಮಾನ್ಯ", "8", "18", "14", "5", "2", "2", "", "1", "53"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "2", "1", "0", "0", "0", "", "0", "5"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರ.ಪಂಗಡ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["PST", "RAICHUR", "HK", "GENERAL", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["PST", "RAICHUR", "HK", "GENERAL", "2-ಎ", "2", "6", "5", "1", "1", "0", "", "0", "16"], ["PST", "RAICHUR", "HK", "GENERAL", "2-ಬಿ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["PST", "RAICHUR", "HK", "GENERAL", "3-ಎ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["PST", "RAICHUR", "HK", "GENERAL", "3-ಬಿ", "1", "2", "2", "0", "0", "0", "", "0", "6"], ["PST", "RAICHUR", "HK", "GENERAL", "ಒಟ್ಟು", "18", "37", "28", "6", "3", "2", "11", "1", "106"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಸಾಮಾನ್ಯ", "2", "5", "4", "1", "0", "0", "", "0", "13"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "0", "0", "0", "0", "0", "0", "0", "1"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರ.ಪಂಗಡ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಪ್ರವರ್ಗ-1", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["PST", "RAICHUR", "NHK", "GENERAL", "2-ಎ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["PST", "RAICHUR", "NHK", "GENERAL", "2-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["PST", "RAICHUR", "NHK", "GENERAL", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["PST", "RAICHUR", "NHK", "GENERAL", "3-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["PST", "RAICHUR", "NHK", "GENERAL", "ಒಟ್ಟು", "10", "8", "5", "1", "0", "0", "2", "0", "26"], ["PST", "YADGIRI", "HK", "GENERAL", "ಸಾಮಾನ್ಯ", "5", "11", "8", "3", "1", "1", "", "1", "32"], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", ""], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "", "", "", "", "", "4"], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "", "", "", "", "", "3"], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರ.ಪಂಗಡ", "1", "1", "", "", "", "", "", "", "2"], ["PST", "YADGIRI", "HK", "GENERAL", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "", "", "", "", "", "3"], ["PST", "YADGIRI", "HK", "GENERAL", "2-ಎ", "2", "3", "3", "1", "", "", "", "", "10"], ["PST", "YADGIRI", "HK", "GENERAL", "2-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["PST", "YADGIRI", "HK", "GENERAL", "3-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["PST", "YADGIRI", "HK", "GENERAL", "3-ಬಿ", "1", "1", "", "", "", "", "", "", "2"], ["PST", "YADGIRI", "HK", "GENERAL", "ಒಟ್ಟು", "15", "22", "16", "4", "1", "1", "4", "1", "64"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಸಾಮಾನ್ಯ", "2", "2", "2", "", "", "", "", "", "7"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", ""], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರ.ಪಂಗಡ", "1", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "2-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["PST", "YADGIRI", "NHK", "GENERAL", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["PST", "YADGIRI", "NHK", "GENERAL", "3-ಎ", "0", "", "", "", "", "", "", "", "0"], ["PST", "YADGIRI", "NHK", "GENERAL", "3-ಬಿ", "0", "", "", "", "", "", "", "", "0"], ["PST", "YADGIRI", "NHK", "GENERAL", "ಒಟ್ಟು", "9", "3", "2", "0", "0", "0", "1", "0", "15"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "4", "10", "7", "2", "1", "1", "", "1", "28"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "SOCIAL", "2-ಎ", "2", "3", "2", "0", "0", "0", "", "0", "8"], ["GPT", "RAICHUR", "HK", "SOCIAL", "2-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "SOCIAL", "3-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "SOCIAL", "3-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["GPT", "RAICHUR", "HK", "SOCIAL", "ಒಟ್ಟು", "14", "21", "12", "2", "1", "1", "3", "1", "55"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "3", "8", "5", "2", "1", "1", "", "1", "22"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "HK", "ENGLISH", "2-ಎ", "2", "2", "2", "0", "0", "0", "", "0", "7"], ["GPT", "RAICHUR", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "ENGLISH", "3-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["GPT", "RAICHUR", "HK", "ENGLISH", "ಒಟ್ಟು", "13", "16", "9", "2", "1", "1", "2", "1", "45"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "2", "2", "0", "0", "0", "", "0", "7"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "2-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "2-ಬಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "3-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "NHK", "SOCIAL", "ಒಟ್ಟು", "6", "4", "2", "0", "0", "0", "1", "0", "13"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಸಾಮಾನ್ಯ", "2", "2", "2", "0", "0", "0", "", "0", "7"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "2-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "2-ಬಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "3-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["GPT", "RAICHUR", "NHK", "ENGLISH", "ಒಟ್ಟು", "6", "4", "2", "0", "0", "0", "1", "0", "13"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "5", "10", "8", "3", "1", "1", "", "1", "31"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "2-ಎ", "2", "3", "3", "", "", "", "", "", "9"], ["HSTR", "BALLARY", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "3-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "BALLARY", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "BALLARY", "HK", "ENGLISH", "ಒಟ್ಟು", "15", "21", "17", "3", "1", "1", "3", "1", "62"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "5", "3", "1", "", "", "", "", "12"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "2-ಎ", "1", "1", "1", "", "", "", "", "", "4"], ["HSTR", "BALLARY", "HK", "SOCIAL", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "3-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "3-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "BALLARY", "HK", "SOCIAL", "ಒಟ್ಟು", "11", "7", "4", "1", "0", "0", "2", "0", "25"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಸಾಮಾನ್ಯ", "3", "2", "3", "2", "0", "0", "", "0", "11"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರ.ಜಾತಿ", "1", "1", "0", "1", "0", "0", "0", "0", "3"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರ.ಜಾತಿ-ಎ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರ.ಜಾತಿ-ಬಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರ.ಜಾತಿ-ಸಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರ.ಪಂಗಡ", "0", "1", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಪ್ರವರ್ಗ-1", "0", "0", "1", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "2-ಎ", "0", "2", "0", "1", "0", "0", "0", "0", "3"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "2-ಬಿ", "0", "0", "1", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "3-ಎ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "3-ಬಿ", "0", "0", "1", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH BACK LOG", "ಒಟ್ಟು", "4", "6", "6", "4", "0", "0", "1", "0", "21"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "2", "7", "5", "1", "1", "1", "", "1", "19"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH", "2-ಎ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["HSTR", "BIDAR", "HK", "ENGLISH", "2-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "ENGLISH", "3-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "ENGLISH", "ಒಟ್ಟು", "11", "15", "6", "1", "1", "1", "2", "1", "38"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "3", "3", "0", "0", "0", "", "0", "9"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "2-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "BIDAR", "HK", "SOCIAL", "2-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "3-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "BIDAR", "HK", "SOCIAL", "ಒಟ್ಟು", "11", "4", "3", "0", "0", "0", "1", "0", "19"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "5", "13", "10", "3", "2", "2", "", "1", "38"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "", "", "", "", "", "4"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "", "", "", "", "", "4"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "", "", "", "", "", "4"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "2-ಎ", "2", "4", "3", "1", "", "", "", "", "11"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "1", "", "", "", "", "", "4"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "3-ಎ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "KALBURGI", "HK", "ENGLISH", "ಒಟ್ಟು", "15", "25", "20", "4", "2", "2", "7", "1", "76"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "5", "3", "1", "", "", "", "", "12"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "2-ಎ", "1", "1", "1", "", "", "", "", "", "4"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "3-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "3-ಬಿ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "KALBURGI", "HK", "SOCIAL", "ಒಟ್ಟು", "10", "8", "4", "1", "0", "0", "2", "0", "25"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "5", "11", "9", "3", "2", "1", "", "1", "34"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "2-ಎ", "2", "3", "3", "1", "0", "0", "", "0", "10"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "3-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "KOPPALA", "HK", "ENGLISH", "ಒಟ್ಟು", "15", "22", "18", "4", "2", "1", "5", "1", "68"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "5", "4", "1", "0", "0", "", "0", "13"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "0", "0", "0", "0", "0", "0", "0", "0", "0"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "2-ಎ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "2-ಬಿ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "3-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "KOPPALA", "HK", "SOCIAL", "ಒಟ್ಟು", "11", "8", "5", "1", "0", "0", "1", "0", "26"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "7", "15", "12", "4", "2", "2", "", "1", "46"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "2-ಎ", "2", "5", "4", "1", "0", "0", "", "0", "13"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "1", "0", "0", "0", "0", "0", "3"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "3-ಎ", "1", "1", "1", "0", "0", "0", "", "0", "4"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "3-ಬಿ", "1", "2", "1", "0", "0", "0", "", "0", "5"], ["HSTR", "RAICHUR", "HK", "ENGLISH", "ಒಟ್ಟು", "17", "30", "24", "5", "2", "2", "10", "1", "91"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "7", "5", "2", "1", "1", "", "1", "20"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "2-ಎ", "1", "2", "2", "0", "0", "0", "", "0", "6"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "2-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "3-ಎ", "1", "0", "0", "0", "0", "0", "0", "0", "1"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "3-ಬಿ", "1", "1", "0", "0", "0", "0", "0", "0", "2"], ["HSTR", "RAICHUR", "HK", "SOCIAL", "ಒಟ್ಟು", "11", "15", "7", "2", "1", "1", "2", "1", "40"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "2", "6", "4", "1", "1", "", "", "", "15"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", ""], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "2-ಎ", "1", "2", "1", "", "", "", "", "", "5"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "3-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "3-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "ENGLISH", "ಒಟ್ಟು", "11", "10", "5", "1", "1", "0", "2", "0", "30"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "3", "3", "1", "", "", "", "0", "10"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", ""], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "2-ಎ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "3-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "3-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "VIJAYAPURA", "HK", "SOCIAL", "ಒಟ್ಟು", "11", "4", "4", "1", "0", "0", "1", "0", "21"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಸಾಮಾನ್ಯ", "5", "10", "8", "3", "1", "1", "", "1", "31"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರ.ಪಂಗಡ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಪ್ರವರ್ಗ-1", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "2-ಎ", "2", "3", "3", "1", "", "", "", "", "10"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "2-ಬಿ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "3-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "3-ಬಿ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "ENGLISH", "ಒಟ್ಟು", "15", "21", "16", "4", "1", "1", "3", "1", "62"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಸಾಮಾನ್ಯ", "2", "3", "3", "1", "", "", "", "", "10"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ", "", "", "", "", "", "", "", "", ""], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಎ", "1", "1", "", "", "", "", "", "", "2"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರ.ಜಾತಿ-ಸಿ", "", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರ.ಪಂಗಡ", "", "", "", "", "", "", "", "", "0"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಪ್ರವರ್ಗ-1", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "2-ಎ", "1", "1", "1", "", "", "", "", "", "3"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "2-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "3-ಎ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "3-ಬಿ", "1", "", "", "", "", "", "", "", "1"], ["HSTR", "YADAGIRI", "HK", "SOCIAL", "ಒಟ್ಟು", "10", "5", "4", "1", "0", "0", "1", "0", "21"]];
+
+    const fallbackSheet3 = [
+      ["ಅನುಬಂಧ-1 ಆಯ್ಕೆ ಪ್ರಾಧಿಕಾರಿಗಳು, ಹಾಗೂ ಸಹನಿರ್ದೇಶಕರು-1 ಶಾಲಾ ಶಿಕ್ಷಣ ಇಲಾಖೆ ಕಲಬುರಗಿ ವಿಭಾಗ ಕಲಬುರಗಿ 2026-27ನೇ ಸಾಲಿನ ಪ್ರೌಢಶಾಲಾ ಸಹ ಶಿಕ್ಷಕರು ಹಾಗೂ ದೈಹಿಕ ಶಿಕ್ಷಣ ಶಿಕ್ಷಕರು ಗ್ರೇಡ್ - 1 ವೃಂದದ ನೇಮಕಾತಿಗಾಗಿ ಪ್ರಕಟಿಸಲಾದ ಖಾಲಿ ಹುದ್ದೆಗಳ ವರ್ಗೀಕರಣ (80%) ಕ್ರ ಸಂ ","ಶೈಕ್ಷಣಿಕ ಜಿಲ್ಲೆಯ ಹೆಸರು ","ಭಾಷೆಗಳು ಕನ್ನಡ","ಆಂಗ್ಲ","ಕಲಾ ಕನ್ನಡ","ಆಂಗ್ಲ","ಜೀವ ವಿಜ್ಞಾನ (ಸಿ.ಬಿ.ಝಡ್) ಕನ್ನಡ","ಆಂಗ್ಲ","ದೈಹಿಕ ಶಿಕ್ಷಣ ಶಿಕ್ಷಕರು ಗ್ರೇಡ್-1 ","ಒಟ್ಟು "],
+      ["1","ಬಳ್ಳಾರಿ","56","62","25","38","26","31","44","282"],
+      ["2","ಬೀದರ್","67","59","19","29","15","18","32","239"],
+      ["3","ಕಲಬುರಗಿ","78","76","25","39","32","39","38","327"],
+      ["4","ಕೊಪ್ಪಳ","78","68","26","39","31","36","42","320"],
+      ["5","ರಾಯಚೂರು","103","91","40","60","56","67","69","486"],
+      ["6","ವಿಜಯನಗರ","11","30","21","33","10","12","8","125"],
+      ["7","ಯಾದಗಿರಿ","52","62","21","33","34","41","29","272"],
+      ["","ಒಟ್ಟು","445","448","177","271","204","244","262","2051"]
+    ];
+
+    
+    let tableSortState = {
+      col: 'valTarget',
+      dir: 'desc'
+    };
+
+    function sortTableBy(colKey) {
+      if (tableSortState.col === colKey) {
+        tableSortState.dir = tableSortState.dir === 'desc' ? 'asc' : 'desc';
+      } else {
+        tableSortState.col = colKey;
+        tableSortState.dir = 'desc';
+      }
+      runAnalysis();
+    }
+
+    let combinedRosterData = fallbackCombinedRoster;
+    let sheet3Data = fallbackSheet3;
+    let activeTab = 'tabLeaderboard';
+    let chartInstance = null;
+    let selectedMapDistrictName = 'RAICHUR';
+
+    // Filter Multi-Select State
+    const filterState = {
+      postName: new Set(),
+      district: new Set(),
+      quota: new Set(),
+      subject: new Set(),
+      caste: new Set(),
+      subCol: new Set(['ಒಟ್ಟು'])
+    };
+
+    const subColDefs = [
+      { id: 'ಒಟ್ಟು', label: '🔢 ಒಟ್ಟು (Total Posts)', colIdx: 13, prop: 'valTotal', short: '🔢 ಒಟ್ಟು' },
+      { id: 'ಇತರೆ', label: '👥 ಇತರೆ (General/Others)', colIdx: 5, prop: 'valOthers', short: '👥 ಇತರೆ' },
+      { id: 'ಮಹಿಳೆ', label: '👩 ಮಹಿಳೆ (Women)', colIdx: 6, prop: 'valWomen', short: '👩 ಮಹಿಳೆ' },
+      { id: 'ಗ್ರಾಮೀಣ', label: '🌾 ಗ್ರಾಮೀಣ (Rural)', colIdx: 7, prop: 'valRural', short: '🌾 ಗ್ರಾಮೀಣ' },
+      { id: 'ಮಾಜಿ ಸೈನಿಕ', label: '🎖️ ಮಾಜಿ ಸೈನಿಕ (Ex-Servicemen)', colIdx: 8, prop: 'valEx', short: '🎖️ ಮಾಜಿ ಸೈನಿಕ' },
+      { id: 'ಕನ್ನಡ ಮಾಧ್ಯಮ', label: '📖 ಕನ್ನಡ ಮಾಧ್ಯಮ (Kannada Med.)', colIdx: 9, prop: 'valKannada', short: '📖 ಕನ್ನಡ ಮಾ.' },
+      { id: 'ಯೋಜನಾ ನಿರಾಶ್ರಿತ', label: '🏗️ ಯೋಜನಾ ನಿರಾಶ್ರಿತ (PDP)', colIdx: 10, prop: 'valPDP', short: '🏗️ PDP' },
+      { id: 'ಅಂಗವಿಕಲ', label: '♿ ಅಂಗವಿಕಲ (PH)', colIdx: 11, prop: 'valPH', short: '♿ PH' },
+      { id: 'ತೃತೀಯ ಲಿಂಗ ಅಭ್ಯರ್ಥಿ', label: '🏳️‍⚧️ ತೃತೀಯ ಲಿಂಗ (Transgender)', colIdx: 12, prop: 'valTrans', short: '🏳️‍⚧️ ತೃತೀಯ ಲಿಂಗ' }
+    ];
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isCream = html.classList.contains('theme-cream');
+      if (isCream) {
+        html.classList.remove('theme-cream');
+        html.classList.add('theme-dark', 'dark');
+        document.getElementById('themeLabel').innerText = 'Dark';
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
+      } else {
+        html.classList.remove('theme-dark', 'dark');
+        html.classList.add('theme-cream');
+        document.getElementById('themeLabel').innerText = 'Cream';
+        document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
+      }
+      lucide.createIcons();
+      if (chartInstance) {
+        chartInstance.destroy();
+        chartInstance = null;
+        if (activeTab === 'tabDivisionSummary') initChart();
+      }
+    }
+
+    
+    function normalizeDistrict(name) {
+      if (!name) return '';
+      let n = name.trim().toUpperCase();
+      if (n === 'YADGIRI' || n === 'YADAGIRI') return 'YADGIRI';
+      if (n === 'BALLARY' || n === 'BALLARI' || n === 'BELLARY') return 'BALLARY';
+      if (n === 'KALBURGI' || n === 'KALABURAGI' || n === 'GULBARGA') return 'KALBURGI';
+      if (n === 'KOPPALA' || n === 'KOPPAL') return 'KOPPALA';
+      if (n === 'VIJAYAPURA' || n === 'VIJAYANAGARA' || n === 'VIJAYANAGAR') return 'VIJAYAPURA';
+      return n;
+    }
+
+    function parseVal(val) {
+      if (!val) return 0;
+      let clean = String(val).replace(/[^0-9]/g, '');
+      let num = parseInt(clean, 10);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function toggleDropdown(key, event) {
+      if (event) event.stopPropagation();
+      const allMenus = document.querySelectorAll('.dropdown-menu');
+      const targetMenu = document.getElementById(`dd-${key}`);
+      const isAlreadyActive = targetMenu.classList.contains('active');
+
+      allMenus.forEach(m => m.classList.remove('active'));
+      if (!isAlreadyActive) {
+        targetMenu.classList.add('active');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[id^="ms-container-"]')) {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+      }
+    });
+
+    function parseGvizResponse(resp) {
+      if (!resp || !resp.table || !resp.table.rows) return [];
+      const rows = [];
+      resp.table.rows.forEach(r => {
+        const rowData = [];
+        if (r.c) {
+          r.c.forEach(cell => {
+            if (cell === null || cell === undefined) {
+              rowData.push('');
+            } else {
+              rowData.push(cell.v !== null && cell.v !== undefined ? String(cell.v) : '');
+            }
+          });
+        }
+        rows.push(rowData);
+      });
+      return rows;
+    }
+
+    window.handleLiveRosterJSONP = function(resp) {
+      const parsed = parseGvizResponse(resp);
+      if (parsed.length > 0) {
+        combinedRosterData = parsed.filter(r => r.length > 1 && r[0].trim() !== '');
+        const syncStatus = document.getElementById('syncStatus');
+        const syncText = document.getElementById('syncText');
+        syncText.innerText = `Live Synced (${combinedRosterData.length} records)`;
+        syncStatus.className = "flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 font-medium";
+        buildDropdowns();
+        runAnalysis();
+        renderFullRoster();
+        renderMatrixView();
+        runEligibilityCalc();
+        populateComparisonSelects();
+        runDistrictComparison();
+        runCutoffEstimator();
+      }
+    };
+
+    window.handleLiveSheet3JSONP = function(resp) {
+      const parsed = parseGvizResponse(resp);
+      if (parsed.length > 0) {
+        sheet3Data = [fallbackSheet3[0], ...parsed];
+        renderDivisionSummary();
+      }
+    };
+
+    function fetchSheetData() {
+      const syncStatus = document.getElementById('syncStatus');
+      const syncText = document.getElementById('syncText');
+      syncText.innerText = "Syncing Google Sheet...";
+      syncStatus.className = "flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-300";
+
+      const oldScript1 = document.getElementById('jsonp-roster');
+      if (oldScript1) oldScript1.remove();
+      const script1 = document.createElement('script');
+      script1.id = 'jsonp-roster';
+      script1.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:handleLiveRosterJSONP&sheet=Combined%20Roster&t=${Date.now()}`;
+      document.body.appendChild(script1);
+
+      const oldScript2 = document.getElementById('jsonp-sheet3');
+      if (oldScript2) oldScript2.remove();
+      const script2 = document.createElement('script');
+      script2.id = 'jsonp-sheet3';
+      script2.src = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=responseHandler:handleLiveSheet3JSONP&sheet=Sheet3&t=${Date.now()}`;
+      document.body.appendChild(script2);
+    }
+
+    function buildDropdowns() {
+      const posts = new Set();
+      const districts = new Set();
+      const quotas = new Set();
+      const subjects = new Set();
+      const castes = new Set();
+
+      combinedRosterData.forEach(row => {
+        if (row[0]) posts.add(row[0].trim());
+        if (row[1]) districts.add(row[1].trim());
+        if (row[2]) quotas.add(row[2].trim());
+        if (row[3]) subjects.add(row[3].trim());
+        if (row[4] && row[4].trim() !== 'ಒಟ್ಟು') castes.add(row[4].trim());
+      });
+
+      if (filterState.postName.size === 0) posts.forEach(p => filterState.postName.add(p));
+      if (filterState.district.size === 0) districts.forEach(d => filterState.district.add(d));
+      if (filterState.quota.size === 0) quotas.forEach(q => filterState.quota.add(q));
+      if (filterState.subject.size === 0) subjects.forEach(s => filterState.subject.add(s));
+      if (filterState.caste.size === 0) castes.forEach(c => filterState.caste.add(c));
+
+      renderCheckboxList('postName', Array.from(posts).sort());
+      renderCheckboxList('district', Array.from(districts).sort());
+      renderCheckboxList('quota', Array.from(quotas).sort());
+      renderCheckboxList('subject', Array.from(subjects).sort());
+
+      const casteOrder = ['ಸಾಮಾನ್ಯ', '2-ಎ', '2-ಬಿ', '3-ಎ', '3-ಬಿ', 'ಪ್ರ.ಜಾತಿ', 'ಪ್ರ.ಜಾತಿ-ಎ', 'ಪ್ರ.ಜಾತಿ-ಬಿ', 'ಪ್ರ.ಜಾತಿ-ಸಿ', 'ಪ್ರ.ಪಂಗಡ', 'ಪ್ರವರ್ಗ-1'];
+      const sortedCastes = Array.from(castes).sort((a, b) => {
+        let ia = casteOrder.indexOf(a), ib = casteOrder.indexOf(b);
+        if (ia !== -1 && ib !== -1) return ia - ib;
+        if (ia !== -1) return -1;
+        if (ib !== -1) return 1;
+        return a.localeCompare(b);
+      });
+      renderCheckboxList('caste', sortedCastes);
+
+      renderSubColCheckboxes();
+      updateDropdownLabels();
+    }
+
+    function renderCheckboxList(key, items) {
+      const container = document.getElementById(`items-${key}`);
+      if (!container) return;
+
+      container.innerHTML = items.map(item => {
+        const isChecked = filterState[key].has(item) ? 'checked' : '';
+        return `
+          <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer select-none">
+            <input type="checkbox" value="${item}" ${isChecked} onchange="toggleItem('${key}', '${item}')" class="w-3.5 h-3.5 rounded text-amber-600 bg-stone-100 border-stone-400 focus:ring-amber-500">
+            <span class="text-stone-800 dark:text-stone-200 text-xs truncate font-medium">${item}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function renderSubColCheckboxes() {
+      const container = document.getElementById('items-subCol');
+      if (!container) return;
+
+      container.innerHTML = subColDefs.map(col => {
+        const isChecked = filterState.subCol.has(col.id) ? 'checked' : '';
+        return `
+          <label class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer select-none">
+            <input type="checkbox" value="${col.id}" ${isChecked} onchange="toggleItem('subCol', '${col.id}')" class="w-3.5 h-3.5 rounded text-amber-600 bg-stone-100 border-stone-400 focus:ring-amber-500">
+            <span class="text-stone-800 dark:text-stone-200 text-xs truncate font-medium">${col.label}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function toggleItem(key, val) {
+      if (key === 'subCol') {
+        if (val === 'ಒಟ್ಟು') {
+          // If total selected, clear specific sub-reservations
+          filterState.subCol.clear();
+          filterState.subCol.add('ಒಟ್ಟು');
+        } else {
+          // If specific sub-quota selected, remove 'ಒಟ್ಟು' to prevent double-counting
+          filterState.subCol.delete('ಒಟ್ಟು');
+          if (filterState.subCol.has(val)) {
+            filterState.subCol.delete(val);
+          } else {
+            filterState.subCol.add(val);
+          }
+          // If all unchecked, default back to 'ಒಟ್ಟು'
+          if (filterState.subCol.size === 0) {
+            filterState.subCol.add('ಒಟ್ಟು');
+          }
+        }
+        renderSubColCheckboxes();
+      } else {
+        if (filterState[key].has(val)) {
+          filterState[key].delete(val);
+        } else {
+          filterState[key].add(val);
+        }
+      }
+      updateDropdownLabels();
+      runAnalysis();
+    }
+
+    function setAll(key, selectAll) {
+      const checkboxes = document.querySelectorAll(`#items-${key} input[type="checkbox"]`);
+      checkboxes.forEach(cb => {
+        cb.checked = selectAll;
+        if (selectAll) {
+          filterState[key].add(cb.value);
+        } else {
+          filterState[key].delete(cb.value);
+        }
+      });
+      updateDropdownLabels();
+      runAnalysis();
+    }
+
+    function selectAllAllFilters() {
+      ['postName', 'district', 'quota', 'subject', 'caste'].forEach(k => setAll(k, true));
+      setAll('subCol', true);
+    }
+
+    function resetAllFilters() {
+      ['postName', 'district', 'quota', 'subject', 'caste'].forEach(k => setAll(k, true));
+      filterState.subCol.clear();
+      filterState.subCol.add('ಒಟ್ಟು');
+      renderSubColCheckboxes();
+      updateDropdownLabels();
+      runAnalysis();
+    }
+
+    function updateDropdownLabels() {
+      const defs = [
+        { key: 'postName', defaultLabel: 'All Posts' },
+        { key: 'district', defaultLabel: 'All Districts' },
+        { key: 'quota', defaultLabel: 'All Quotas' },
+        { key: 'subject', defaultLabel: 'All Subjects' },
+        { key: 'caste', defaultLabel: 'All Categories' },
+        { key: 'subCol', defaultLabel: 'Total Posts' }
+      ];
+
+      defs.forEach(d => {
+        const totalItems = document.querySelectorAll(`#items-${d.key} input[type="checkbox"]`).length;
+        const selectedCount = filterState[d.key].size;
+        const labelEl = document.getElementById(`label-${d.key}`);
+        if (!labelEl) return;
+
+        if (selectedCount === 0) {
+          labelEl.innerHTML = `<span class="text-rose-600 font-bold">None</span>`;
+        } else if (selectedCount === totalItems && totalItems > 0) {
+          labelEl.innerHTML = `<span class="font-bold text-amber-900 dark:text-amber-300">${d.defaultLabel}</span> <span class="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.2 rounded-full font-bold ml-1">All</span>`;
+        } else if (selectedCount === 1) {
+          const firstVal = Array.from(filterState[d.key])[0];
+          labelEl.innerHTML = `<span class="font-bold text-stone-900 dark:text-white truncate">${firstVal}</span>`;
+        } else {
+          labelEl.innerHTML = `<span class="font-bold text-stone-900 dark:text-white">${selectedCount} selected</span> <span class="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.2 rounded-full font-bold ml-1">${selectedCount}</span>`;
+        }
+      });
+
+      const selectedSubCols = Array.from(filterState.subCol);
+      document.getElementById('statActiveSubCount').innerText = selectedSubCols.length > 0 ? selectedSubCols.join(', ') : 'None';
+      document.getElementById('statActiveSubDetail').innerText = `${selectedSubCols.length} column(s) summed`;
+    }
+
+    // Run Core Analysis
+    function runAnalysis() {
+      const activeColIndices = [];
+      subColDefs.forEach(def => {
+        if (filterState.subCol.has(def.id)) {
+          activeColIndices.push(def.colIdx);
+        }
+      });
+      if (activeColIndices.length === 0) activeColIndices.push(13);
+
+      let filtered = combinedRosterData.filter(row => {
+        let post = (row[0] || '').trim();
+        let district = (row[1] || '').trim();
+        let quota = (row[2] || '').trim();
+        let subject = (row[3] || '').trim();
+        let caste = (row[4] || '').trim();
+
+        if (caste === 'ಒಟ್ಟು' && filterState.caste.size > 0 && !filterState.caste.has('ಒಟ್ಟು')) return false;
+
+        if (filterState.postName.size > 0 && !filterState.postName.has(post)) return false;
+        if (filterState.district.size > 0 && !filterState.district.has(district)) return false;
+        if (filterState.quota.size > 0 && !filterState.quota.has(quota)) return false;
+        if (filterState.subject.size > 0 && !filterState.subject.has(subject)) return false;
+        if (filterState.caste.size > 0 && !filterState.caste.has(caste)) return false;
+
+        return true;
+      });
+
+      let scored = filtered.map(row => {
+        let postName = row[0] || 'GPT';
+        let district = row[1] || '';
+        let quota = row[2] || '';
+        let subject = row[3] || '';
+        let caste = row[4] || '';
+        
+        let valTarget = activeColIndices.reduce((sum, idx) => sum + parseVal(row[idx]), 0);
+        let valOthers = parseVal(row[5]);
+        let valWomen = parseVal(row[6]);
+        let valRural = parseVal(row[7]);
+        let valEx = parseVal(row[8]);
+        let valKannada = parseVal(row[9]);
+        let valPDP = parseVal(row[10]);
+        let valPH = parseVal(row[11]);
+        let valTrans = parseVal(row[12]);
+        let valTotal = parseVal(row[13]);
+
+        return {
+          postName,
+          district,
+          quota,
+          subject,
+          caste,
+          valTarget,
+          valOthers,
+          valWomen,
+          valRural,
+          valEx,
+          valKannada,
+          valPDP,
+          valPH,
+          valTrans,
+          valTotal,
+          raw: row
+        };
+      });
+
+            // Apply sorting based on tableSortState
+      scored.sort((a, b) => {
+        let valA = a[tableSortState.col];
+        let valB = b[tableSortState.col];
+
+        if (typeof valA === 'string') {
+          return tableSortState.dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        valA = Number(valA) || 0;
+        valB = Number(valB) || 0;
+        if (valA !== valB) {
+          return tableSortState.dir === 'asc' ? valA - valB : valB - valA;
+        }
+        return b.valTotal - a.valTotal;
+      });
+
+      let totalPostsSum = scored.reduce((acc, curr) => acc + curr.valTarget, 0);
+      document.getElementById('statTotalMatched').innerText = totalPostsSum;
+      document.getElementById('statMatchCount').innerText = `${scored.length} matching rows`;
+
+      let uniqueDistricts = new Set(scored.map(s => s.district).filter(Boolean));
+      document.getElementById('statDistrictsMatched').innerText = `${uniqueDistricts.size} Districts`;
+      document.getElementById('statDistrictsDetail').innerText = Array.from(uniqueDistricts).slice(0, 3).join(', ') + (uniqueDistricts.size > 3 ? '...' : '');
+
+      if (scored.length > 0) {
+        document.getElementById('statTopCount').innerText = `${scored[0].valTarget} posts`;
+        document.getElementById('statTopDetail').innerText = `${scored[0].postName} • ${scored[0].district} (${scored[0].caste})`;
+      } else {
+        document.getElementById('statTopCount').innerText = '0';
+        document.getElementById('statTopDetail').innerText = 'No records match';
+      }
+
+      renderPodium(scored);
+      renderRankedTable(scored);
+    }
+
+    function renderPodium(scored) {
+      const podium = document.getElementById('podiumSection');
+      if (!podium) return;
+
+      if (scored.length === 0) {
+        podium.innerHTML = `
+          <div class="col-span-full p-8 text-center panel-bg rounded-2xl border">
+            <i data-lucide="info" class="w-8 h-8 text-stone-400 mx-auto mb-2"></i>
+            <p class="text-sm text-stone-500">No posts match the chosen filter combination. Try selecting 'All' in the filters.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const top3 = scored.slice(0, 3);
+      const medals = [
+        { title: '🥇 Rank #1 Highest Posts', border: 'border-amber-400 dark:border-amber-500/40', badge: 'bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-300', numColor: 'text-amber-800 dark:text-amber-400' },
+        { title: '🥈 Rank #2 Runner Up', border: 'border-stone-300 dark:border-stone-600', badge: 'bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-300', numColor: 'text-stone-700 dark:text-stone-300' },
+        { title: '🥉 Rank #3', border: 'border-yellow-600/40 dark:border-yellow-700/40', badge: 'bg-yellow-100 text-yellow-900 dark:bg-yellow-900/40 dark:text-yellow-300', numColor: 'text-yellow-800 dark:text-yellow-400' }
+      ];
+
+      podium.innerHTML = top3.map((item, idx) => {
+        const m = medals[idx];
+
+        // Dynamically build breakdown of ONLY selected sub-quotas
+        let breakdownHtml = '';
+        const selectedDefs = subColDefs.filter(d => filterState.subCol.has(d.id));
+        if (selectedDefs.length === 1 && selectedDefs[0].id === 'ಒಟ್ಟು') {
+          breakdownHtml = `
+            <div>👥 ಇತರೆ: <span class="text-stone-900 dark:text-white font-bold">${item.valOthers}</span></div>
+            <div>👩 ಮಹಿಳೆ: <span class="text-stone-900 dark:text-white font-bold">${item.valWomen}</span></div>
+            <div>🌾 ಗ್ರಾಮೀಣ: <span class="text-stone-900 dark:text-white font-bold">${item.valRural}</span></div>
+          `;
+        } else if (selectedDefs.length > 0) {
+          breakdownHtml = selectedDefs.map(d => {
+            const count = item[d.prop] || 0;
+            return `<div>${d.short}: <span class="text-stone-900 dark:text-white font-bold">${count}</span></div>`;
+          }).join('');
+        } else {
+          breakdownHtml = `<div>🔢 ಒಟ್ಟು: <span class="text-stone-900 dark:text-white font-bold">${item.valTotal}</span></div>`;
+        }
+
+        return `
+          <div class="panel-bg p-5 rounded-2xl border ${m.border} shadow-sm relative flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${m.badge}">
+                ${m.title}
+              </span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded card-bg border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300">
+                ${item.postName} • ${item.quota}
+              </span>
+            </div>
+
+            <div class="space-y-1">
+              <h4 class="text-xl font-black text-stone-900 dark:text-white flex items-center gap-2">
+                <span>${item.district}</span>
+                <span class="text-xs font-semibold text-stone-500">(${item.subject})</span>
+              </h4>
+              <p class="text-xs font-bold ${m.numColor} kannada-font">
+                ಪ್ರವರ್ಗ: ${item.caste}
+              </p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-stone-200 dark:border-stone-800 flex items-end justify-between">
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-stone-500 font-bold">Selected Vacancies</p>
+                <p class="text-2xl font-black text-stone-900 dark:text-white">${item.valTarget} <span class="text-xs font-normal text-stone-500">ಹುದ್ದೆಗಳು</span></p>
+              </div>
+              <div class="text-right text-[11px] text-stone-600 dark:text-stone-400 space-y-0.5 font-medium">
+                ${breakdownHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function renderRankedTable(scored) {
+      const tbody = document.getElementById('rankedTableBody');
+      if (!tbody) return;
+
+      if (scored.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="16" class="p-8 text-center text-stone-500">No records found</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = scored.map((item, idx) => {
+        let rankBadge = '';
+        if (idx === 0) rankBadge = '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200 font-black text-xs">1</span>';
+        else if (idx === 1) rankBadge = '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-stone-300 text-stone-900 dark:bg-stone-700 dark:text-stone-200 font-bold text-xs">2</span>';
+        else if (idx === 2) rankBadge = '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-200 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-200 font-bold text-xs">3</span>';
+        else rankBadge = `<span class="text-stone-500 font-medium">${idx + 1}</span>`;
+
+        let quotaColor = item.quota === 'HK' ? 'bg-purple-100 text-purple-900 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+
+        return `
+          <tr class="hover:bg-stone-100/60 dark:hover:bg-stone-800/50 transition">
+            <td class="py-2.5 px-3 text-center font-bold">${rankBadge}</td>
+            <td class="py-2.5 px-3 font-bold text-amber-800 dark:text-amber-400">${item.postName}</td>
+            <td class="py-2.5 px-3 font-bold text-stone-900 dark:text-white">${item.district}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded border ${quotaColor}">${item.quota}</span>
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded card-bg border border-stone-300 dark:border-stone-700 font-semibold text-stone-800 dark:text-stone-200">${item.subject}</span>
+            </td>
+            <td class="py-2.5 px-3 font-bold text-stone-900 dark:text-amber-300 kannada-font">${item.caste}</td>
+            <td class="py-2.5 px-3 text-center font-black text-amber-900 dark:text-amber-300 text-sm bg-amber-50 dark:bg-amber-950/30 border-x border-amber-200 dark:border-amber-900/40">
+              ${item.valTarget}
+            </td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valOthers || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-900 dark:text-stone-200 font-bold">${item.valWomen || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-900 dark:text-stone-200 font-bold">${item.valRural || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valEx || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valKannada || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valPDP || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valPH || '-'}</td>
+            <td class="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">${item.valTrans || '-'}</td>
+            <td class="py-2.5 px-3 text-center font-black text-stone-900 dark:text-white bg-stone-100 dark:bg-stone-800/50">${item.valTotal}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTableBySearch() {
+      const q = document.getElementById('tableSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#rankedTableBody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // 1. CANDIDATE ELIGIBILITY CALCULATOR (WITH POST & COTA)
+    function runEligibilityCalc() {
+      const postName = document.getElementById('calcPostName')?.value || 'ALL';
+      const gender = document.getElementById('calcGender')?.value || 'FEMALE';
+      const userCaste = document.getElementById('calcCaste')?.value || '2-ಎ';
+      const userSubject = document.getElementById('calcSubject')?.value || 'ENGLISH';
+      const userQuota = document.getElementById('calcQuota')?.value || 'HK';
+      const hasRural = document.getElementById('chkRural')?.checked || false;
+      const hasKannada = document.getElementById('chkKannada')?.checked || false;
+
+      const districtMap = {};
+
+      combinedRosterData.forEach(row => {
+        const post = (row[0] || '').trim();
+        const district = (row[1] || '').trim();
+        const quota = (row[2] || '').trim();
+        const subject = (row[3] || '').trim();
+        const caste = (row[4] || '').trim();
+
+        if (!district || caste === 'ಒಟ್ಟು') return;
+        if (postName !== 'ALL' && post.toUpperCase() !== postName.toUpperCase()) return;
+        if (subject.toUpperCase() !== userSubject.toUpperCase()) return;
+        if (userQuota !== 'BOTH' && quota.toUpperCase() !== userQuota.toUpperCase()) return;
+
+        const isGM = (caste === 'ಸಾಮಾನ್ಯ');
+        const isMyCaste = (caste === userCaste);
+
+        if (!isGM && !isMyCaste) return;
+
+        let eligibleInThisRow = 0;
+        eligibleInThisRow += parseVal(row[5]); // Others
+
+        if (gender === 'FEMALE') eligibleInThisRow += parseVal(row[6]); // Women
+        if (hasRural) eligibleInThisRow += parseVal(row[7]); // Rural
+        if (hasKannada) eligibleInThisRow += parseVal(row[9]); // Kannada Medium
+        if (gender === 'TRANS') eligibleInThisRow += parseVal(row[12]); // Trans
+
+        if (!districtMap[district]) {
+          districtMap[district] = {
+            district: district,
+            postName: post,
+            gmPosts: 0,
+            castePosts: 0,
+            totalEligible: 0,
+            quotasAvailable: new Set()
+          };
+        }
+
+        districtMap[district].quotasAvailable.add(quota);
+        if (isGM) districtMap[district].gmPosts += eligibleInThisRow;
+        if (isMyCaste && !isGM) districtMap[district].castePosts += eligibleInThisRow;
+        districtMap[district].totalEligible += eligibleInThisRow;
+      });
+
+      const results = Object.values(districtMap).sort((a, b) => b.totalEligible - a.totalEligible);
+      const container = document.getElementById('eligibilityResults');
+      if (!container) return;
+
+      if (results.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-stone-500">No records found matching this profile combination.</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          ${results.map((r, i) => `
+            <div class="panel-bg p-4 rounded-xl border ${i===0?'border-amber-400 shadow-md bg-amber-50/40 dark:bg-amber-950/20':'border-stone-200 dark:border-stone-800'}">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${i===0?'bg-amber-200 text-amber-900 font-extrabold':'bg-stone-200 text-stone-800'}">
+                  ${i===0?'🥇 Highest Chances #1':`Rank #${i+1}`}
+                </span>
+                <span class="text-[10px] font-semibold text-stone-500">${Array.from(r.quotasAvailable).join(', ')}</span>
+              </div>
+              <h4 class="text-lg font-black text-stone-900 dark:text-white">${r.district}</h4>
+              <div class="mt-3 pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
+                <div class="text-xs text-stone-600 dark:text-stone-400 space-y-0.5">
+                  <div>General (GM) Pool: <strong class="text-stone-900 dark:text-white">${r.gmPosts}</strong></div>
+                  <div>${userCaste} Pool: <strong class="text-amber-800 dark:text-amber-400">${r.castePosts}</strong></div>
+                </div>
+                <div class="text-right">
+                  <div class="text-[10px] font-bold uppercase text-stone-400">Total Chances</div>
+                  <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400">${r.totalEligible}</div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 2. DISTRICT COMPARISON TOOL (WITH POST & COTA)
+    function populateComparisonSelects() {
+      const districts = new Set();
+      const posts = new Set();
+
+      combinedRosterData.forEach(r => { 
+        if (r[1]) districts.add(normalizeDistrict(r[1])); 
+        if (r[0]) posts.add(r[0].trim());
+      });
+
+      const distList = Array.from(districts).sort();
+      const postList = Array.from(posts).sort();
+
+      const selA = document.getElementById('compDistA');
+      const selB = document.getElementById('compDistB');
+      const selPost = document.getElementById('compPostName');
+
+      if (selPost && postList.length > 0) {
+        selPost.innerHTML = '<option value="ALL" selected>All Posts (ಎಲ್ಲಾ ಹುದ್ದೆಗಳು - GPT/HSTR/PST)</option>' + postList.map(p => `<option value="${p}">${p}</option>`).join('');
+        selPost.value = 'ALL';
+      }
+
+      if (selA && selB) {
+        selA.innerHTML = distList.map(d => `<option value="${d}">${d}</option>`).join('');
+        selB.innerHTML = distList.map(d => `<option value="${d}">${d}</option>`).join('');
+
+        if (distList.length > 1) {
+          selA.value = distList[0];
+          selB.value = distList[1];
+        }
+      }
+    }
+
+        function runDistrictComparison() {
+      const postName = document.getElementById('compPostName')?.value || 'ALL';
+      const quotaFilter = document.getElementById('compQuota')?.value || 'ALL';
+      const subj = document.getElementById('compSubject')?.value || 'ALL';
+      const dA = document.getElementById('compDistA')?.value;
+      const dB = document.getElementById('compDistB')?.value;
+      const container = document.getElementById('comparisonResults');
+      if (!dA || !dB || !container) return;
+
+      const casteOrder = ['ಸಾಮಾನ್ಯ', '2-ಎ', '2-ಬಿ', '3-ಎ', '3-ಬಿ', 'ಪ್ರ.ಜಾತಿ', 'ಪ್ರ.ಜಾತಿ-ಎ', 'ಪ್ರ.ಜಾತಿ-ಬಿ', 'ಪ್ರ.ಜಾತಿ-ಸಿ', 'ಪ್ರ.ಪಂಗಡ', 'ಪ್ರವರ್ಗ-1'];
+      
+      const initCasteObj = () => ({
+        others: 0, women: 0, rural: 0, ex: 0, kannada: 0, pdp: 0, ph: 0, trans: 0, total: 0
+      });
+
+      const statsA = { 
+        total: 0, women: 0, rural: 0, others: 0, ex: 0, kannada: 0, pdp: 0, ph: 0, trans: 0,
+        byCaste: {} 
+      };
+      const statsB = { 
+        total: 0, women: 0, rural: 0, others: 0, ex: 0, kannada: 0, pdp: 0, ph: 0, trans: 0,
+        byCaste: {} 
+      };
+
+      casteOrder.forEach(c => {
+        statsA.byCaste[c] = initCasteObj();
+        statsB.byCaste[c] = initCasteObj();
+      });
+
+      combinedRosterData.forEach(r => {
+        const post = (r[0] || '').trim();
+        const d = (r[1] || '').trim();
+        const q = (r[2] || '').trim();
+        const s = (r[3] || '').trim();
+        const c = (r[4] || '').trim();
+
+        if (c === 'ಒಟ್ಟು') return;
+        if (postName !== 'ALL' && post.toUpperCase() !== postName.toUpperCase()) return;
+        if (quotaFilter !== 'ALL' && q.toUpperCase() !== quotaFilter.toUpperCase()) return;
+        if (subj !== 'ALL' && s.toUpperCase() !== subj.toUpperCase()) return;
+
+        const oth = parseVal(r[5]);
+        const wom = parseVal(r[6]);
+        const rur = parseVal(r[7]);
+        const ex = parseVal(r[8]);
+        const kan = parseVal(r[9]);
+        const pdp = parseVal(r[10]);
+        const ph = parseVal(r[11]);
+        const tra = parseVal(r[12]);
+        const tot = parseVal(r[13]);
+
+        const normD = normalizeDistrict(d);
+        const normA = normalizeDistrict(dA);
+        const normB = normalizeDistrict(dB);
+
+        if (normD === normA) {
+          statsA.total += tot;
+          statsA.others += oth;
+          statsA.women += wom;
+          statsA.rural += rur;
+          statsA.ex += ex;
+          statsA.kannada += kan;
+          statsA.pdp += pdp;
+          statsA.ph += ph;
+          statsA.trans += tra;
+
+          if (statsA.byCaste[c]) {
+            statsA.byCaste[c].others += oth;
+            statsA.byCaste[c].women += wom;
+            statsA.byCaste[c].rural += rur;
+            statsA.byCaste[c].ex += ex;
+            statsA.byCaste[c].kannada += kan;
+            statsA.byCaste[c].pdp += pdp;
+            statsA.byCaste[c].ph += ph;
+            statsA.byCaste[c].trans += tra;
+            statsA.byCaste[c].total += tot;
+          }
+        }
+        if (normD === normB) {
+          statsB.total += tot;
+          statsB.others += oth;
+          statsB.women += wom;
+          statsB.rural += rur;
+          statsB.ex += ex;
+          statsB.kannada += kan;
+          statsB.pdp += pdp;
+          statsB.ph += ph;
+          statsB.trans += tra;
+
+          if (statsB.byCaste[c]) {
+            statsB.byCaste[c].others += oth;
+            statsB.byCaste[c].women += wom;
+            statsB.byCaste[c].rural += rur;
+            statsB.byCaste[c].ex += ex;
+            statsB.byCaste[c].kannada += kan;
+            statsB.byCaste[c].pdp += pdp;
+            statsB.byCaste[c].ph += ph;
+            statsB.byCaste[c].trans += tra;
+            statsB.byCaste[c].total += tot;
+          }
+        }
+      });
+
+      const winnerText = statsA.total > statsB.total 
+        ? `🏆 ${dA} has +${statsA.total - statsB.total} more vacancies than ${dB} (Filter: ${postName} • ${quotaFilter} • ${subj})` 
+        : (statsB.total > statsA.total 
+          ? `🏆 ${dB} has +${statsB.total - statsA.total} more vacancies than ${dA} (Filter: ${postName} • ${quotaFilter} • ${subj})` 
+          : `🤝 Both districts have identical vacancies (${statsA.total})`);
+
+      const renderTable = (distName, stats) => `
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-center text-xs text-stone-700 dark:text-stone-300">
+            <thead class="table-header text-[11px] uppercase font-bold border-b border-stone-300 dark:border-stone-700">
+              <tr>
+                <th class="py-2 px-2 text-left">ಪ್ರವರ್ಗ</th>
+                <th class="py-2 px-1">ಇತರೆ</th>
+                <th class="py-2 px-1">ಮಹಿಳೆ</th>
+                <th class="py-2 px-1">ಗ್ರಾಮೀಣ</th>
+                <th class="py-2 px-1">ಮಾಜಿ ಸೈನಿಕ</th>
+                <th class="py-2 px-1">ಕನ್ನಡ ಮಾ.</th>
+                <th class="py-2 px-1">PDP</th>
+                <th class="py-2 px-1">PH</th>
+                <th class="py-2 px-1">ತೃತೀಯ ಲಿಂಗ</th>
+                <th class="py-2 px-2 text-center bg-stone-200/70 dark:bg-stone-800 font-black text-stone-900 dark:text-white">ಒಟ್ಟು</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-200 dark:divide-stone-800">
+              ${casteOrder.map(c => {
+                const row = stats.byCaste[c] || initCasteObj();
+                return `
+                  <tr class="hover:bg-stone-100/60 dark:hover:bg-stone-800/50">
+                    <td class="py-1.5 px-2 text-left font-bold text-stone-900 dark:text-amber-300 kannada-font">${c}</td>
+                    <td class="py-1.5 px-1 ${row.others>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.others || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.women>0?'text-amber-800 dark:text-amber-300 font-bold':'text-stone-400'}">${row.women || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.rural>0?'text-emerald-800 dark:text-emerald-300 font-bold':'text-stone-400'}">${row.rural || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.ex>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.ex || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.kannada>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.kannada || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.pdp>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.pdp || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.ph>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.ph || '-'}</td>
+                    <td class="py-1.5 px-1 ${row.trans>0?'text-stone-900 dark:text-stone-200 font-semibold':'text-stone-400'}">${row.trans || '-'}</td>
+                    <td class="py-1.5 px-2 text-center font-black text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40">${row.total}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+            <tfoot class="border-t-2 border-stone-300 dark:border-stone-700 font-black bg-stone-100 dark:bg-stone-800/80 text-stone-900 dark:text-white">
+              <tr>
+                <td class="py-2 px-2 text-left">ಒಟ್ಟು (Total)</td>
+                <td class="py-2 px-1">${stats.others}</td>
+                <td class="py-2 px-1 text-amber-700 dark:text-amber-400">${stats.women}</td>
+                <td class="py-2 px-1 text-emerald-700 dark:text-emerald-400">${stats.rural}</td>
+                <td class="py-2 px-1">${stats.ex}</td>
+                <td class="py-2 px-1">${stats.kannada}</td>
+                <td class="py-2 px-1">${stats.pdp}</td>
+                <td class="py-2 px-1">${stats.ph}</td>
+                <td class="py-2 px-1">${stats.trans}</td>
+                <td class="py-2 px-2 bg-amber-200 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 text-sm">${stats.total}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = `
+        <div class="p-3.5 bg-amber-100/70 dark:bg-amber-950/40 rounded-xl border border-amber-300 dark:border-amber-800 text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>${winnerText}</span>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 pt-2">
+          <!-- Card District A -->
+          <div class="panel-bg p-5 rounded-2xl border ${statsA.total>=statsB.total?'border-amber-400 shadow-sm':''}">
+            <div class="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+              <h4 class="text-xl font-black text-stone-900 dark:text-white">${dA}</h4>
+              <span class="text-2xl font-black text-amber-700 dark:text-amber-400">${statsA.total} <span class="text-xs font-normal text-stone-500">Posts</span></span>
+            </div>
+            ${renderTable(dA, statsA)}
+          </div>
+
+          <!-- Card District B -->
+          <div class="panel-bg p-5 rounded-2xl border ${statsB.total>statsA.total?'border-amber-400 shadow-sm':''}">
+            <div class="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800">
+              <h4 class="text-xl font-black text-stone-900 dark:text-white">${dB}</h4>
+              <span class="text-2xl font-black text-amber-700 dark:text-amber-400">${statsB.total} <span class="text-xs font-normal text-stone-500">Posts</span></span>
+            </div>
+            ${renderTable(dB, statsB)}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // 3. COMPETITION & CUTOFF ESTIMATOR (WITH POST & COTA)
+    function runCutoffEstimator() {
+      const postName = document.getElementById('cutoffPostName')?.value || 'ALL';
+      const quotaFilter = document.getElementById('cutoffQuota')?.value || 'ALL';
+      const merit = parseFloat(document.getElementById('cutoffMerit')?.value || '75');
+      const userCaste = document.getElementById('cutoffCaste')?.value || '2-ಎ';
+      const userSubj = document.getElementById('cutoffSubject')?.value || 'ENGLISH';
+      const container = document.getElementById('cutoffResults');
+      if (!container) return;
+
+      const distMap = {};
+      combinedRosterData.forEach(r => {
+        const post = (r[0] || '').trim();
+        const d = (r[1] || '').trim();
+        const q = (r[2] || '').trim();
+        const s = (r[3] || '').trim();
+        const c = (r[4] || '').trim();
+        const tot = parseVal(r[13]);
+
+        if (!d || c === 'ಒಟ್ಟು') return;
+        if (postName !== 'ALL' && post.toUpperCase() !== postName.toUpperCase()) return;
+        if (quotaFilter !== 'ALL' && q.toUpperCase() !== quotaFilter.toUpperCase()) return;
+        if (s.toUpperCase() !== userSubj.toUpperCase()) return;
+
+        if (!distMap[d]) distMap[d] = { district: d, myPosts: 0, totalPosts: 0 };
+        distMap[d].totalPosts += tot;
+        if (c === userCaste || c === 'ಸಾಮಾನ್ಯ') {
+          distMap[d].myPosts += tot;
+        }
+      });
+
+      const list = Object.values(distMap).sort((a, b) => b.myPosts - a.myPosts);
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-stone-500">No records found matching filters.</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          ${list.map((item, idx) => {
+            let safetyBadge = '';
+            let safetyColor = '';
+            if (item.myPosts >= 10 && merit >= 70) {
+              safetyBadge = '🟢 High Seat Probability (Safe Choice)';
+              safetyColor = 'text-emerald-700 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800';
+            } else if (item.myPosts >= 5 || merit >= 75) {
+              safetyBadge = '🟡 Moderate Competition (Fair Chance)';
+              safetyColor = 'text-amber-800 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800';
+            } else {
+              safetyBadge = '🔴 High Competition (Lower Seats)';
+              safetyColor = 'text-rose-800 bg-rose-50 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800';
+            }
+
+            return `
+              <div class="panel-bg p-4 rounded-xl border flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-stone-500">Rank #${idx+1}</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${safetyColor}">${safetyBadge}</span>
+                  </div>
+                  <h4 class="text-lg font-black text-stone-900 dark:text-white">${item.district}</h4>
+                  <p class="text-xs text-stone-500 mt-1">${userCaste} + GM Pool: <strong class="text-amber-800 dark:text-amber-400 font-bold">${item.myPosts} vacancies</strong></p>
+                </div>
+                <div class="mt-3 pt-3 border-t border-stone-200 dark:border-stone-800 text-[11px] text-stone-500 flex justify-between">
+                  <span>Subject Total: ${item.totalPosts}</span>
+                  <span>Merit: ${merit}%</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    // 4. MAP INTERACTIVITY
+    function selectMapDistrict(distName) {
+      selectedMapDistrictName = distName;
+      document.getElementById('mapSpotlightTitle').innerText = distName;
+      
+      const counts = { total: 0, english: 0, social: 0, general: 0 };
+      combinedRosterData.forEach(r => {
+        if ((r[1] || '').trim().toUpperCase().includes(distName.toUpperCase()) && r[4] !== 'ಒಟ್ಟು') {
+          const tot = parseVal(r[13]);
+          counts.total += tot;
+          const s = (r[3] || '').trim().toUpperCase();
+          if (s === 'ENGLISH') counts.english += tot;
+          if (s === 'SOCIAL') counts.social += tot;
+          if (s === 'GENERAL') counts.general += tot;
+        }
+      });
+
+      document.getElementById('mapSpotlightBreakdown').innerHTML = `
+        <div class="flex justify-between items-center text-xs py-1">
+          <span class="font-medium text-stone-600 dark:text-stone-400">Total Subject Vacancies:</span>
+          <span class="font-extrabold text-amber-700 text-sm">${counts.total} Posts</span>
+        </div>
+        <div class="flex justify-between items-center text-xs py-1">
+          <span>📘 English:</span>
+          <strong class="text-stone-900 dark:text-white">${counts.english}</strong>
+        </div>
+        <div class="flex justify-between items-center text-xs py-1">
+          <span>📙 Social:</span>
+          <strong class="text-stone-900 dark:text-white">${counts.social}</strong>
+        </div>
+      `;
+    }
+
+    function applyMapDistrictFilter() {
+      filterState.district.clear();
+      filterState.district.add(selectedMapDistrictName);
+      buildDropdowns();
+      runAnalysis();
+      switchTab('tabLeaderboard');
+    }
+
+    // 5. SHARE ON WHATSAPP
+    function shareOnWhatsApp() {
+      const topCount = document.getElementById('statTopCount')?.innerText || '';
+      const topDetail = document.getElementById('statTopDetail')?.innerText || '';
+      const text = encodeURIComponent(`📢 *KARTET / GPT 2026-27 Roster Analysis Summary*\n\n🏆 *Top Vacancy:* ${topCount}\n📍 *Details:* ${topDetail}\n\nCheck the full interactive roster analyzer with eligibility calculations!`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    // 6. MATRIX VIEW RENDERER (WITH POST & COTA FILTERS)
+    function renderMatrixView() {
+      const selectedPost = document.getElementById('matrixPostFilter')?.value || 'ALL';
+      const selectedQuota = document.getElementById('matrixQuotaFilter')?.value || 'ALL';
+      const selectedSubj = document.getElementById('matrixSubjectFilter')?.value || 'ALL';
+      const districts = new Set();
+      const casteOrder = ['ಸಾಮಾನ್ಯ', '2-ಎ', '2-ಬಿ', '3-ಎ', '3-ಬಿ', 'ಪ್ರ.ಜಾತಿ', 'ಪ್ರ.ಜಾತಿ-ಎ', 'ಪ್ರ.ಜಾತಿ-ಬಿ', 'ಪ್ರ.ಜಾತಿ-ಸಿ', 'ಪ್ರ.ಪಂಗಡ', 'ಪ್ರವರ್ಗ-1'];
+      const matrix = {};
+
+      combinedRosterData.forEach(row => {
+        const p = (row[0] || '').trim();
+        const d = (row[1] || '').trim();
+        const q = (row[2] || '').trim();
+        const s = (row[3] || '').trim();
+        const c = (row[4] || '').trim();
+        const tot = parseVal(row[13]);
+
+        if (!d || c === 'ಒಟ್ಟು') return;
+        if (selectedPost !== 'ALL' && p.toUpperCase() !== selectedPost.toUpperCase()) return;
+        if (selectedQuota !== 'ALL' && q.toUpperCase() !== selectedQuota.toUpperCase()) return;
+        if (selectedSubj !== 'ALL' && s.toUpperCase() !== selectedSubj.toUpperCase()) return;
+
+        districts.add(d);
+        if (!matrix[d]) matrix[d] = {};
+        matrix[d][c] = (matrix[d][c] || 0) + tot;
+      });
+
+      const thead = document.getElementById('matrixThead');
+      const tbody = document.getElementById('matrixTbody');
+      if (!thead || !tbody) return;
+      
+      thead.innerHTML = `
+        <tr>
+          <th class="py-3 px-3 text-left">District (ಜಿಲ್ಲೆ)</th>
+          ${casteOrder.map(c => `<th class="py-3 px-2 text-center font-bold">${c}</th>`).join('')}
+          <th class="py-3 px-3 text-center bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-white">Total (ಒಟ್ಟು)</th>
+        </tr>
+      `;
+
+      const distList = Array.from(districts).sort();
+      if (distList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="p-6 text-center text-stone-500">No records found matching filters</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = distList.map(dist => {
+        let rowSum = 0;
+        const colsHtml = casteOrder.map(c => {
+          const count = matrix[dist]?.[c] || 0;
+          rowSum += count;
+          let cellStyle = count > 5 ? 'font-black text-amber-900 bg-amber-100 dark:bg-amber-950/50 dark:text-amber-300' : (count > 0 ? 'font-bold text-stone-900 dark:text-white' : 'text-stone-400');
+          return `<td class="py-2.5 px-2 ${cellStyle}">${count || '-'}</td>`;
+        }).join('');
+
+        return `
+          <tr class="hover:bg-stone-100/50 dark:hover:bg-stone-800/40">
+            <td class="py-2.5 px-3 text-left font-black text-stone-900 dark:text-white">${dist}</td>
+            ${colsHtml}
+            <td class="py-2.5 px-3 font-black text-stone-900 dark:text-white bg-stone-100 dark:bg-stone-800">${rowSum}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    
+        let lastGeneratedPreferenceList = [];
+
+    function runPreferenceGenerator() {
+      const postName = document.getElementById('prefPostName')?.value || 'ALL';
+      const quotaFilter = document.getElementById('prefQuota')?.value || 'HK';
+      const userSubj = document.getElementById('prefSubject')?.value || 'ENGLISH';
+      const userCaste = document.getElementById('prefCaste')?.value || '2-ಎ';
+
+      const hasOthers = document.getElementById('prefChkOthers')?.checked ?? true;
+      const hasWomen = document.getElementById('prefChkWomen')?.checked || false;
+      const hasRural = document.getElementById('prefChkRural')?.checked || false;
+      const hasKannada = document.getElementById('prefChkKannada')?.checked || false;
+      const hasEx = document.getElementById('prefChkEx')?.checked || false;
+      const hasPDP = document.getElementById('prefChkPDP')?.checked || false;
+      const hasPH = document.getElementById('prefChkPH')?.checked || false;
+      const hasTrans = document.getElementById('prefChkTrans')?.checked || false;
+
+      const casteOrder = ['ಸಾಮಾನ್ಯ', '2-ಎ', '2-ಬಿ', '3-ಎ', '3-ಬಿ', 'ಪ್ರ.ಜಾತಿ', 'ಪ್ರ.ಜಾತಿ-ಎ', 'ಪ್ರ.ಜಾತಿ-ಬಿ', 'ಪ್ರ.ಜಾತಿ-ಸಿ', 'ಪ್ರ.ಪಂಗಡ', 'ಪ್ರವರ್ಗ-1'];
+      const initCasteObj = () => ({
+        others: 0, women: 0, rural: 0, ex: 0, kannada: 0, pdp: 0, ph: 0, trans: 0, total: 0, matchedChances: 0
+      });
+
+      const distMap = {};
+
+      combinedRosterData.forEach(r => {
+        const post = (r[0] || '').trim();
+        const d = (r[1] || '').trim();
+        const q = (r[2] || '').trim();
+        const s = (r[3] || '').trim();
+        const c = (r[4] || '').trim();
+
+        if (!d || c === 'ಒಟ್ಟು') return;
+        if (postName !== 'ALL' && post.toUpperCase() !== postName.toUpperCase()) return;
+        if (quotaFilter !== 'ALL' && q.toUpperCase() !== quotaFilter.toUpperCase()) return;
+        if (userSubj !== 'ALL' && s.toUpperCase() !== userSubj.toUpperCase()) return;
+
+        const normD = normalizeDistrict(d);
+        if (!distMap[normD]) {
+          distMap[normD] = {
+            district: normD,
+            castePosts: 0,
+            gmPosts: 0,
+            totalChances: 0,
+            totalDistrictPosts: 0,
+            byCaste: {},
+            totalOthers: 0,
+            totalWomen: 0,
+            totalRural: 0,
+            totalEx: 0,
+            totalKannada: 0,
+            totalPDP: 0,
+            totalPH: 0,
+            totalTrans: 0
+          };
+          casteOrder.forEach(casteName => {
+            distMap[normD].byCaste[casteName] = initCasteObj();
+          });
+        }
+
+        const valOth = parseVal(r[5]);
+        const valWom = parseVal(r[6]);
+        const valRur = parseVal(r[7]);
+        const valEx = parseVal(r[8]);
+        const valKan = parseVal(r[9]);
+        const valPDP = parseVal(r[10]);
+        const valPH = parseVal(r[11]);
+        const valTra = parseVal(r[12]);
+        const valTot = parseVal(r[13]);
+
+        // Accumulate full district matrix table
+        if (distMap[normD].byCaste[c]) {
+          distMap[normD].byCaste[c].others += valOth;
+          distMap[normD].byCaste[c].women += valWom;
+          distMap[normD].byCaste[c].rural += valRur;
+          distMap[normD].byCaste[c].ex += valEx;
+          distMap[normD].byCaste[c].kannada += valKan;
+          distMap[normD].byCaste[c].pdp += valPDP;
+          distMap[normD].byCaste[c].ph += valPH;
+          distMap[normD].byCaste[c].trans += valTra;
+          distMap[normD].byCaste[c].total += valTot;
+        }
+
+        distMap[normD].totalOthers += valOth;
+        distMap[normD].totalWomen += valWom;
+        distMap[normD].totalRural += valRur;
+        distMap[normD].totalEx += valEx;
+        distMap[normD].totalKannada += valKan;
+        distMap[normD].totalPDP += valPDP;
+        distMap[normD].totalPH += valPH;
+        distMap[normD].totalTrans += valTra;
+        distMap[normD].totalDistrictPosts += valTot;
+
+        // Calculate candidate-specific matching chances
+        const isGM = (c === 'ಸಾಮಾನ್ಯ');
+        const isMyCaste = (userCaste === 'ALL' || c === userCaste);
+
+        if (isGM || isMyCaste) {
+          let rowChances = 0;
+          if (hasOthers) rowChances += valOth;
+          if (hasWomen) rowChances += valWom;
+          if (hasRural) rowChances += valRur;
+          if (hasKannada) rowChances += valKan;
+          if (hasEx) rowChances += valEx;
+          if (hasPDP) rowChances += valPDP;
+          if (hasPH) rowChances += valPH;
+          if (hasTrans) rowChances += valTra;
+
+          if (isGM) distMap[normD].gmPosts += rowChances;
+          if (isMyCaste && !isGM) distMap[normD].castePosts += rowChances;
+          distMap[normD].totalChances += rowChances;
+          if (distMap[normD].byCaste[c]) {
+            distMap[normD].byCaste[c].matchedChances += rowChances;
+          }
+        }
+      });
+
+      const list = Object.values(distMap).sort((a, b) => b.totalChances - a.totalChances || b.totalDistrictPosts - a.totalDistrictPosts);
+      lastGeneratedPreferenceList = list;
+
+      const container = document.getElementById('preferenceResultsContainer');
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center panel-bg rounded-2xl border">
+            <i data-lucide="info" class="w-8 h-8 text-stone-400 mx-auto mb-2"></i>
+            <p class="text-sm text-stone-500 font-medium">No districts found matching this filter combination. Try selecting 'All Posts' or 'Both HK & NHK'.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const top = list[0];
+      const badges = [
+        { label: '🥇 1st Choice (ಮೊದಲ ಆದ್ಯತೆ)', cardClass: 'border-amber-400 bg-amber-50/20 dark:bg-amber-950/20 shadow-md', numBg: 'bg-amber-500 text-white' },
+        { label: '🥈 2nd Choice (ಎರಡನೇ ಆದ್ಯತೆ)', cardClass: 'border-stone-300 dark:border-stone-700', numBg: 'bg-stone-700 text-white' },
+        { label: '🥉 3rd Choice (ಮೂರನೇ ಆದ್ಯತೆ)', cardClass: 'border-stone-300 dark:border-stone-700', numBg: 'bg-yellow-600 text-white' }
+      ];
+
+      container.innerHTML = `
+        <!-- Top Best Choice Alert -->
+        <div class="p-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-2xl shadow">
+              🏆
+            </div>
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-100">Top Recommended 1st Preference</p>
+              <h4 class="text-xl font-black">${top.district} — ${top.totalChances} Matched Opportunities (${top.totalDistrictPosts} Total Posts)</h4>
+            </div>
+          </div>
+          <div class="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-white">
+            ${userCaste === 'ALL' ? 'All Categories' : userCaste} + GM Open Pool
+          </div>
+        </div>
+
+        <!-- Ranked District Cards with Full Roster Matrix Tables -->
+        <div class="space-y-5 pt-2">
+          ${list.map((item, idx) => {
+            const b = idx < 3 ? badges[idx] : { label: `#${idx + 1} Preference (ಆದ್ಯತೆ #${idx + 1})`, cardClass: 'border-stone-200 dark:border-stone-800', numBg: 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300' };
+            
+            let safetyBadge = item.totalChances >= 15 ? '🟢 Highest Probability' : (item.totalChances >= 5 ? '🟡 Good Probability' : '⚪ Lower Seats');
+
+            return `
+              <div class="panel-bg p-5 rounded-2xl border ${b.cardClass} shadow-sm space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-200 dark:border-stone-800">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-xs font-extrabold px-3 py-1 rounded-full ${b.numBg}">
+                      ${b.label}
+                    </span>
+                    <h4 class="text-2xl font-black text-stone-900 dark:text-white">
+                      ${item.district}
+                    </h4>
+                  </div>
+                  
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg card-bg border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300">
+                      ${safetyBadge}
+                    </span>
+                    <div class="text-right">
+                      <span class="text-[10px] uppercase font-bold text-stone-400">Total Matched Chances</span>
+                      <span class="text-2xl font-black text-emerald-700 dark:text-emerald-400 ml-1">${item.totalChances}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Full Vertical & Horizontal Roster Matrix Table for this District -->
+                <div class="overflow-x-auto">
+                  <table class="w-full text-center text-xs text-stone-700 dark:text-stone-300">
+                    <thead class="table-header text-[11px] uppercase font-bold border-b border-stone-300 dark:border-stone-700">
+                      <tr>
+                        <th class="py-2.5 px-2.5 text-left">ಪ್ರವರ್ಗ (Vertical)</th>
+                        <th class="py-2.5 px-1.5 ${hasOthers ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ಇತರೆ</th>
+                        <th class="py-2.5 px-1.5 ${hasWomen ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ಮಹಿಳೆ</th>
+                        <th class="py-2.5 px-1.5 ${hasRural ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ಗ್ರಾಮೀಣ</th>
+                        <th class="py-2.5 px-1.5 ${hasEx ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ಮಾಜಿ ಸೈನಿಕ</th>
+                        <th class="py-2.5 px-1.5 ${hasKannada ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ಕನ್ನಡ ಮಾ.</th>
+                        <th class="py-2.5 px-1.5 ${hasPDP ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">PDP</th>
+                        <th class="py-2.5 px-1.5 ${hasPH ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">PH</th>
+                        <th class="py-2.5 px-1.5 ${hasTrans ? 'bg-amber-100/70 dark:bg-amber-950/60 font-black text-amber-900 dark:text-amber-300' : ''}">ತೃತೀಯ ಲಿಂಗ</th>
+                        <th class="py-2.5 px-2.5 text-center bg-stone-200/70 dark:bg-stone-800 font-black text-stone-900 dark:text-white">ಒಟ್ಟು</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-200 dark:divide-stone-800/70">
+                      ${casteOrder.map(c => {
+                        const row = item.byCaste[c] || initCasteObj();
+                        const isTargetCaste = (userCaste === 'ALL' || c === userCaste || c === 'ಸಾಮಾನ್ಯ');
+                        const rowHighlight = isTargetCaste ? 'bg-amber-50/40 dark:bg-amber-950/20 font-semibold' : '';
+
+                        return `
+                          <tr class="hover:bg-stone-100/60 dark:hover:bg-stone-800/50 ${rowHighlight}">
+                            <td class="py-2 px-2.5 text-left font-bold text-stone-900 dark:text-amber-300 kannada-font flex items-center gap-1">
+                              ${isTargetCaste ? '⭐' : ''} ${c}
+                            </td>
+                            <td class="py-2 px-1.5 ${hasOthers && row.others > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.others || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasWomen && row.women > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.women || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasRural && row.rural > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.rural || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasEx && row.ex > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.ex || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasKannada && row.kannada > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.kannada || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasPDP && row.pdp > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.pdp || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasPH && row.ph > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.ph || '-'}</td>
+                            <td class="py-2 px-1.5 ${hasTrans && row.trans > 0 ? 'font-bold text-amber-900 dark:text-amber-300 bg-amber-50/50' : 'text-stone-500'}">${row.trans || '-'}</td>
+                            <td class="py-2 px-2.5 text-center font-black text-amber-950 dark:text-amber-300 bg-stone-100 dark:bg-stone-800">${row.total}</td>
+                          </tr>
+                        `;
+                      }).join('')}
+                    </tbody>
+                    <tfoot class="border-t-2 border-stone-300 dark:border-stone-700 font-black bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white text-xs">
+                      <tr>
+                        <td class="py-2.5 px-2.5 text-left">ಒಟ್ಟು (Total)</td>
+                        <td class="py-2.5 px-1.5">${item.totalOthers}</td>
+                        <td class="py-2.5 px-1.5 text-amber-700 dark:text-amber-400">${item.totalWomen}</td>
+                        <td class="py-2.5 px-1.5 text-emerald-700 dark:text-emerald-400">${item.totalRural}</td>
+                        <td class="py-2.5 px-1.5">${item.totalEx}</td>
+                        <td class="py-2.5 px-1.5">${item.totalKannada}</td>
+                        <td class="py-2.5 px-1.5">${item.totalPDP}</td>
+                        <td class="py-2.5 px-1.5">${item.totalPH}</td>
+                        <td class="py-2.5 px-1.5">${item.totalTrans}</td>
+                        <td class="py-2.5 px-2.5 bg-amber-200 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 text-sm">${item.totalDistrictPosts}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function copyPreferenceList() {
+      if (!lastGeneratedPreferenceList || lastGeneratedPreferenceList.length === 0) {
+        alert("ದಯವಿಟ್ಟು ಮೊದಲು ಆದ್ಯತಾ ಪಟ್ಟಿಯನ್ನು ಜನರೇಟ್ ಮಾಡಿ.");
+        return;
+      }
+
+      const postName = document.getElementById('prefPostName')?.value || 'ALL';
+      const userSubj = document.getElementById('prefSubject')?.value || 'ENGLISH';
+      const userCaste = document.getElementById('prefCaste')?.value || '2-ಎ';
+
+      let text = `🎯 KARTET / GPT 2026-27 District Preference Order\n`;
+      text += `📌 Subject: ${userSubj} | Caste: ${userCaste} | Post: ${postName}\n\n`;
+      
+      lastGeneratedPreferenceList.forEach((item, idx) => {
+        text += `${idx + 1}. ${item.district} -> ${item.totalChances} Available Seats (${userCaste}: ${item.castePosts} + GM: ${item.gmPosts})\n`;
+      });
+
+      text += `\nGenerated via Roster Vacancy Analyzer (Dev: MRERILIN PRABHU - 7848036744)`;
+
+      navigator.clipboard.writeText(text.replace(/\\n/g, '\n')).then(() => {
+        alert("✅ ಜಿಲ್ಲಾ ಆದ್ಯತಾ ಪಟ್ಟಿಯನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!");
+      }).catch(() => {
+        alert("ಕಾಪಿ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮ್ಯಾನುಯಲ್ ಆಗಿ ಕಾಪಿ ಮಾಡಿ.");
+      });
+    }
+
+    function switchTab(tabId) {
+
+      activeTab = tabId;
+      ['tabLeaderboard', 'tabComparison', 'tabMapView', 'tabMatrixView', 'tabDivisionSummary', 'tabFullRoster'].forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.add('hidden');
+      });
+      const activeEl = document.getElementById(tabId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      const tabs = [
+        { id: 'tabLeaderboard', btn: 'btnTabLeaderboard' },
+        { id: 'tabComparison', btn: 'btnTabComparison' },
+        { id: 'tabMapView', btn: 'btnTabMapView' },
+        { id: 'tabMatrixView', btn: 'btnTabMatrixView' },
+        { id: 'tabDivisionSummary', btn: 'btnTabDivisionSummary' },
+        { id: 'tabFullRoster', btn: 'btnTabFullRoster' }
+      ];
+
+      tabs.forEach(t => {
+        const btn = document.getElementById(t.btn);
+        if (btn) {
+          if (t.id === tabId) {
+            btn.className = "px-3.5 py-2.5 text-xs md:text-sm font-bold border-b-2 border-amber-600 text-amber-800 dark:text-amber-400 flex items-center gap-1.5";
+          } else {
+            btn.className = "px-3.5 py-2.5 text-xs md:text-sm font-medium border-b-2 border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white flex items-center gap-1.5";
+          }
+        }
+      });
+
+      if (tabId === 'tabDivisionSummary' && !chartInstance) initChart();
+      if (tabId === 'tabMatrixView') renderMatrixView();
+      if (tabId === 'tabComparison') runDistrictComparison();
+      if (tabId === 'tabPreferenceOrder') runPreferenceGenerator();
+      if (tabId === 'tabMapView') selectMapDistrict('RAICHUR');
+    }
+
+    function renderDivisionSummary() {
+      const data = sheet3Data.length ? sheet3Data : fallbackSheet3;
+      if (!data || data.length < 2) return;
+
+      const thead = document.getElementById('sheet3Thead');
+      const tbody = document.getElementById('sheet3Tbody');
+      
+      const headerRow = data[0];
+      thead.innerHTML = `<tr>${headerRow.map((col, idx) => `<th class="py-3 px-3.5 ${idx===1?'text-left':'text-center'}">${col}</th>`).join('')}</tr>`;
+
+      tbody.innerHTML = data.slice(1).map((row, idx) => {
+        let isTotalRow = idx === data.length - 2 || row[1]?.includes('ಒಟ್ಟು');
+        let trClass = isTotalRow ? 'bg-amber-100/60 dark:bg-amber-950/40 font-bold text-stone-900 dark:text-white' : 'hover:bg-stone-100/60 dark:hover:bg-stone-800/40 text-stone-800 dark:text-stone-300';
+        return `
+          <tr class="${trClass}">
+            ${row.map((cell, cIdx) => `<td class="py-2.5 px-3.5 ${cIdx<=1?'text-left font-semibold':'text-center'}">${cell || '-'}</td>`).join('')}
+          </tr>
+        `;
+      }).join('');
+
+      const subjectList = document.getElementById('subjectSummaryList');
+      if (subjectList && data.length > 2) {
+        const lastRow = data[data.length - 1];
+        const subjects = [
+          { name: 'ಕನ್ನಡ ಭಾಷೆ (Kannada)', count: lastRow[2] || '445', color: 'text-amber-800 dark:text-amber-400' },
+          { name: 'ಆಂಗ್ಲ ಭಾಷೆ (English)', count: lastRow[3] || '448', color: 'text-blue-800 dark:text-blue-400' },
+          { name: 'ಕಲಾ ಕನ್ನಡ (Arts Kannada)', count: lastRow[4] || '177', color: 'text-indigo-800 dark:text-indigo-400' },
+          { name: 'ಕಲಾ ಆಂಗ್ಲ (Arts English)', count: lastRow[5] || '271', color: 'text-purple-800 dark:text-purple-400' },
+          { name: 'ಜೀವ ವಿಜ್ಞಾನ ಕನ್ನಡ (Bio Kannada)', count: lastRow[6] || '204', color: 'text-emerald-800 dark:text-emerald-400' },
+          { name: 'ಜೀವ ವಿಜ್ಞಾನ ಆಂಗ್ಲ (Bio English)', count: lastRow[7] || '244', color: 'text-teal-800 dark:text-teal-400' },
+          { name: 'ದೈಹಿಕ ಶಿಕ್ಷಣ (Physical Ed)', count: lastRow[8] || '262', color: 'text-rose-800 dark:text-rose-400' },
+        ];
+
+        subjectList.innerHTML = subjects.map(s => `
+          <div class="flex items-center justify-between p-2 rounded-lg card-bg border border-stone-200 dark:border-stone-800">
+            <span class="text-stone-700 dark:text-stone-300 font-medium">${s.name}</span>
+            <span class="font-bold ${s.color}">${s.count}</span>
+          </div>
+        `).join('') + `
+          <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/50 mt-3">
+            <span class="font-bold text-amber-900 dark:text-white">ಒಟ್ಟು ನೇಮಕಾತಿ ಹುದ್ದೆಗಳು</span>
+            <span class="font-extrabold text-amber-800 dark:text-amber-400 text-sm">${lastRow[9] || '2051'}</span>
+          </div>
+        `;
+      }
+    }
+
+    function initChart() {
+      const data = sheet3Data.length ? sheet3Data : fallbackSheet3;
+      if (!data || data.length < 2) return;
+
+      const labels = [];
+      const totals = [];
+
+      data.slice(1).forEach(r => {
+        let dist = r[1];
+        let tot = parseVal(r[r.length - 1]);
+        if (dist && !dist.includes('ಒಟ್ಟು') && tot > 0) {
+          labels.push(dist);
+          totals.push(tot);
+        }
+      });
+
+      const ctx = document.getElementById('divisionChart')?.getContext('2d');
+      if (!ctx) return;
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'ಒಟ್ಟು ಹುದ್ದೆಗಳು (Total Vacancies)',
+            data: totals,
+            backgroundColor: [
+              'rgba(217, 119, 6, 0.85)',
+              'rgba(16, 185, 129, 0.85)',
+              'rgba(59, 130, 246, 0.85)',
+              'rgba(139, 92, 246, 0.85)',
+              'rgba(236, 72, 153, 0.85)',
+              'rgba(20, 184, 166, 0.85)',
+              'rgba(249, 115, 22, 0.85)'
+            ],
+            borderColor: 'rgba(0, 0, 0, 0.05)',
+            borderWidth: 1,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#292524',
+              titleColor: '#fff',
+              bodyColor: '#e7e5e4',
+              padding: 10,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            y: {
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              ticks: { color: '#78716c' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#292524', font: { family: 'Tiro Kannada, Plus Jakarta Sans', weight: 'bold' } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderFullRoster() {
+      const thead = document.getElementById('fullRosterThead');
+      const tbody = document.getElementById('fullRosterTbody');
+      if (!thead || !tbody) return;
+
+      const headers = ["POST NAME","DISTRICT","COTA","SUBJECT","ಪ್ರವರ್ಗವಾರು ಮೀಸಲಾತಿ","ಇತರೆ","ಮಹಿಳೆ","ಗ್ರಾಮೀಣ","ಮಾಜಿ ಸೈನಿಕ","ಕನ್ನಡ ಮಾಧ್ಯಮ","PDP","ಅಂಗವಿಕಲ","ತೃತೀಯ ಲಿಂಗ","ಒಟ್ಟು"];
+      thead.innerHTML = `<tr>${headers.map(h => `<th class="py-2.5 px-3 text-xs">${h}</th>`).join('')}</tr>`;
+
+      tbody.innerHTML = combinedRosterData.map(r => `
+        <tr class="hover:bg-stone-100/50 dark:hover:bg-stone-800/40">
+          ${r.map((c, i) => `<td class="py-2 px-3 text-xs ${i===4?'font-bold text-amber-800 dark:text-amber-300':''}">${c || '-'}</td>`).join('')}
+        </tr>
+      `).join('');
+    }
+
+    function exportTableToCSV(filename) {
+      let csv = [];
+      const rows = document.querySelectorAll("#fullRosterTable tr");
+      for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
+        for (let j = 0; j < cols.length; j++) {
+          row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+        }
+        csv.push(row.join(","));
+      }
+      let csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+      let downloadLink = document.createElement("a");
+      downloadLink.download = filename;
+      downloadLink.href = window.URL.createObjectURL(csvFile);
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+    }
+
+    
+    function openDevModal() {
+      const modal = document.getElementById('devPromoModal');
+      const widget = document.getElementById('devFloatingWidget');
+      if (modal) modal.classList.remove('hidden');
+      if (widget) widget.classList.add('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDevModal() {
+      const modal = document.getElementById('devPromoModal');
+      const widget = document.getElementById('devFloatingWidget');
+      if (modal) modal.classList.add('hidden');
+      if (widget) widget.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    
+    function initVisitorCounter() {
+      const BASE_OFFSET = 1840;
+      let localVisits = parseInt(localStorage.getItem('kartet_site_visits') || '0', 10);
+      localVisits += 1;
+      localStorage.setItem('kartet_site_visits', localVisits);
+
+      let totalCount = BASE_OFFSET + localVisits;
+      updateVisitorDisplay(totalCount);
+
+      // Attempt live cloud counter increment
+      try {
+        fetch('https://api.counterapi.dev/v1/kartet-gpt-roster-2026-mrerilin/visits/up')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.count) {
+              const liveCount = BASE_OFFSET + data.count;
+              updateVisitorDisplay(liveCount);
+            }
+          })
+          .catch(e => {
+            // Keep local calculated count if network blocked
+          });
+      } catch (err) {}
+    }
+
+    function updateVisitorDisplay(count) {
+      const formatted = count.toLocaleString();
+      const el1 = document.getElementById('visitorCount');
+      const el2 = document.getElementById('footerVisitorCount');
+      if (el1) el1.innerText = formatted;
+      if (el2) el2.innerText = formatted;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initVisitorCounter();
+      lucide.createIcons();
+      buildDropdowns();
+      runAnalysis();
+      renderDivisionSummary();
+      renderFullRoster();
+      renderMatrixView();
+      populateComparisonSelects();
+      runDistrictComparison();
+      runCutoffEstimator();
+      runEligibilityCalc();
+      fetchSheetData();
+    });
+  </script>
+
+  <!-- FLOATING MINIMIZED BOTTOM-LEFT WIDGET -->
+  <div id="devFloatingWidget" onclick="openDevModal()" class="fixed bottom-5 left-5 z-[9999] flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-stone-900/90 dark:bg-stone-800/95 text-white backdrop-blur-md border border-amber-500/40 shadow-2xl shadow-amber-500/20 hover:scale-105 transition-all duration-200 cursor-pointer group select-none">
+    <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center text-stone-950 font-black shadow-md shadow-amber-500/30 group-hover:rotate-12 transition">
+      <i data-lucide="sparkles" class="w-4 h-4 text-stone-950"></i>
+    </div>
+    <div class="text-left">
+      <div class="flex items-center gap-1.5">
+        <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-400">Build Your Own Website</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+      </div>
+      <p class="text-xs font-bold text-stone-100 flex items-center gap-1">
+        <span>MRERILIN PRABHU</span>
+        <span class="text-stone-400 text-[10px]">• 7848036744</span>
+      </p>
+    </div>
+    <div class="ml-1 pl-2 border-l border-stone-700 text-stone-400 group-hover:text-white">
+      <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+    </div>
+  </div>
+
+  <!-- BEAUTIFUL STARTUP / ON-LOAD ADVERTISEMENT MODAL -->
+  <div id="devPromoModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-amber-400/50 bg-gradient-to-b from-stone-900 via-stone-900 to-stone-950 text-white p-6 sm:p-8 transform transition-all duration-300 scale-100 animate-in fade-in zoom-in-95">
+      
+      <!-- Top Decorative Glow -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-amber-500/20 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-yellow-500/20 blur-3xl pointer-events-none"></div>
+
+      <!-- Close / Minimize Button -->
+      <div class="flex items-center justify-between pb-3 border-b border-stone-800">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-[11px] font-extrabold text-amber-400 uppercase tracking-wider">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Official Developer Ad</span>
+        </div>
+        <button onclick="closeDevModal()" class="flex items-center gap-1 text-xs text-stone-400 hover:text-white px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 transition cursor-pointer" title="Minimize to Corner">
+          <i data-lucide="minimize-2" class="w-3.5 h-3.5"></i>
+          <span>Minimize</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="mt-4 space-y-3.5 text-center sm:text-left">
+        <h3 class="text-xl sm:text-2xl font-black tracking-tight text-white kannada-font">
+          ನಿಮ್ಮದೇ ಸ್ವಂತ ವೆಬ್‌ಸೈಟ್ ಅಥವಾ ಆ್ಯಪ್ ನಿರ್ಮಿಸಲು ಸಂಪರ್ಕಿಸಿ! 🚀
+        </h3>
+        
+        <p class="text-xs sm:text-sm text-stone-300 leading-relaxed font-medium">
+          Want a high-speed, interactive, custom-built <strong class="text-amber-400">Website, Exam Analysis Dashboard, Coaching Center Portal, or Web App</strong> like this one?
+        </p>
+
+        <!-- Developer Info Card -->
+        <div class="p-4 rounded-2xl bg-stone-800/80 border border-stone-700/80 shadow-inner flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 flex items-center justify-center font-black text-xl text-white shadow-md shadow-amber-500/20">
+              <i data-lucide="code-2" class="w-6 h-6"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-[10px] uppercase font-extrabold text-amber-400">Lead Developer</p>
+              <h4 class="text-base font-black text-white">MRERILIN PRABHU</h4>
+              <p class="text-xs text-stone-400 font-semibold">Ph: <span class="text-white font-bold">7848036744</span></p>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            🟢 Available for Projects
+          </span>
+        </div>
+
+        <!-- Features list -->
+        <div class="grid grid-cols-2 gap-2 text-left text-xs font-semibold text-stone-300 pt-1">
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> 100% Mobile Ready</div>
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> Super Fast Speed</div>
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> Live Google Sheets Sync</div>
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> Affordable Pricing</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <a href="tel:7848036744" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white hover:bg-stone-100 text-stone-900 font-black text-xs transition shadow-lg shadow-white/10">
+            <i data-lucide="phone-call" class="w-4 h-4 text-amber-600"></i>
+            <span>Call: 7848036744</span>
+          </a>
+
+          <a href="https://wa.me/917848036744?text=Hello%20Mrerilin%20Prabhu,%20I%20saw%20the%20Roster%20Portal%20and%20I%20want%20to%20build%20my%20own%20website%20/%20app." target="_blank" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs transition shadow-lg shadow-emerald-900/30">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>WhatsApp: 7848036744</span>
+          </a>
+        </div>
+
+        <button onclick="closeDevModal()" class="w-full text-center text-[11px] text-stone-400 hover:text-stone-200 pt-1 font-medium underline cursor-pointer">
+          Continue to Roster Portal & Minimize to Corner
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಅಡ್ಮಿನ್ ಲೈವ್ ಬಳಕೆದಾರರ ಮಾನಿಟರ್ (Admin Live User Portal) - BLO Smart Portal V5.0</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="portal-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-user-shield"></i></div>
+        <div class="sidebar-title">
+          <h2>ಅಡ್ಮಿನ್ ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="admin.html" class="active"><i class="fa-solid fa-users-viewfinder"></i> <span>ಸಕ್ರಿಯ ಬಳಕೆದಾರರು (Admin)</span></a>
+        <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (Analytics)</span></a>
+        <a href="voterlist.html"><i class="fa-solid fa-users-gear"></i> <span>ಮತದಾರರ ಪಟ್ಟಿ (Voter List)</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html"><i class="fa-solid fa-file-contract"></i> <span>ವರದಿಗಳ ಹಬ್ (Report ASDD)</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Admin Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Area -->
+    <div class="portal-body">
+
+      <!-- Header Bar -->
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-success" style="font-size:0.85rem;"><i class="fa-solid fa-satellite-dish"></i> 🟢 LIVE CLOUD MONITOR</span>
+          <h1>ಅಡ್ಮಿನ್ ಲೈವ್ ಬಳಕೆದಾರರ ಮಾನಿಟರಿಂಗ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (Admin Live User Portal)</h1>
+        </div>
+        <div class="header-controls">
+          <button class="btn btn-sm btn-warning" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px;" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile & Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್
+          </button>
+          <span class="badge badge-outline" id="firebaseStatusBadge" style="cursor:pointer;" onclick="openFirebaseSetupModal()">
+            <i class="fa-solid fa-database"></i> Firebase Realtime Cloud
+          </span>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="portal-content">
+
+        <!-- Hero Section -->
+        <div class="page-hero" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#fff; border-left:5px solid #10b981;">
+          <div>
+            <h2><i class="fa-solid fa-users-viewfinder" style="color:#10b981;"></i> ನೋಂದಾಯಿತ BLO ಅಧಿಕಾರಿಗಳು ಹಾಗೂ ಲೈವ್ ಸಕ್ರಿಯ ಬಳಕೆದಾರರು</h2>
+            <p>ನಿಮ್ಮ Firebase Cloud Database ನಲ್ಲಿ ನೋಂದಾಯಿಸಿಕೊಂಡಿರುವ ಎಲ್ಲಾ BLO ಅಧಿಕಾರಿಗಳು ಹಾಗೂ ಸದ್ಯ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿರುವ ಬಳಕೆದಾರರ ರಿಯಲ್-ಟೈಮ್ ಪಟ್ಟಿ:</p>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="loadAdminUserData()"><i class="fa-solid fa-arrows-rotate"></i> ರಿಫ್ರೆಶ್ ಮಾಡಿ (Refresh)</button>
+          </div>
+        </div>
+
+        <!-- Live Stats Counters -->
+        <section class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom:1.5rem;">
+          <div class="stat-card total">
+            <div class="stat-icon" style="background:rgba(2, 132, 199, 0.15); color:#0284c7;"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಒಟ್ಟು ನೋಂದಾಯಿತ BLOಗಳು</span>
+              <h2 id="statRegUsers">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card verified" style="border-left:4px solid #10b981;">
+            <div class="stat-icon" style="background:rgba(16, 185, 129, 0.15); color:#10b981;"><i class="fa-solid fa-circle"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಸದ್ಯ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದಾರೆ (Online Now)</span>
+              <h2 id="statOnlineUsers" style="color:#10b981;">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-left:4px solid #64748b;">
+            <div class="stat-icon" style="background:rgba(100, 116, 139, 0.15); color:#64748b;"><i class="fa-solid fa-clock"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">ಆಫ್‌ಲೈನ್ / ಇತ್ತೀಚೆಗೆ ಬಳಸಿದವರು</span>
+              <h2 id="statOfflineUsers" style="color:#64748b;">0</h2>
+            </div>
+          </div>
+        </section>
+
+        <!-- Admin Table View Container -->
+        <div class="voters-table-wrap" style="background:#fff; border-radius:16px; box-shadow:var(--shadow-md);">
+          <div style="padding:1rem 1.25rem; background:#0f172a; color:#fff; border-top-left-radius:16px; border-top-right-radius:16px; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="font-size:1rem; font-weight:800; margin:0; color:#38bdf8;">
+              <i class="fa-solid fa-list-check"></i> ನೋಂದಾಯಿತ BLO ಅಧಿಕಾರಿಗಳ ರಿಯಲ್-ಟೈಮ್ ಪಟ್ಟಿ (Registered & Live Online Users)
+            </h3>
+            <span class="badge badge-success" id="adminUsersCountBadge">0 Users Found</span>
+          </div>
+
+          <table class="voters-table">
+            <thead>
+              <tr style="background:#1e293b; color:#cbd5e1;">
+                <th style="width:50px; text-align:center;">No.</th>
+                <th>ಸ್ಥಿತಿ (Live Status)</th>
+                <th>BLO ಅಧಿಕಾರಿಯ ಹೆಸರು</th>
+                <th>ಮತಗಟ್ಟೆ ಭಾಗ ನಂ (Part)</th>
+                <th>ಮತಗಟ್ಟೆ ಶಾಲೆಯ ಹೆಸರು (Polling Station)</th>
+                <th>ಮೊಬೈಲ್ ನಂಬರ್</th>
+                <th>ಕೊನೆಯದಾಗಿ ಸಕ್ರಿಯ (Last Seen / Logged In)</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                  <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; margin-bottom:0.5rem; display:block;"></i>
+                  Firebase Cloud ನಿಂದ ಬಳಕೆದಾರರ ವಿವರಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1. Immediately register active user in Firebase Cloud
+      const session = JSON.parse(sessionStorage.getItem("blo_session_v5") || localStorage.getItem("blo_profile_v5") || "{}");
+      const activeUser = {
+        bloName: session.bloName || currentBloName || "BLO ಅಧಿಕಾರಿ",
+        partNo: session.partNo || currentPartNo || "87",
+        stationName: session.stationName || "ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ",
+        mobile: session.mobile || "9876543210",
+        state: session.state || "ಕರ್ನಾಟಕ (S10)",
+        district: session.district || "ರಾಯಚೂರು (10)",
+        taluka: session.taluka || "53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ",
+        isOnline: true,
+        lastSeen: new Date().toISOString()
+      };
+
+      if (typeof saveUserProfileToFirebase === 'function') {
+        await saveUserProfileToFirebase(activeUser);
+      }
+      if (typeof trackLiveUserPresence === 'function') {
+        await trackLiveUserPresence(activeUser);
+      }
+
+      // Load Users
+      setTimeout(loadAdminUserData, 800);
+    });
+
+    function loadAdminUserData() {
+      const session = JSON.parse(sessionStorage.getItem("blo_session_v5") || localStorage.getItem("blo_profile_v5") || "{}");
+      const activeUser = {
+        bloName: session.bloName || currentBloName || "BLO ಅಧಿಕಾರಿ",
+        partNo: session.partNo || currentPartNo || "87",
+        stationName: session.stationName || "ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ",
+        mobile: session.mobile || "9876543210",
+        isOnline: true,
+        lastSeen: new Date().toISOString()
+      };
+
+      if (typeof subscribeToAllRegisteredUsers === 'function') {
+        subscribeToAllRegisteredUsers((userList) => {
+          // If list is empty, include current logged-in user!
+          if (!userList || userList.length === 0) {
+            userList = [activeUser];
+          } else {
+            // Check if active user is in the list
+            const found = userList.find(u => u.partNo === activeUser.partNo || u.bloName === activeUser.bloName);
+            if (!found) {
+              userList.unshift(activeUser);
+            }
+          }
+          renderAdminUsersTable(userList);
+        });
+      } else {
+        renderAdminUsersTable([activeUser]);
+      }
+    }
+
+    function renderAdminUsersTable(userList) {
+      const tbody = document.getElementById("adminUsersTableBody");
+      const statReg = document.getElementById("statRegUsers");
+      const statOnline = document.getElementById("statOnlineUsers");
+      const statOffline = document.getElementById("statOfflineUsers");
+      const countBadge = document.getElementById("adminUsersCountBadge");
+
+      if (!userList || userList.length === 0) {
+        const session = JSON.parse(sessionStorage.getItem("blo_session_v5") || localStorage.getItem("blo_profile_v5") || "{}");
+        userList = [{
+          bloName: session.bloName || currentBloName || "BLO ಅಧಿಕಾರಿ",
+          partNo: session.partNo || currentPartNo || "87",
+          stationName: session.stationName || "ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ",
+          mobile: session.mobile || "9876543210",
+          isOnline: true,
+          lastSeen: new Date().toISOString()
+        }];
+      }
+
+      const onlineCount = userList.filter(u => u.isOnline).length;
+      const offlineCount = userList.length - onlineCount;
+
+      if (statReg) statReg.textContent = userList.length;
+      if (statOnline) statOnline.textContent = onlineCount;
+      if (statOffline) statOffline.textContent = offlineCount;
+      if (countBadge) countBadge.textContent = `${userList.length} BLO Users Registered`;
+
+      tbody.innerHTML = userList.map((u, idx) => `
+        <tr>
+          <td style="text-align:center; font-weight:800; color:var(--text-muted);">${idx + 1}</td>
+          <td>
+            ${u.isOnline ? 
+              `<span class="badge badge-success" style="font-size:0.75rem; background:#10b981; color:#fff;"><i class="fa-solid fa-circle" style="font-size:0.6rem;"></i> 🟢 ಆನ್‌ಲೈನ್ (Online Now)</span>` : 
+              `<span class="badge badge-outline" style="font-size:0.75rem; color:#64748b;"><i class="fa-solid fa-clock"></i> 🕒 ಆಫ್‌ಲೈನ್ (Offline)</span>`
+            }
+          </td>
+          <td style="font-weight:800; color:#0f172a;">${u.bloName || 'BLO ಅಧಿಕಾರಿ'}</td>
+          <td><span class="badge badge-primary" style="font-weight:800;">ಭಾಗ ${u.partNo || '87'}</span></td>
+          <td style="font-weight:600; font-size:0.85rem;">${u.stationName || 'ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ'}</td>
+          <td style="font-weight:700; color:#0284c7;">${u.mobile || '-'}</td>
+          <td style="font-size:0.8rem; color:#64748b;">${u.lastSeen ? new Date(u.lastSeen).toLocaleString() : 'N/A'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderDefaultAdminDemo() {
+      const demoUsers = [
+        { bloName: currentBloName || "ಮರ್ಲಿನ್ ಪ್ರಭು", partNo: currentPartNo || "87", stationName: "ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ", mobile: "9876543210", isOnline: true, lastSeen: new Date().toISOString() }
+      ];
+      renderAdminUsersTable(demoUsers);
+    }
+  </script>
+</body>
+</html>

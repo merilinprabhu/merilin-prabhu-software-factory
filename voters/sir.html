@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIR 2002 Master Roll Workspace | BLO ಪೋರ್ಟಲ್ 5.0</title>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ══════════════════════════════════════════════════════════════════════════
+       COMPACT EXECUTIVE SPACE-MANAGEMENT & HIGH-DENSITY PORTAL SYSTEM
+       ══════════════════════════════════════════════════════════════════════════ */
+    :root {
+      --header-h: 54px;
+      --stats-h: 50px;
+      --toolbar-h: 46px;
+    }
+
+    body {
+      background-color: #f8fafc;
+      overflow-y: hidden; /* App view layout */
+    }
+
+    /* Executive Top Bar (54px) */
+    .executive-header {
+      height: var(--header-h);
+      background: linear-gradient(90deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+      color: #fff;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2.5px solid #f59e0b;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header-brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    }
+    .header-title-text h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #f8fafc;
+      margin: 0;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-title-text p {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Compact Upload & Control Ribbon (38px) */
+    .upload-action-ribbon {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.4rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    /* Compact Stats Ribbon (50px) */
+    .compact-stats-ribbon {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      padding: 0.5rem 1.25rem;
+      background: #f1f5f9;
+    }
+
+    .stat-pill-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.4rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+    }
+    .stat-pill-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(15,23,42,0.08);
+    }
+    .stat-pill-card.active {
+      border-color: #f59e0b;
+      background: #fffbeb;
+      box-shadow: 0 0 0 2px rgba(245,158,11,0.25);
+    }
+
+    .stat-pill-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .stat-pill-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .stat-pill-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      line-height: 1.1;
+    }
+    .stat-pill-sub {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .stat-pill-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    /* High-Density Toolbar (46px) */
+    .high-density-toolbar {
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.4rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Quick Filter Chips */
+    .quick-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .chip-mini {
+      padding: 0.25rem 0.65rem;
+      border-radius: 16px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .chip-mini:hover {
+      background: #eff6ff;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+    .chip-mini.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Collapsible Terminal Log Drawer */
+    .terminal-drawer {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.8rem;
+      padding: 0.6rem 1rem;
+      border-bottom: 2px solid #38bdf8;
+      max-height: 130px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    /* Viewport Maximized Table Container */
+    .main-table-viewport {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+      background: #ffffff;
+      height: calc(100vh - 245px); /* Maximize space for data */
+    }
+
+    .voters-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .voters-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0f172a !important;
+      color: #f8fafc !important;
+      font-size: 0.78rem;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 0.65rem 0.6rem;
+      border-bottom: 2px solid #334155;
+      white-space: nowrap;
+    }
+    .voters-table tbody td {
+      padding: 0.55rem 0.6rem;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+    .voters-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* Compact Bottom Pagination Footer */
+    .table-pagination-footer {
+      height: 38px;
+      padding: 0 1.25rem;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .btn-xs {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 5px;
+      font-weight: 700;
+    }
+
+    /* Print Optimization */
+    @media print {
+      .portal-sidebar, .executive-header, .upload-action-ribbon, .compact-stats-ribbon, .high-density-toolbar, .table-pagination-footer {
+        display: none !important;
+      }
+      .portal-body { margin: 0 !important; padding: 0 !important; }
+      .main-table-viewport { height: auto !important; overflow: visible !important; }
+      .voters-table thead th { background: #1e293b !important; color: #fff !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-layout" style="height:100vh; display:flex;">
+
+    <!-- Sidebar Navigation (Compact 250px) -->
+    <aside class="portal-sidebar" style="width:250px; flex-shrink:0;">
+      <div class="sidebar-header" style="padding:1rem;">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್ 5.0</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav" style="padding:0.75rem 0.5rem; gap:0.25rem;">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (ಮ್ಯಾಪಿಂಗ್)</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html"><i class="fa-solid fa-chart-pie"></i> <span>ವರದಿಗಳ ಹಬ್ (All Reports)</span></a>
+        <a href="asd.html"><i class="fa-solid fa-user-slash"></i> <span>ASDD ಪೋರ್ಟಲ್</span></a>
+        <a href="sir.html" class="active"><i class="fa-solid fa-sitemap"></i> <span>2002 Master Roll</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer" style="padding:0.75rem; font-size:0.7rem;">BLO Official Portal V5.0</div>
+    </aside>
+
+    <!-- Main Workspace (Flexible Column Layout) -->
+    <div class="portal-body" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+
+      <!-- Executive Top Header (54px) -->
+      <header class="executive-header">
+        <div class="header-brand">
+          <div class="header-brand-logo"><i class="fa-solid fa-sitemap"></i></div>
+          <div class="header-title-text">
+            <h1>
+              SIR 2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿ 
+              <span class="badge" style="background:#f59e0b; color:#0f172a; font-weight:800; font-size:0.7rem; padding:0.15rem 0.45rem; border-radius:4px;">REFERENCE ROLL</span>
+            </h1>
+            <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ &bull; 2002 Master Electoral Reference Database</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-sm btn-outline" style="color:#38bdf8; border-color:#38bdf8; padding:0.3rem 0.6rem; font-size:0.78rem;" onclick="focusMainSearch()" title="Press Ctrl + K to search">
+            <i class="fa-solid fa-magnifying-glass"></i> <kbd style="background:#0f172a; color:#fff; padding:0.1rem 0.3rem; border-radius:3px; font-size:0.65rem;">Ctrl+K</kbd>
+          </button>
+          
+          <a href="admin.html" class="btn btn-sm" style="background:#10b981; color:#fff; font-weight:800; text-decoration:none; padding:0.3rem 0.65rem; font-size:0.78rem;">
+            <i class="fa-solid fa-user-shield"></i> ಅಡ್ಮಿನ್
+          </a>
+
+          <button class="btn btn-sm" style="background:#fbbf24; color:#0f172a; font-weight:800; padding:0.3rem 0.65rem; font-size:0.78rem;" onclick="openBloProfileSettingsModal()">
+            <i class="fa-solid fa-gear"></i> ಸೆಟ್ಟಿಂಗ್ಸ್
+          </button>
+
+          <button class="btn btn-success btn-sm" style="padding:0.3rem 0.65rem; font-size:0.78rem;" onclick="export2002Csv()"><i class="fa-solid fa-file-excel"></i> CSV</button>
+          <button class="btn btn-primary btn-sm" style="padding:0.3rem 0.65rem; font-size:0.78rem;" onclick="window.print()"><i class="fa-solid fa-print"></i> ಪ್ರಿಂಟ್</button>
+          
+          <span class="badge" id="count2002RollBadge" style="background:#10b981; color:#fff; font-weight:800; padding:0.35rem 0.6rem; font-size:0.78rem;">
+            0 Loaded
+          </span>
+
+          <button class="btn btn-outline btn-sm" style="color:#ef4444; border-color:#ef4444; padding:0.3rem 0.5rem;" onclick="handleLogout()" title="Logout">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Upload Action & Live Status Bar (38px) -->
+      <div class="upload-action-ribbon">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <input type="file" id="filePicker2002" accept=".xlsx,.xlsm,.xls,.csv,.pdf" style="display:none;">
+          
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('filePicker2002').click();" style="font-weight:700; padding:0.3rem 0.85rem; font-size:0.8rem;">
+            <i class="fa-solid fa-folder-open"></i> 2002 Excel/PDF ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ
+          </button>
+
+          <button class="btn btn-danger btn-xs" onclick="clear2002RollData()" title="Clear Master Roll">
+            <i class="fa-solid fa-trash"></i> 2002 ತೆರವುಗೊಳಿಸಿ
+          </button>
+
+          <span style="font-size:0.78rem; color:#64748b; font-weight:600;" id="uploadInfoText">
+            <i class="fa-solid fa-circle-info" style="color:#0284c7;"></i> Excel (.xlsm, .xlsx) ಅಥವಾ ECI PDF ಬೆಂಬಲಿತವಾಗಿದೆ.
+          </span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <button class="btn btn-xs btn-outline" style="color:#334155;" onclick="toggleTerminalLog()" title="Toggle Output Terminal">
+            <i class="fa-solid fa-terminal"></i> Terminal Log <i class="fa-solid fa-chevron-down" id="termChevron"></i>
+          </button>
+          <span id="headerClock" style="font-family:monospace; color:#0284c7; font-weight:700; font-size:0.8rem;">--:--:--</span>
+        </div>
+      </div>
+
+      <!-- Collapsible Terminal Output Log Drawer -->
+      <div class="terminal-drawer" id="sirLogPanel">
+        <div style="font-weight:bold; border-bottom:1px solid #334155; padding-bottom:0.25rem; margin-bottom:0.25rem; color:#f59e0b; display:flex; justify-content:space-between;">
+          <span><i class="fa-solid fa-terminal"></i> Data Processing Engine Terminal:</span>
+          <button style="background:none; border:none; color:#94a3b8; cursor:pointer;" onclick="toggleTerminalLog()">✕</button>
+        </div>
+        <div id="sirLogContent"></div>
+      </div>
+
+      <!-- Compact Stats Ribbon (50px) -->
+      <section class="compact-stats-ribbon">
+        <div class="stat-pill-card active" id="cardStatTotal" onclick="filter2002ByStatus('all')">
+          <div class="stat-pill-left">
+            <div class="stat-pill-icon" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-users"></i></div>
+            <div>
+              <div class="stat-pill-label">ಒಟ್ಟು 2002 ಮತದಾರರು</div>
+              <div class="stat-pill-sub" id="statGenderRatio">👨 0 | 👩 0</div>
+            </div>
+          </div>
+          <div class="stat-pill-val" id="stat2002Total" style="color:#d97706;">0</div>
+        </div>
+
+        <div class="stat-pill-card" id="cardStatMapped" onclick="filter2002ByStatus('mapped')">
+          <div class="stat-pill-left">
+            <div class="stat-pill-icon" style="background:#d1fae5; color:#059669;"><i class="fa-solid fa-link"></i></div>
+            <div>
+              <div class="stat-pill-label">ಮ್ಯಾಪ್ ಆಗಿದ್ದಾರೆ (Mapped)</div>
+              <div class="stat-pill-sub" id="textMappedPercent">0% Mapped</div>
+            </div>
+          </div>
+          <div class="stat-pill-val" id="stat2002Mapped" style="color:#059669;">0</div>
+        </div>
+
+        <div class="stat-pill-card" id="cardStatUnmapped" onclick="filter2002ByStatus('unmapped')">
+          <div class="stat-pill-left">
+            <div class="stat-pill-icon" style="background:#fee2e2; color:#dc2626;"><i class="fa-solid fa-unlink"></i></div>
+            <div>
+              <div class="stat-pill-label">ಮ್ಯಾಪ್ ಆಗಿಲ್ಲ (Unmapped)</div>
+              <div class="stat-pill-sub" id="textUnmappedPercent">100% Unmapped</div>
+            </div>
+          </div>
+          <div class="stat-pill-val" id="stat2002Unmapped" style="color:#dc2626;">0</div>
+        </div>
+
+        <div class="stat-pill-card" id="cardStatSeniors" onclick="setQuickFilterChip('senior')">
+          <div class="stat-pill-left">
+            <div class="stat-pill-icon" style="background:#f3e8ff; color:#7c3aed;"><i class="fa-solid fa-hands-holding-child"></i></div>
+            <div>
+              <div class="stat-pill-label">60+ ಹಿರಿಯರು (Seniors)</div>
+              <div class="stat-pill-sub">ವಿಶೇಷ ಆದ್ಯತೆ</div>
+            </div>
+          </div>
+          <div class="stat-pill-val" id="stat2002Seniors" style="color:#7c3aed;">0</div>
+        </div>
+      </section>
+
+      <!-- High-Density Toolbar & Quick Chips -->
+      <div class="high-density-toolbar">
+        
+        <!-- Row 1: Dedicated Search Inputs (Voter Name, Relative Name, EPIC / SlNo / House No) -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.5rem; width:100%; margin-bottom:0.25rem;">
+          <div style="position:relative;">
+            <i class="fa-solid fa-user" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:0.75rem;"></i>
+            <input type="text" id="search2002Name" class="form-control" placeholder="2002 ಮತದಾರರ ಹೆಸರು..." oninput="currentPage2002=1; render2002RollTable();" style="padding-left:1.8rem; height:30px; font-size:0.78rem; font-weight:600;">
+          </div>
+
+          <div style="position:relative;">
+            <i class="fa-solid fa-users" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:0.75rem;"></i>
+            <input type="text" id="search2002Rel" class="form-control" placeholder="ಸಂಬಂಧಿಯ ಹೆಸರು..." oninput="currentPage2002=1; render2002RollTable();" style="padding-left:1.8rem; height:30px; font-size:0.78rem; font-weight:600;">
+          </div>
+
+          <div style="position:relative;">
+            <i class="fa-solid fa-id-card" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:0.75rem;"></i>
+            <input type="text" id="search2002Main" class="form-control" placeholder="2002 EPIC / SlNo / ಮನೆ ನಂ..." oninput="onMainSearchInput()" style="padding-left:1.8rem; padding-right:1.8rem; height:30px; font-size:0.78rem; font-weight:600;">
+            <button id="btnClearMainSearch" onclick="clearMainSearch()" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; color:#94a3b8; cursor:pointer; display:none; font-size:0.75rem;">✕</button>
+          </div>
+        </div>
+
+        <!-- Row 2: Quick Chips & Dropdown Controls -->
+        <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:0.5rem; flex-wrap:wrap; border-top:1px solid #f1f5f9; padding-top:0.3rem;">
+          <div class="quick-chips-row">
+            <span style="font-size:0.75rem; font-weight:700; color:#64748b; margin-right:0.2rem;"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> ಫಿಲ್ಟರ್:</span>
+            <button class="chip-mini active" id="chipAll" onclick="setQuickFilterChip('all')">⚡ ಎಲ್ಲಾ</button>
+            <button class="chip-mini" id="chipMale" onclick="setQuickFilterChip('male')">👨 ಗಂಡು</button>
+            <button class="chip-mini" id="chipFemale" onclick="setQuickFilterChip('female')">👩 ಸ್ತ್ರೀ</button>
+            <button class="chip-mini" id="chipYouth" onclick="setQuickFilterChip('youth')">👶 18-30Y</button>
+            <button class="chip-mini" id="chipSenior" onclick="setQuickFilterChip('senior')">👴 60+Y</button>
+            <button class="chip-mini" id="chipMapped" onclick="setQuickFilterChip('mapped')">🔗 Mapped</button>
+            <button class="chip-mini" id="chipUnmapped" onclick="setQuickFilterChip('unmapped')">❌ Unmapped</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+            <!-- Gender Select -->
+            <select id="filter2002Gender" class="form-control" onchange="render2002RollTable()" style="width:auto; height:28px; font-size:0.75rem; font-weight:600; padding:0 0.4rem;">
+              <option value="all">⚤ ಎಲ್ಲಾ ಲಿಂಗ</option>
+              <option value="M">👨 ಗಂಡು (Male)</option>
+              <option value="F">👩 ಸ್ತ್ರೀ (Female)</option>
+              <option value="O">⚧️ ಇತರ</option>
+            </select>
+
+            <!-- Age Range Select -->
+            <select id="filter2002AgeRange" class="form-control" onchange="on2002AgeRangeChange(this.value); render2002RollTable();" style="width:auto; height:28px; font-size:0.75rem; font-weight:600; padding:0 0.4rem;">
+              <option value="all">🎂 ಎಲ್ಲಾ ವಯಸ್ಸು</option>
+              <option value="18-30">18 - 30 Y</option>
+              <option value="31-50">31 - 50 Y</option>
+              <option value="51-60">51 - 60 Y</option>
+              <option value="60+">60+ Y (ಹಿರಿಯರು)</option>
+              <option value="custom">⚙️ Custom...</option>
+            </select>
+            <div id="customAgeWrap" style="display:none; align-items:center; gap:0.2rem;">
+              <input type="number" id="filter2002MinAge" class="form-control" placeholder="Min" style="width:50px; height:28px; font-size:0.72rem; padding:0.2rem;" oninput="render2002RollTable()">
+              <span style="color:#94a3b8;">-</span>
+              <input type="number" id="filter2002MaxAge" class="form-control" placeholder="Max" style="width:50px; height:28px; font-size:0.72rem; padding:0.2rem;" oninput="render2002RollTable()">
+            </div>
+
+            <!-- Sort Select -->
+            <select id="sort2002Select" class="form-control" onchange="on2002SortSelectChange(this.value);" style="width:auto; height:28px; font-size:0.75rem; font-weight:600; padding:0 0.4rem;">
+              <option value="slNo_asc">🔢 Sl.No (1➔9)</option>
+              <option value="slNo_desc">🔢 Sl.No (9➔1)</option>
+              <option value="age_asc">🎂 Age (Low➔High)</option>
+              <option value="age_desc">🎂 Age (High➔Low)</option>
+              <option value="gender_m">👨 Gender (Male 1st)</option>
+              <option value="gender_f">👩 Gender (Female 1st)</option>
+              <option value="name_asc">🔤 Name (A➔Z)</option>
+            </select>
+
+            <!-- Page Size -->
+            <select id="pageSizeSelect" class="form-control" onchange="change2002PageSize(this.value)" style="width:auto; height:28px; font-size:0.75rem; font-weight:600; padding:0 0.4rem;">
+              <option value="25">25/Pg</option>
+              <option value="50" selected>50/Pg</option>
+              <option value="100">100/Pg</option>
+              <option value="250">250/Pg</option>
+              <option value="all">All</option>
+            </select>
+
+            <button class="btn btn-outline btn-xs" onclick="reset2002Filters()" title="Reset Filters" style="height:28px; padding:0 0.4rem;">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viewport Maximized Table Container -->
+      <div class="main-table-viewport" id="sir2002TableContainer" style="display:none;">
+        <table class="voters-table">
+          <thead>
+            <tr>
+              <th onclick="toggle2002Sort('slNo')" style="cursor:pointer; user-select:none; width:65px;" title="Sort by SL.NO">
+                SL.NO <i id="sortIcon_slNo" class="fa-solid fa-sort" style="margin-left:2px; opacity:0.7;"></i>
+              </th>
+              <th>PS. NO.</th>
+              <th onclick="toggle2002Sort('epicNo')" style="cursor:pointer; user-select:none;" title="Sort by EPIC">
+                EPIC NUMBER <i id="sortIcon_epicNo" class="fa-solid fa-sort" style="margin-left:2px; opacity:0.7;"></i>
+              </th>
+              <th onclick="toggle2002Sort('nameKn')" style="cursor:pointer; user-select:none;" title="Sort by Name">
+                NAME (KANNADA) <i id="sortIcon_nameKn" class="fa-solid fa-sort" style="margin-left:2px; opacity:0.7;"></i>
+              </th>
+              <th>RELATION TYPE</th>
+              <th>RELATION NAME (KANNADA)</th>
+              <th onclick="toggle2002Sort('houseNo')" style="cursor:pointer; user-select:none;" title="Sort by House No">
+                HOUSE NO <i id="sortIcon_houseNo" class="fa-solid fa-sort" style="margin-left:2px; opacity:0.7;"></i>
+              </th>
+              <th onclick="toggle2002Sort('age')" style="cursor:pointer; user-select:none;" title="Sort by Age">
+                AGE <i id="sortIcon_age" class="fa-solid fa-sort" style="margin-left:2px; color:#f59e0b;"></i>
+              </th>
+              <th onclick="toggle2002Sort('gender')" style="cursor:pointer; user-select:none;" title="Sort by Gender">
+                GENDER <i id="sortIcon_gender" class="fa-solid fa-sort" style="margin-left:2px; color:#38bdf8;"></i>
+              </th>
+              <th>MAPPED STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="tbl2002Body"></tbody>
+        </table>
+      </div>
+
+      <!-- Empty State Container -->
+      <div id="sir2002EmptyState" class="empty-state" style="display:none; flex:1; align-items:center; justify-content:center; flex-direction:column; background:#fff; padding:3rem 1rem; text-align:center;">
+        <i class="fa-solid fa-folder-open" style="font-size:3.5rem; color:#cbd5e1; margin-bottom:0.75rem;"></i>
+        <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; margin-bottom:0.3rem;">2002 ರಾಯಚೂರು/ಕರ್ನಾಟಕ ಮಾಸ್ಟರ್ ಪಟ್ಟಿ ಖಾಲಿ ಇದೆ!</h3>
+        <p style="color:#64748b; font-size:0.85rem; margin-bottom:1.25rem; max-width:450px;">
+          ದಯವಿಟ್ಟು ಮೇಲಿನ <strong>"2002 Excel/PDF ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ"</strong> ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ 2002 ರ ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಿ.
+        </p>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('filePicker2002').click();">
+          <i class="fa-solid fa-file-arrow-up"></i> 2002 ಪಟ್ಟಿ ಲೋಡ್ ಮಾಡಿ
+        </button>
+      </div>
+
+      <!-- Compact Bottom Pagination Footer (38px) -->
+      <div class="table-pagination-footer" id="tblPaginationFooter" style="display:none;">
+        <div id="paginationSummary">Showing 0 of 0 entries</div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <span id="filtered2002CountBadge" class="badge" style="background:#eff6ff; color:#2563eb; font-weight:800; font-size:0.75rem; border:1px solid #bfdbfe;">
+            ಫಲಿತಾಂಶಗಳು: 0
+          </span>
+          <div style="display:flex; gap:0.25rem; align-items:center;" id="paginationControls"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Firebase Setup Modal -->
+  <div class="modal-overlay" id="firebaseSetupModal">
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header" style="background:#0f172a;">
+        <div>
+          <h3 style="font-size:1.1rem; font-weight:800; color:#38bdf8;"><i class="fa-solid fa-fire"></i> Firebase Cloud Database ಸೆಟಪ್</h3>
+          <p style="font-size:0.8rem; color:#94a3b8;">ನಿಮ್ಮ ಉಚಿತ Firebase Realtime Database ನಮೂದಿಸಿ ಡೇಟಾವನ್ನು ಕ್ಲೌಡ್‌ನಲ್ಲಿ ಸೆವ್ ಮಾಡಿ</p>
+        </div>
+        <button class="btn btn-sm btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.3);" onclick="closeFirebaseSetupModal()">✕</button>
+      </div>
+
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:0.85rem;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">Firebase Web API Key:</label>
+          <input type="text" id="fbApiKeyInput" class="form-control" placeholder="AIzaSy...">
+        </div>
+
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">Firebase Realtime Database URL:</label>
+          <input type="text" id="fbDbUrlInput" class="form-control" placeholder="https://your-app-default-rtdb.firebaseio.com">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">Project ID:</label>
+            <input type="text" id="fbProjectIdInput" class="form-control" placeholder="your-project-id">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">Auth Domain (Optional):</label>
+            <input type="text" id="fbAuthDomainInput" class="form-control" placeholder="your-app.firebaseapp.com">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeFirebaseSetupModal()">ರದ್ದು ಮಾಡಿ</button>
+        <button class="btn btn-primary btn-sm" onclick="saveFirebaseCredentialsFromModal()"><i class="fa-solid fa-cloud-arrow-up"></i> ಕ್ಲೌಡ್ ಕನೆಕ್ಟ್ & Sync ಮಾಡಿ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script src="excel-pdf-parser.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    let roll2002 = [];
+    let currentVoters = [];
+    let currentSort2002Col = 'slNo';
+    let currentSort2002Dir = 'asc';
+    let currentQuickChip = 'all';
+    let currentPage2002 = 1;
+    let pageSize2002 = 50;
+
+    const filePicker2002 = document.getElementById('filePicker2002');
+    const sirLogPanel = document.getElementById('sirLogPanel');
+    const sirLogContent = document.getElementById('sirLogContent');
+
+    // Live Clock Header
+    function updateClock() {
+      const now = new Date();
+      const elem = document.getElementById('headerClock');
+      if (elem) elem.textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function toggleTerminalLog() {
+      if (sirLogPanel.style.display === 'block') {
+        sirLogPanel.style.display = 'none';
+      } else {
+        sirLogPanel.style.display = 'block';
+      }
+    }
+
+    function getNormalizedGender(g) {
+      if (g === null || g === undefined) return '';
+      const str = String(g).trim();
+      if (!str) return '';
+      const upper = str.toUpperCase();
+      if (
+        str === 'ಹೆಂ' || str.startsWith('ಹೆಂ') ||
+        str.includes('ಹೆಣ್ಣು') || str.includes('ಸ್ತ್ರೀ') || str.includes('ಮಹಿಳೆ') ||
+        upper === 'F' || upper === 'W' || upper.startsWith('FEMALE') || upper.startsWith('WOMAN')
+      ) return 'F';
+      if (
+        str === 'ಗಂ' || str.startsWith('ಗಂ') ||
+        str.includes('ಗಂಡು') || str.includes('ಪುರುಷ') ||
+        upper === 'M' || upper.startsWith('MALE') || upper.startsWith('MAN')
+      ) return 'M';
+      if (['O', 'OTHER', 'THIRD', 'ಇತರ', 'ಇತರೆ'].some(k => upper === k || upper.startsWith('O'))) return 'O';
+      return str;
+    }
+
+    function focusMainSearch() {
+      const input = document.getElementById('search2002Main');
+      if (input) { input.focus(); input.select(); }
+    }
+
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        focusMainSearch();
+      }
+    });
+
+    function onMainSearchInput() {
+      const val = document.getElementById('search2002Main')?.value || '';
+      const btnClear = document.getElementById('btnClearMainSearch');
+      if (btnClear) btnClear.style.display = val.trim() ? 'block' : 'none';
+      currentPage2002 = 1;
+      render2002RollTable();
+    }
+
+    function clearMainSearch() {
+      const input = document.getElementById('search2002Main');
+      if (input) input.value = '';
+      const btnClear = document.getElementById('btnClearMainSearch');
+      if (btnClear) btnClear.style.display = 'none';
+      currentPage2002 = 1;
+      render2002RollTable();
+    }
+
+    function setQuickFilterChip(chipType) {
+      currentQuickChip = chipType;
+      const chips = ['All', 'Male', 'Female', 'Youth', 'Senior', 'Mapped', 'Unmapped'];
+      chips.forEach(c => {
+        const btn = document.getElementById(`chip${c}`);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const activeBtn = document.getElementById(`chip${chipType.charAt(0).toUpperCase() + chipType.slice(1)}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const genderSel = document.getElementById('filter2002Gender');
+      const ageSel = document.getElementById('filter2002AgeRange');
+
+      if (chipType === 'male' && genderSel) genderSel.value = 'M';
+      else if (chipType === 'female' && genderSel) genderSel.value = 'F';
+      else if (chipType === 'all' && genderSel) genderSel.value = 'all';
+
+      if (chipType === 'youth' && ageSel) ageSel.value = '18-30';
+      else if (chipType === 'senior' && ageSel) ageSel.value = '60+';
+      else if (chipType === 'all' && ageSel) ageSel.value = 'all';
+
+      currentPage2002 = 1;
+      render2002RollTable();
+    }
+
+    function filter2002ByStatus(status) {
+      if (status === 'mapped') setQuickFilterChip('mapped');
+      else if (status === 'unmapped') setQuickFilterChip('unmapped');
+      else setQuickFilterChip('all');
+
+      ['Total', 'Mapped', 'Unmapped', 'Seniors'].forEach(k => {
+        const card = document.getElementById(`cardStat${k}`);
+        if (card) card.classList.remove('active');
+      });
+      const activeCard = document.getElementById(`cardStat${status.charAt(0).toUpperCase() + status.slice(1)}`);
+      if (activeCard) activeCard.classList.add('active');
+    }
+
+    function toggle2002Sort(col) {
+      if (currentSort2002Col === col) {
+        currentSort2002Dir = currentSort2002Dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort2002Col = col;
+        currentSort2002Dir = 'asc';
+      }
+      syncSortSelectWithState();
+      render2002RollTable();
+    }
+
+    function on2002SortSelectChange(val) {
+      if (val === 'slNo_asc') { currentSort2002Col = 'slNo'; currentSort2002Dir = 'asc'; }
+      else if (val === 'slNo_desc') { currentSort2002Col = 'slNo'; currentSort2002Dir = 'desc'; }
+      else if (val === 'age_asc') { currentSort2002Col = 'age'; currentSort2002Dir = 'asc'; }
+      else if (val === 'age_desc') { currentSort2002Col = 'age'; currentSort2002Dir = 'desc'; }
+      else if (val === 'gender_m') { currentSort2002Col = 'gender'; currentSort2002Dir = 'asc'; }
+      else if (val === 'gender_f') { currentSort2002Col = 'gender'; currentSort2002Dir = 'desc'; }
+      else if (val === 'name_asc') { currentSort2002Col = 'nameKn'; currentSort2002Dir = 'asc'; }
+      render2002RollTable();
+    }
+
+    function syncSortSelectWithState() {
+      const sel = document.getElementById('sort2002Select');
+      if (!sel) return;
+      if (currentSort2002Col === 'slNo') sel.value = currentSort2002Dir === 'asc' ? 'slNo_asc' : 'slNo_desc';
+      else if (currentSort2002Col === 'age') sel.value = currentSort2002Dir === 'asc' ? 'age_asc' : 'age_desc';
+      else if (currentSort2002Col === 'gender') sel.value = currentSort2002Dir === 'asc' ? 'gender_m' : 'gender_f';
+      else if (currentSort2002Col === 'nameKn') sel.value = 'name_asc';
+    }
+
+    function updateSortHeaderIcons() {
+      const cols = ['slNo', 'epicNo', 'nameKn', 'houseNo', 'age', 'gender'];
+      cols.forEach(c => {
+        const icon = document.getElementById(`sortIcon_${c}`);
+        if (!icon) return;
+        if (currentSort2002Col === c) {
+          icon.className = currentSort2002Dir === 'asc' ? 'fa-solid fa-sort-up' : 'fa-solid fa-sort-down';
+          icon.style.opacity = '1';
+        } else {
+          icon.className = 'fa-solid fa-sort';
+          icon.style.opacity = '0.6';
+        }
+      });
+    }
+
+    function on2002AgeRangeChange(val) {
+      const customWrap = document.getElementById('customAgeWrap');
+      if (val === 'custom') {
+        if (customWrap) customWrap.style.display = 'inline-flex';
+      } else {
+        if (customWrap) customWrap.style.display = 'none';
+      }
+    }
+
+    function reset2002Filters() {
+      if (document.getElementById('search2002Name')) document.getElementById('search2002Name').value = '';
+      if (document.getElementById('search2002Rel')) document.getElementById('search2002Rel').value = '';
+      if (document.getElementById('search2002Main')) document.getElementById('search2002Main').value = '';
+      if (document.getElementById('filter2002Gender')) document.getElementById('filter2002Gender').value = 'all';
+      if (document.getElementById('filter2002AgeRange')) document.getElementById('filter2002AgeRange').value = 'all';
+      if (document.getElementById('filter2002MinAge')) document.getElementById('filter2002MinAge').value = '';
+      if (document.getElementById('filter2002MaxAge')) document.getElementById('filter2002MaxAge').value = '';
+      if (document.getElementById('customAgeWrap')) document.getElementById('customAgeWrap').style.display = 'none';
+      if (document.getElementById('btnClearMainSearch')) document.getElementById('btnClearMainSearch').style.display = 'none';
+      
+      currentQuickChip = 'all';
+      currentSort2002Col = 'slNo';
+      currentSort2002Dir = 'asc';
+      currentPage2002 = 1;
+      
+      setQuickFilterChip('all');
+      syncSortSelectWithState();
+      render2002RollTable();
+    }
+
+    function change2002PageSize(val) {
+      pageSize2002 = val === 'all' ? 999999 : parseInt(val, 10);
+      currentPage2002 = 1;
+      render2002RollTable();
+    }
+
+    function change2002Page(newPage) {
+      currentPage2002 = newPage;
+      render2002RollTable();
+    }
+
+    function addSirLog(msg, type = 'info') {
+      sirLogPanel.style.display = 'block';
+      const div = document.createElement('div');
+      div.className = `status-log-line ${type}`;
+      div.style.padding = '0.15rem 0';
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      sirLogContent.appendChild(div);
+      sirLogPanel.scrollTop = sirLogPanel.scrollHeight;
+    }
+
+    filePicker2002.addEventListener('change', async e => {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        addSirLog(`2002 ಫೈಲ್ ಆಯ್ಕೆಯಾಗಿದೆ: ${file.name}`, 'info');
+        const ext = file.name.toLowerCase().split('.').pop();
+        try {
+          let res = null;
+          if (ext === 'pdf') {
+            res = await processPDFFileEngine(file, currentPartNo, null, addSirLog);
+          } else {
+            res = await processExcelFileEngine(file, currentPartNo, null, addSirLog);
+          }
+
+          if (res && res.voters && res.voters.length > 0) {
+            roll2002 = res.voters;
+            await save2002RollForPart(currentPartNo, roll2002);
+            addSirLog(`✅ ಯಶಸ್ಸು! 2002 ರ ${roll2002.length} ಮತದಾರರ ವಿವರಗಳು ಅಪ್‌ಲೋಡ್ ಆಗಿವೆ!`, 'success');
+            showToast(`2002 ರ ${roll2002.length} ಮತದಾರರ ಮಾಸ್ಟರ್ ಪಟ್ಟಿ ಲೋಡ್ ಆಗಿದೆ!`, 'success');
+            currentPage2002 = 1;
+            render2002RollTable();
+          }
+        } catch (err) {
+          addSirLog(`❌ ದೋಷ: ${err.message}`, 'error');
+          showToast(`2002 ಅಪ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ: ${err.message}`, 'error');
+        } finally {
+          filePicker2002.value = '';
+        }
+      }
+    });
+
+    function sanitizeStored2002Roll(voters) {
+      if (!Array.isArray(voters)) return [];
+      let updated = false;
+
+      voters.forEach(r => {
+        // Fix misaligned houseNo containing gender ('ಗಂ', 'ಹೆಂ', 'M', 'F')
+        const houseStr = (r.houseNo || '').toString().trim();
+        const normHouseG = getNormalizedGender(houseStr);
+        if (normHouseG === 'M' || normHouseG === 'F') {
+          if (!r.gender || r.gender === '' || r.gender === '-') {
+            r.gender = normHouseG;
+          }
+          r.houseNo = '-';
+          updated = true;
+        }
+      });
+
+      return { voters, updated };
+    }
+
+    async function load2002PageData() {
+      if (typeof initFirebaseEngine === 'function') {
+        initFirebaseEngine();
+      }
+      roll2002 = await get2002RollForPart(currentPartNo);
+      currentVoters = await getVotersForPart(currentPartNo);
+
+      // Auto-sanitize existing stored 2002 roll if corrupted by previous upload
+      if (roll2002 && roll2002.length > 0) {
+        const res = sanitizeStored2002Roll(roll2002);
+        if (res.updated) {
+          roll2002 = res.voters;
+          await save2002RollForPart(currentPartNo, roll2002);
+        }
+      }
+
+      if (typeof subscribeTo2002RollFirebase === 'function') {
+        subscribeTo2002RollFirebase(currentPartNo, (cloud2002) => {
+          if (cloud2002 && cloud2002.length > 0) {
+            const res = sanitizeStored2002Roll(cloud2002);
+            roll2002 = res.voters;
+          } else {
+            roll2002 = cloud2002;
+          }
+          render2002RollTable();
+        });
+      }
+
+      render2002RollTable();
+    }
+
+    function render2002RollTable() {
+      const container = document.getElementById('sir2002TableContainer');
+      const emptyState = document.getElementById('sir2002EmptyState');
+      const tbody = document.getElementById('tbl2002Body');
+      const countBadge = document.getElementById('count2002RollBadge');
+      const paginationFooter = document.getElementById('tblPaginationFooter');
+
+      countBadge.textContent = `${roll2002.length} Loaded`;
+
+      // Calculate stats
+      let mappedCount = 0;
+      let maleCount = 0;
+      let femaleCount = 0;
+      let seniorCount = 0;
+
+      roll2002.forEach(r => {
+        const isMapped = currentVoters.some(cv => cv.ref2002Epic === r.epicNo || (cv.remarks && cv.remarks.includes(r.nameKn)));
+        if (isMapped) mappedCount++;
+        
+        const normG = getNormalizedGender(r.gender);
+        if (normG === 'M') maleCount++;
+        else if (normG === 'F') femaleCount++;
+
+        const ageNum = parseInt(r.age, 10);
+        if (!isNaN(ageNum) && ageNum >= 60) seniorCount++;
+      });
+
+      const totalCount = roll2002.length;
+      const unmappedCount = totalCount - mappedCount;
+
+      if (document.getElementById('stat2002Total')) document.getElementById('stat2002Total').textContent = totalCount;
+      if (document.getElementById('stat2002Mapped')) document.getElementById('stat2002Mapped').textContent = mappedCount;
+      if (document.getElementById('stat2002Unmapped')) document.getElementById('stat2002Unmapped').textContent = unmappedCount;
+      if (document.getElementById('stat2002Seniors')) document.getElementById('stat2002Seniors').textContent = seniorCount;
+      if (document.getElementById('statGenderRatio')) document.getElementById('statGenderRatio').textContent = `👨 ${maleCount} | 👩 ${femaleCount}`;
+
+      const mappedPercent = totalCount > 0 ? Math.round((mappedCount / totalCount) * 100) : 0;
+      const unmappedPercent = totalCount > 0 ? Math.round((unmappedCount / totalCount) * 100) : 0;
+
+      if (document.getElementById('textMappedPercent')) document.getElementById('textMappedPercent').textContent = `${mappedPercent}% Mapped`;
+      if (document.getElementById('textUnmappedPercent')) document.getElementById('textUnmappedPercent').textContent = `${unmappedPercent}% Unmapped`;
+
+      if (!roll2002 || roll2002.length === 0) {
+        container.style.display = 'none';
+        paginationFooter.style.display = 'none';
+        emptyState.style.display = 'flex';
+        return;
+      }
+
+      const nameQ = (document.getElementById('search2002Name')?.value || '').trim().toLowerCase();
+      const relQ = (document.getElementById('search2002Rel')?.value || '').trim().toLowerCase();
+      const epicQ = (document.getElementById('search2002Main')?.value || '').trim().toLowerCase();
+      const genderFilterVal = document.getElementById('filter2002Gender')?.value || 'all';
+      const ageRangeVal = document.getElementById('filter2002AgeRange')?.value || 'all';
+      const minAgeInput = parseInt(document.getElementById('filter2002MinAge')?.value, 10);
+      const maxAgeInput = parseInt(document.getElementById('filter2002MaxAge')?.value, 10);
+
+      const filtered = roll2002.filter(r => {
+        // 1. Voter Name Search
+        if (nameQ) {
+          const matched = typeof matchNameSmart === 'function'
+            ? matchNameSmart(r.nameKn, r.nameEn, nameQ)
+            : (r.nameKn || '').toLowerCase().includes(nameQ) || (r.nameEn || '').toLowerCase().includes(nameQ);
+          if (!matched) return false;
+        }
+
+        // 2. Relative Name Search
+        if (relQ) {
+          const matched = typeof matchNameSmart === 'function'
+            ? matchNameSmart(r.relNameKn, r.relNameEn, relQ)
+            : (r.relNameKn || '').toLowerCase().includes(relQ) || (r.relNameEn || '').toLowerCase().includes(relQ);
+          if (!matched) return false;
+        }
+
+        // 3. EPIC / SlNo / House No Search
+        if (epicQ) {
+          const matchEpic = (r.epicNo || '').toLowerCase().includes(epicQ);
+          const matchHouse = (r.houseNo || '').toLowerCase().includes(epicQ);
+          const matchSl = (r.slNo || '').toString().includes(epicQ);
+          if (!matchEpic && !matchHouse && !matchSl) return false;
+        }
+
+        const isMapped = currentVoters.some(cv => cv.ref2002Epic === r.epicNo || (cv.remarks && cv.remarks.includes(r.nameKn)));
+        if (currentQuickChip === 'mapped' && !isMapped) return false;
+        if (currentQuickChip === 'unmapped' && isMapped) return false;
+
+        if (genderFilterVal !== 'all') {
+          const normG = getNormalizedGender(r.gender);
+          if (normG !== genderFilterVal) return false;
+        }
+
+        const voterAge = parseInt(r.age, 10);
+        if (ageRangeVal === '18-30') {
+          if (isNaN(voterAge) || voterAge < 18 || voterAge > 30) return false;
+        } else if (ageRangeVal === '31-50') {
+          if (isNaN(voterAge) || voterAge < 31 || voterAge > 50) return false;
+        } else if (ageRangeVal === '51-60') {
+          if (isNaN(voterAge) || voterAge < 51 || voterAge > 60) return false;
+        } else if (ageRangeVal === '60+') {
+          if (isNaN(voterAge) || voterAge < 60) return false;
+        } else if (ageRangeVal === 'custom') {
+          if (!isNaN(minAgeInput) && (isNaN(voterAge) || voterAge < minAgeInput)) return false;
+          if (!isNaN(maxAgeInput) && (isNaN(voterAge) || voterAge > maxAgeInput)) return false;
+        }
+
+        return true;
+      });
+
+      // Sort filtered results
+      filtered.sort((a, b) => {
+        if (currentSort2002Col === 'age') {
+          const ageA = parseInt(a.age, 10) || 0;
+          const ageB = parseInt(b.age, 10) || 0;
+          return currentSort2002Dir === 'asc' ? ageA - ageB : ageB - ageA;
+        } else if (currentSort2002Col === 'gender') {
+          const genA = getNormalizedGender(a.gender);
+          const genB = getNormalizedGender(b.gender);
+          if (genA === genB) {
+            return (parseInt(a.slNo, 10) || 0) - (parseInt(b.slNo, 10) || 0);
+          }
+          const order = { 'M': 1, 'F': 2, 'O': 3, '': 4 };
+          const ordA = order[genA] || 99;
+          const ordB = order[genB] || 99;
+          return currentSort2002Dir === 'asc' ? ordA - ordB : ordB - ordA;
+        } else if (currentSort2002Col === 'nameKn') {
+          const nA = (a.nameKn || '').trim();
+          const nB = (b.nameKn || '').trim();
+          return currentSort2002Dir === 'asc' ? nA.localeCompare(nB, 'kn') : nB.localeCompare(nA, 'kn');
+        } else if (currentSort2002Col === 'epicNo') {
+          const eA = (a.epicNo || '').trim();
+          const eB = (b.epicNo || '').trim();
+          return currentSort2002Dir === 'asc' ? eA.localeCompare(eB) : eB.localeCompare(eA);
+        } else if (currentSort2002Col === 'houseNo') {
+          const hA = (a.houseNo || '').trim();
+          const hB = (b.houseNo || '').trim();
+          const numA = parseInt(hA, 10);
+          const numB = parseInt(hB, 10);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return currentSort2002Dir === 'asc' ? numA - numB : numB - numA;
+          }
+          return currentSort2002Dir === 'asc' ? hA.localeCompare(hB) : hB.localeCompare(hA);
+        } else {
+          const slA = parseInt(a.slNo, 10) || 0;
+          const slB = parseInt(b.slNo, 10) || 0;
+          return currentSort2002Dir === 'asc' ? slA - slB : slB - slA;
+        }
+      });
+
+      updateSortHeaderIcons();
+
+      const countBadgeElem = document.getElementById('filtered2002CountBadge');
+      if (countBadgeElem) {
+        countBadgeElem.textContent = `ಫಲಿತಾಂಶಗಳು: ${filtered.length} / ${roll2002.length}`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:2.5rem; color:#64748b; font-weight:600;"><i class="fa-solid fa-magnifying-glass" style="font-size:1.8rem; margin-bottom:0.4rem; display:block; opacity:0.4;"></i>ಆಯ್ಕೆ ಮಾಡಿದ ಫಿಲ್ಟರ್‌ಗೆ ಯಾವುದೇ ಮತದಾರರು ಸಿಗಲಿಲ್ಲ.</td></tr>`;
+        container.style.display = 'block';
+        paginationFooter.style.display = 'flex';
+        emptyState.style.display = 'none';
+        document.getElementById('paginationSummary').textContent = 'Showing 0 of 0 entries';
+        document.getElementById('paginationControls').innerHTML = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      container.style.display = 'block';
+      paginationFooter.style.display = 'flex';
+
+      // Pagination Calculation
+      const totalFiltered = filtered.length;
+      const totalPages = Math.ceil(totalFiltered / pageSize2002) || 1;
+      if (currentPage2002 > totalPages) currentPage2002 = totalPages;
+
+      const startIndex = (currentPage2002 - 1) * pageSize2002;
+      const endIndex = Math.min(startIndex + pageSize2002, totalFiltered);
+      const pageVoters = filtered.slice(startIndex, endIndex);
+
+      // Render Pagination Bar Info & Buttons
+      document.getElementById('paginationSummary').textContent = `ತೋರಿಸಲಾಗುತ್ತಿದೆ: ${startIndex + 1} - ${endIndex} (ಒಟ್ಟು ${totalFiltered} ರಲ್ಲಿ)`;
+
+      let pagHTML = `<button class="pagination-btn" ${currentPage2002 === 1 ? 'disabled' : ''} onclick="change2002Page(1)"><i class="fa-solid fa-angles-left"></i></button>`;
+      pagHTML += `<button class="pagination-btn" ${currentPage2002 === 1 ? 'disabled' : ''} onclick="change2002Page(${currentPage2002 - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
+
+      const maxPageButtons = 5;
+      let startP = Math.max(1, currentPage2002 - 2);
+      let endP = Math.min(totalPages, startP + maxPageButtons - 1);
+      if (endP - startP + 1 < maxPageButtons) {
+        startP = Math.max(1, endP - maxPageButtons + 1);
+      }
+
+      for (let p = startP; p <= endP; p++) {
+        pagHTML += `<button class="pagination-btn ${p === currentPage2002 ? 'active' : ''}" onclick="change2002Page(${p})">${p}</button>`;
+      }
+
+      pagHTML += `<button class="pagination-btn" ${currentPage2002 === totalPages ? 'disabled' : ''} onclick="change2002Page(${currentPage2002 + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
+      pagHTML += `<button class="pagination-btn" ${currentPage2002 === totalPages ? 'disabled' : ''} onclick="change2002Page(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
+
+      document.getElementById('paginationControls').innerHTML = pagHTML;
+
+      // Render Table Rows matching Excel columns 1:1
+      tbody.innerHTML = pageVoters.map((r, idx) => {
+        const globalIdx = startIndex + idx + 1;
+        const mappedVoter = currentVoters.find(cv => cv.ref2002Epic === r.epicNo || (cv.remarks && cv.remarks.includes(r.nameKn)));
+        const normG = getNormalizedGender(r.gender);
+        const genderDisplay = normG === 'F' 
+          ? '<span class="badge" style="background:#fce7f3; color:#db2777; font-weight:700; border:1px solid #fbcfe8; font-size:0.75rem;"><i class="fa-solid fa-venus"></i> F (ಸ್ತ್ರೀ)</span>' 
+          : normG === 'M' 
+          ? '<span class="badge" style="background:#e0f2fe; color:#0284c7; font-weight:700; border:1px solid #bae6fd; font-size:0.75rem;"><i class="fa-solid fa-mars"></i> M (ಗಂಡು)</span>' 
+          : (r.gender && String(r.gender).trim() !== '' ? r.gender : '<span style="color:#94a3b8; font-style:italic;">-</span>');
+
+        const ageNum = parseInt(r.age, 10);
+        const isSenior = !isNaN(ageNum) && ageNum >= 60;
+        const hasAge = r.age !== undefined && r.age !== null && String(r.age).trim() !== '' && String(r.age).trim() !== '0';
+        
+        const ageDisplay = isSenior 
+          ? `<span class="badge" style="background:#fef3c7; color:#d97706; font-weight:800; border:1px solid #fde68a; font-size:0.75rem;" title="Senior Citizen (60+)">👴 ${r.age}Y</span>`
+          : hasAge
+          ? `<strong style="color:#0f172a; font-weight:700;">${r.age}Y</strong>`
+          : `<span style="color:#94a3b8; font-style:italic;">-</span>`;
+
+        return `
+          <tr>
+            <td><strong style="color:#2563eb;">#${r.slNo || globalIdx}</strong></td>
+            <td><span class="badge badge-outline" style="font-weight:600; font-size:0.72rem;">PS #${r.psNo || r.partNo || currentPartNo}</span></td>
+            <td><span class="epic-badge" style="font-weight:800; background:#f1f5f9; padding:0.15rem 0.4rem; border-radius:4px; border:1px solid #cbd5e1; font-size:0.8rem;">${r.epicNo}</span></td>
+            <td><strong style="font-size:0.9rem; color:#0f172a;">${r.nameKn}</strong></td>
+            <td><span class="badge badge-outline" style="font-size:0.72rem;">${r.relType || 'Father'}</span></td>
+            <td>${r.relNameKn || '-'}</td>
+            <td><span class="badge badge-outline" style="font-weight:700; font-size:0.75rem;">${r.houseNo}</span></td>
+            <td>${ageDisplay}</td>
+            <td>${genderDisplay}</td>
+            <td>
+              ${mappedVoter 
+                ? `<span class="badge badge-success" style="font-weight:700; padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-link"></i> #${mappedVoter.slNo} ${mappedVoter.nameKn}</span>` 
+                : `<span class="badge badge-outline" style="color:#94a3b8; font-size:0.72rem;">Unmapped</span>`}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function clear2002RollData() {
+      if (confirm("2002 ರ ಮಾಸ್ಟರ್ ಪಟ್ಟಿಯ ಡೇಟಾವನ್ನು ತೆರವುಗೊಳಿಸಬೇಕೆ?")) {
+        localStorage.removeItem(`blo_2002_roll_part_${currentPartNo}`);
+        roll2002 = [];
+        addSirLog("2002 ಮಾಸ್ಟರ್ ಪಟ್ಟಿ ತೆರವುಗೊಂಡಿದೆ.", "info");
+        render2002RollTable();
+      }
+    }
+
+    function export2002Csv() {
+      if (!roll2002 || roll2002.length === 0) {
+        alert("ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು 2002 ಮತದಾರರು ಇಲ್ಲ!");
+        return;
+      }
+
+      let csv = "\uFEFFSlNo,PS_No,EPIC_No,Voter_Name,Relation_Type,Relative_Name,House_No,Age,Gender,Mapped_Status\n";
+      roll2002.forEach(r => {
+        const mappedVoter = currentVoters.find(cv => cv.ref2002Epic === r.epicNo || (cv.remarks && cv.remarks.includes(r.nameKn)));
+        const mappedStr = mappedVoter ? `Mapped to #${mappedVoter.slNo} ${mappedVoter.nameKn}` : 'Unmapped';
+        csv += `"${r.slNo}","${r.psNo || r.partNo || ''}","${r.epicNo}","${r.nameKn || ''}","${r.relType || ''}","${r.relNameKn || ''}","${r.houseNo || ''}","${r.age || ''}","${r.gender || ''}","${mappedStr}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `SIR_2002_Mapped_Report_Part_${currentPartNo}.csv`;
+      a.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', load2002PageData);
+  </script>
+</body>
+</html>

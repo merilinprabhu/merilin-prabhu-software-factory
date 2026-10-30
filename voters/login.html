@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಚುನಾವಣಾ BLO ಅಧಿಕಾರಿ ಲಾಗಿನ್ ಹಾಗೂ ನೋಂದಣಿ ಪೋರ್ಟಲ್ - ECI Official Portal V5.0</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Kannada:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 60%, #090d16 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      font-family: 'Inter', 'Noto Sans Kannada', sans-serif;
+      color: #f8fafc;
+    }
+
+    .auth-wrapper {
+      width: 100%;
+      max-width: 490px;
+      perspective: 1000px;
+    }
+
+    .auth-glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 30px rgba(2, 132, 199, 0.15);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .auth-header-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 2.25rem 1.75rem 1.75rem 1.75rem;
+      text-align: center;
+      border-bottom: 3px solid #0284c7;
+      position: relative;
+    }
+
+    .auth-header-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff9933 0%, #ffffff 50%, #138808 100%);
+    }
+
+    .eci-emblem-badge {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #0284c7;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.5);
+      border: 3px solid #38bdf8;
+    }
+
+    .auth-body-container {
+      padding: 1.85rem;
+    }
+
+    .auth-nav-tabs {
+      display: flex;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 0.35rem;
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.7rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .auth-tab-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    }
+
+    .form-group-custom {
+      margin-bottom: 1.1rem;
+      text-align: left;
+    }
+
+    .form-group-custom label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control-custom {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-control-custom:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+      background: #1e293b;
+    }
+
+    .input-password-wrap {
+      position: relative;
+    }
+
+    .password-toggle-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .password-toggle-icon:hover {
+      color: #38bdf8;
+    }
+
+    .btn-auth-submit {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 10px 20px -5px rgba(2, 132, 199, 0.4);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-auth-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 25px -5px rgba(2, 132, 199, 0.5);
+    }
+
+    .cloud-status-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      margin-top: 1.25rem;
+      padding: 0.4rem 0.8rem;
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 20px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .footer-credits {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-glass-card">
+      
+      <!-- Header Banner -->
+      <div class="auth-header-banner">
+        <div class="eci-emblem-badge">
+          <i class="fa-solid fa-vote-yea"></i>
+        </div>
+        <h2 style="font-size:1.35rem; font-weight:900; color:#f8fafc; letter-spacing:-0.5px; margin:0;">
+          ಚುನಾವಣಾ BLO ಅಧಿಕಾರಿ ಅಧಿಕೃತ ಪೋರ್ಟಲ್
+        </h2>
+        <p style="color:#94a3b8; font-size:0.85rem; margin:0.35rem 0 0 0; font-weight:600;">
+          ರಾಜ್ಯ: ಕರ್ನಾಟಕ (S10) | 53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ (SC)
+        </p>
+      </div>
+
+      <!-- Main Form Body -->
+      <div class="auth-body-container">
+
+        <!-- Navigation Tabs -->
+        <div class="auth-nav-tabs">
+          <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">
+            <i class="fa-solid fa-right-to-bracket"></i> ಲಾಗಿನ್ (Login)
+          </button>
+          <button class="auth-tab-btn" id="tabRegisterBtn" onclick="switchAuthTab('register')">
+            <i class="fa-solid fa-user-plus"></i> ನೂತನ ನೋಂದಣಿ (Register)
+          </button>
+        </div>
+
+        <!-- 1. LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group-custom">
+            <label><i class="fa-solid fa-user" style="color:#38bdf8;"></i> BLO ಅಧಿಕಾರಿಯ ಹೆಸರು / ಬಳಕೆದಾರರ ಐಡಿ (Username): *</label>
+            <input type="text" id="loginUsername" class="form-control-custom" placeholder="ಉದಾ: ನಿಮ್ಮ ಹೆಸರು / ಮರ್ಲಿನ್ ಪ್ರಭು" required style="font-weight:700;">
+          </div>
+
+          <div class="form-group-custom">
+            <label><i class="fa-solid fa-lock" style="color:#38bdf8;"></i> ಗುಪ್ತಪದ (Password): *</label>
+            <div class="input-password-wrap">
+              <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••" value="blo123" required>
+              <i class="fa-solid fa-eye password-toggle-icon" onclick="togglePasswordVisibility('loginPassword', this)"></i>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; font-size:0.82rem;">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; color:#94a3b8;">
+              <input type="checkbox" checked style="accent-color:#0284c7;"> ನೆನಪಿನಲ್ಲಿಡಿ (Remember Me)
+            </label>
+            <a href="#" style="color:#38bdf8; font-weight:700; text-decoration:none;" onclick="openForgotPasswordModal(event)">ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿದೆಯೇ?</a>
+          </div>
+
+          <button type="submit" class="btn-auth-submit" id="btnLoginSubmit">
+            <i class="fa-solid fa-right-to-bracket"></i> ಪೋರ್ಟಲ್‌ಗೆ ಲಾಗಿನ್ ಆಗಿ (Login Now)
+          </button>
+        </form>
+
+        <!-- 2. REGISTER FORM -->
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)" style="display:none;">
+          <div class="form-group-custom">
+            <label><i class="fa-solid fa-user-check" style="color:#38bdf8;"></i> BLO ಅಧಿಕಾರಿಯ ಪೂರ್ಣ ಹೆಸರು (Full Name): *</label>
+            <input type="text" id="regBloName" class="form-control-custom" placeholder="ಉದಾ: ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು..." required style="font-weight:700;">
+          </div>
+
+          <div class="form-group-custom">
+            <label><i class="fa-solid fa-school" style="color:#38bdf8;"></i> ಮತಗಟ್ಟೆ ಶಾಲೆಯ ಹೆಸರು (Polling Station / School Name): *</label>
+            <input type="text" id="regStationName" class="form-control-custom" value="ಸರಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ಮಚೇಡಬೂಲ" placeholder="ಶಾಲೆಯ ಹೆಸರು..." required>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+            <div class="form-group-custom">
+              <label>ರಾಜ್ಯ (State):</label>
+              <input type="text" id="regState" class="form-control-custom" value="ಕರ್ನಾಟಕ (S10)" required>
+            </div>
+            <div class="form-group-custom">
+              <label>ಜಿಲ್ಲೆ (District):</label>
+              <input type="text" id="regDistrict" class="form-control-custom" value="ರಾಯಚೂರು (10)" required>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+            <div class="form-group-custom">
+              <label>ಕ್ಷೇತ್ರ (AC/Taluka):</label>
+              <input type="text" id="regTaluka" class="form-control-custom" value="53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ" required>
+            </div>
+            <div class="form-group-custom">
+              <label>ಬೂತ್ ಭಾಗ ನಂಬರ್: *</label>
+              <input type="text" id="regPartNo" class="form-control-custom" value="87" required style="font-weight:800; color:#38bdf8;">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+            <div class="form-group-custom">
+              <label>ಮೊಬೈಲ್ ನಂಬರ್: *</label>
+              <input type="text" id="regMobile" class="form-control-custom" placeholder="9876543210" required>
+            </div>
+            <div class="form-group-custom">
+              <label>ಗುಪ್ತಪದ (Password): *</label>
+              <div class="input-password-wrap">
+                <input type="password" id="regPassword" class="form-control-custom" placeholder="••••••••" required>
+                <i class="fa-solid fa-eye password-toggle-icon" onclick="togglePasswordVisibility('regPassword', this)"></i>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-auth-submit" id="btnRegisterSubmit" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <i class="fa-solid fa-cloud-arrow-up"></i> ನೋಂದಾಯಿಸಿ & Firebase Cloud ಗೆ ಉಳಿಸಿ
+          </button>
+        </form>
+
+        <div class="cloud-status-indicator" id="authCloudStatusBadge">
+          <i class="fa-solid fa-cloud-arrow-up"></i> ☁️ Firebase Realtime Cloud Connected & Synchronized
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer-credits">
+      Election Commission of India | BLO Digital Smart Assistant V5.0
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-key"></i> ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ</h3>
+        <button class="btn btn-sm btn-outline" style="color:#fff;" onclick="closeForgotPasswordModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+          ನಿಮ್ಮ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ನಂಬರ್ ಅಥವಾ ಭಾಗ ನಂಬರ್ ನಮೂದಿಸಿ. ನಿಮ್ಮ BLO ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಲಾಗುತ್ತದೆ.
+        </p>
+        <input type="text" id="forgotMobileInput" class="form-control" placeholder="ಮೊಬೈಲ್ ಅಥವಾ ಭಾಗ ನಂ (ಉದಾ: 87)..." style="margin-bottom:1rem;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()">ಮುಚ್ಚಿ</button>
+        <button class="btn btn-primary btn-sm" onclick="recoverPassword()"><i class="fa-solid fa-check"></i> ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("blo_profile_v5") || sessionStorage.getItem("blo_session_v5");
+      if (saved) {
+        try {
+          const profile = JSON.parse(saved);
+          if (profile.bloName) {
+            document.getElementById("loginUsername").value = profile.bloName;
+          }
+        } catch (e) {}
+      }
+    });
+
+    function switchAuthTab(tab) {
+      document.getElementById('tabLoginBtn').className = `auth-tab-btn ${tab==='login'?'active':''}`;
+      document.getElementById('tabRegisterBtn').className = `auth-tab-btn ${tab==='register'?'active':''}`;
+      document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+      document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
+    }
+
+    function togglePasswordVisibility(inputId, iconEl) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        iconEl.className = 'fa-solid fa-eye-slash password-toggle-icon';
+      } else {
+        input.type = 'password';
+        iconEl.className = 'fa-solid fa-eye password-toggle-icon';
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnLoginSubmit");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ಲಾಗಿನ್ ಆಗುತ್ತಿದೆ...';
+
+      const username = document.getElementById("loginUsername").value.trim() || "BLO ಅಧಿಕಾರಿ";
+      let profile = { bloName: username, partNo: "87" };
+
+      // Attempt to fetch profile from Firebase Cloud
+      if (typeof fetchUserProfileFromFirebase === 'function') {
+        const cloudProfile = await fetchUserProfileFromFirebase(username) || await fetchUserProfileFromFirebase("87");
+        if (cloudProfile && cloudProfile.bloName) {
+          profile = { ...profile, ...cloudProfile };
+        }
+      }
+
+      sessionStorage.setItem("blo_session_v5", JSON.stringify(profile));
+      localStorage.setItem("blo_profile_v5", JSON.stringify(profile));
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 500);
+    }
+
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnRegisterSubmit");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Firebase ಗೆ ಉಳಿಸಲಾಗುತ್ತಿದೆ...';
+
+      const bloName = document.getElementById("regBloName").value.trim();
+      const partNo = document.getElementById("regPartNo").value.trim() || "87";
+      const profile = {
+        bloName: bloName,
+        partNo: partNo,
+        stationName: document.getElementById("regStationName").value.trim(),
+        state: document.getElementById("regState").value.trim(),
+        district: document.getElementById("regDistrict").value.trim(),
+        taluka: document.getElementById("regTaluka").value.trim(),
+        mobile: document.getElementById("regMobile").value.trim(),
+        password: document.getElementById("regPassword").value
+      };
+
+      sessionStorage.setItem("blo_session_v5", JSON.stringify(profile));
+      localStorage.setItem("blo_profile_v5", JSON.stringify(profile));
+
+      // Save to Firebase Cloud Database!
+      if (typeof saveUserProfileToFirebase === 'function') {
+        await saveUserProfileToFirebase(profile);
+      }
+
+      alert(`✅ BLO ಅಧಿಕಾರಿ "${bloName}" ಅವರ ಪ್ರೊಫೈಲ್ Firebase Cloud ಗೆ ಯಶಸ್ವಿಯಾಗಿ ನೋಂದಾಯಿಸಲಾಗಿದೆ!`);
+      window.location.href = "dashboard.html";
+    }
+
+    function openForgotPasswordModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById("forgotModal").classList.add("active");
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById("forgotModal").classList.remove("active");
+    }
+
+    async function recoverPassword() {
+      const input = document.getElementById("forgotMobileInput").value.trim() || "87";
+      let pass = "blo123";
+      if (typeof fetchUserProfileFromFirebase === 'function') {
+        const cloud = await fetchUserProfileFromFirebase(input);
+        if (cloud && cloud.password) pass = cloud.password;
+      }
+      alert(`✅ ನಿಮ್ಮ BLO ಲಾಗಿನ್ ಪಾಸ್‌ವರ್ಡ್: ${pass}`);
+      closeForgotPasswordModal();
+    }
+  </script>
+</body>
+</html>

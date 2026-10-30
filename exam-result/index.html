@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ ಸಾಫ್ಟ್‌ವೇರ್ | Exam Result Evaluation Software</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS (Excel / CSV Processing) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Custom CSS -->
+  <style>
+/* Custom Styles & Print Media Rules for Exam Result Software */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #1e40af;
+  --primary-hover: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #ca8a04;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans Kannada', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+/* OMR Bubble Styling */
+.omr-bubble {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 2px solid #94a3b8;
+  background-color: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+}
+
+.omr-bubble:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  transform: scale(1.08);
+}
+
+.omr-bubble.active {
+  background-color: #1e40af;
+  border-color: #1e40af;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.omr-bubble.key-selected {
+  background-color: #059669;
+  border-color: #059669;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Question Matrix in Scorecard */
+.q-pill {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.q-pill-correct {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.q-pill-wrong {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.q-pill-blank {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+  nav, .no-print, header button, footer, .tab-buttons {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-area {
+    display: block !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #94a3b8 !important;
+    padding: 6px 8px !important;
+    font-size: 11pt !important;
+  }
+}
+
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-brand-900 text-white shadow-lg sticky top-0 z-40 border-b border-blue-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-600 p-2.5 rounded-xl shadow-inner text-white">
+          <i data-lucide="award" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
+            ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ ಸಾಫ್ಟ್‌ವೇರ್
+            <span class="text-xs bg-blue-700/80 text-blue-100 font-normal px-2.5 py-0.5 rounded-full border border-blue-500">v1.0 Dynamic OMR</span>
+          </h1>
+          <p class="text-xs text-blue-200 mt-0.5">Exam Result & OMR Evaluation System with Google Sheets Backend</p>
+        </div>
+      </div>
+
+      <!-- Quick Info Badges -->
+      <div class="flex items-center flex-wrap gap-2 text-xs">
+        <div class="bg-blue-950/70 border border-blue-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-blue-400"></i>
+          <span class="text-slate-300">ಪರೀಕ್ಷೆ:</span>
+          <span id="badge-exam-name" class="font-semibold text-white">ದಾಖಲಿಸಿಲ್ಲ</span>
+        </div>
+        <div class="bg-blue-950/70 border border-blue-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+          <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i>
+          <span class="text-slate-300">ಅಭ್ಯರ್ಥಿಗಳು:</span>
+          <span id="badge-candidates-count" class="font-semibold text-white">0</span>
+        </div>
+        <div id="badge-gsheet-status" class="bg-amber-950/50 border border-amber-700/60 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-amber-300 cursor-pointer" onclick="switchTab('tab-sync')">
+          <i data-lucide="cloud-off" class="w-4 h-4"></i>
+          <span>ಶೀಟ್ ಸಿಂಕ್: ಸ್ಥಳೀಯ (Offline)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-brand-800/80 px-4 sm:px-6 lg:px-8 border-t border-brand-700/60 no-print overflow-x-auto">
+      <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-4 py-1.5">
+        <button onclick="switchTab('tab-exam')" id="nav-tab-exam" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-white bg-brand-900 shadow">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>1. ಪರೀಕ್ಷೆ & ಕೀ ಉತ್ತರಗಳು</span>
+        </button>
+        <button onclick="switchTab('tab-candidates')" id="nav-tab-candidates" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-blue-200 hover:text-white hover:bg-brand-700/50">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>2. ಅಭ್ಯರ್ಥಿಗಳ OMR ಎಂಟ್ರಿ</span>
+        </button>
+        <button onclick="switchTab('tab-results')" id="nav-tab-results" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-blue-200 hover:text-white hover:bg-brand-700/50">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>3. ಡೈನಾಮಿಕ್ ಫಲಿತಾಂಶ ಶೀಟ್</span>
+        </button>
+        <button onclick="switchTab('tab-scorecard')" id="nav-tab-scorecard" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-blue-200 hover:text-white hover:bg-brand-700/50">
+          <i data-lucide="file-check" class="w-4 h-4"></i>
+          <span>4. ವೈಯಕ್ತಿಕ ಸ್ಕೋರ್‌ಕಾರ್ಡ್</span>
+        </button>
+        <button onclick="switchTab('tab-sync')" id="nav-tab-sync" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-blue-200 hover:text-white hover:bg-brand-700/50">
+          <i data-lucide="cloud" class="w-4 h-4"></i>
+          <span>5. ಗೂಗಲ್ ಶೀಟ್ ಬ್ಯಾಕೆಂಡ್</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: EXAM & OFFICIAL KEY ANSWERS SETUP -->
+    <!-- ========================================== -->
+    <div id="tab-exam" class="tab-content space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="clipboard-list" class="w-6 h-6 text-brand-600"></i>
+              ಹಂತ 1: ಪರೀಕ್ಷೆಯ ಮಾಹಿತಿ ಮತ್ತು ಕೀ-ಉತ್ತರಗಳ ರಚನೆ
+            </h2>
+            <p class="text-sm text-slate-500 mt-1">ಪರೀಕ್ಷೆಯ ಹೆಸರು, ಆವೃತ್ತಿಗಳು (Versions) ಮತ್ತು ಅಧಿಕೃತ ಕೀ ಉತ್ತರಗಳನ್ನು ಇಲ್ಲಿ ದಾಖಲಿಸಿ.</p>
+          </div>
+          <button onclick="loadSampleData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3.5 py-2 rounded-lg border border-slate-300 flex items-center gap-1.5 transition">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+            ಮಾದರಿ ಡೇಟಾ ತುಂಬಿ (Load Sample Demo)
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Exam Name -->
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700">ಪರೀಕ್ಷೆಯ ಹೆಸರು (Exam Name) *</label>
+            <input type="text" id="exam-name-input" placeholder="ಉದಾ: KPSC FDA ಪರೀಕ್ಷೆ 2026 / Mock Test 1" 
+                   oninput="onExamNameChange()"
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition text-slate-800">
+          </div>
+
+          <!-- Total Questions -->
+          <div class="space-y-1.5">
+            <label class="block text-sm font-semibold text-slate-700">ಒಟ್ಟು ಪ್ರಶ್ನೆಗಳ ಸಂಖ್ಯೆ (Total Qs) *</label>
+            <input type="number" id="exam-total-q" min="1" max="250" value="100"
+                   oninput="onTotalQuestionsChange()"
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition font-bold text-brand-900">
+          </div>
+
+          <!-- Marks Per Correct -->
+          <div class="space-y-1.5">
+            <label class="block text-sm font-semibold text-slate-700">ಪ್ರತಿ ಸರಿ ಉತ್ತರಕ್ಕೆ ಅಂಕ (Marks per Correct)</label>
+            <input type="number" id="marks-per-correct" step="0.25" value="1.0" min="0.5" max="10"
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500">
+          </div>
+
+          <!-- Negative Marking Toggle -->
+          <div class="md:col-span-2 bg-blue-50/60 p-4 rounded-xl border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
+                <h4 class="font-bold text-slate-900">ನೆಗೆಟಿವ್ ಮಾರ್ಕಿಂಗ್ ಇದೆಯೇ? (Negative Marking)</h4>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">ತಪ್ಪಾದ ಪ್ರತಿಯೊಂದು ಉತ್ತರಕ್ಕೂ ಅಂಕ ಕಡಿತಗೊಳಿಸಬೇಕೆ?</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="negative-marking-toggle" class="sr-only peer" checked onchange="toggleNegativeOptions()">
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                <span id="negative-toggle-label" class="ml-2.5 text-sm font-semibold text-brand-900">ಹೌದು (Yes)</span>
+              </label>
+
+              <div id="negative-ratio-container" class="flex items-center gap-2 pl-3 border-l border-blue-200">
+                <span class="text-xs font-medium text-slate-700">ಕಡಿತ:</span>
+                <select id="negative-ratio-select" class="text-sm bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-semibold text-slate-800">
+                  <option value="0.25" selected>1/4th (-0.25 ಅಂಕ)</option>
+                  <option value="0.333">1/3rd (-0.33 ಅಂಕ)</option>
+                  <option value="0.5">1/2 (-0.50 ಅಂಕ)</option>
+                  <option value="1.0">1/1 (-1.0 ಅಂಕ)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper Versions Configuration -->
+        <div class="mt-8 pt-6 border-t border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="layers" class="w-5 h-5 text-brand-600"></i>
+                ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಆವೃತ್ತಿಗಳು (Question Paper Versions / Sets)
+              </h3>
+              <p class="text-xs text-slate-500">ಪ್ರತಿಯೊಂದು ಆವೃತ್ತಿಗೂ ಸರ್ಕಾರದ ಅಧಿಕೃತ ಕೀ ಉತ್ತರಗಳನ್ನು ನಮೂದಿಸಿ.</p>
+            </div>
+            <!-- Version Pills -->
+            <div id="version-tabs-list" class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+              <!-- Dynamically populated e.g. A, B, C, D -->
+            </div>
+          </div>
+
+          <!-- Active Version Key Editor -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 mb-5">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">ಪ್ರಸ್ತುತ ಆವೃತ್ತಿ:</span>
+                <span id="active-version-badge" class="px-3 py-1 rounded-lg bg-brand-800 text-white font-bold text-sm">Version A</span>
+                <span id="key-filled-count" class="text-xs text-slate-600 font-medium ml-2">0/20 ಭರ್ತಿಯಾಗಿದೆ</span>
+              </div>
+
+              <!-- Quick Bulk String Input -->
+              <div class="flex items-center gap-2">
+                <button onclick="toggleQuickPasteModal()" class="text-xs bg-white hover:bg-slate-50 text-brand-700 font-semibold px-3 py-1.5 rounded-lg border border-brand-300 shadow-sm flex items-center gap-1.5">
+                  <i data-lucide="clipboard-copy" class="w-3.5 h-3.5"></i>
+                  ಒಟ್ಟಿಗೆ ಪೇಸ್ಟ್ ಮಾಡಿ (Quick Bulk Paste)
+                </button>
+                <button onclick="clearCurrentVersionKeys()" class="text-xs text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-200">
+                  ತೆರವುಗೊಳಿಸಿ (Clear)
+                </button>
+              </div>
+            </div>
+
+            <!-- Visual Key Grid (Question 1 to N) -->
+            <div id="key-answers-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-3 max-h-[380px] overflow-y-auto p-1">
+              <!-- Questions generated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Save Button -->
+        <div class="mt-6 flex justify-end gap-3">
+          <button onclick="saveExamAndKeys()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            ಪರೀಕ್ಷೆ & ಕೀ ಉತ್ತರಗಳನ್ನು ಉಳಿಸಿ (Save & Proceed)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: CANDIDATE OMR RESPONSES ENTRY -->
+    <!-- ========================================== -->
+    <div id="tab-candidates" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Add Candidate Form & OMR Sheet Entry -->
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+          <div class="border-b border-slate-200 pb-4 mb-5">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-brand-600"></i>
+              ಅಭ್ಯರ್ಥಿಯ OMR ಉತ್ತರಗಳ ಎಂಟ್ರಿ
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">ಅಭ್ಯರ್ಥಿ OMR ಶೀಟ್‌ನಲ್ಲಿ ಗುರುತಿಸಿದ ಉತ್ತರಗಳನ್ನು ನಮೂದಿಸಿ.</p>
+          </div>
+
+          <form id="candidate-entry-form" onsubmit="handleCandidateSubmit(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-slate-700">ರೋಲ್ / ರಿಜಿಸ್ಟರ್ ನಂ *</label>
+                <input type="text" id="cand-roll" required placeholder="ಉದಾ: 101" 
+                       class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500">
+              </div>
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-slate-700">ಅಭ್ಯರ್ಥಿಯ ಹೆಸರು *</label>
+                <input type="text" id="cand-name" required placeholder="ಉದಾ: ರಮೇಶ್ ಕುಮಾರ್" 
+                       class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-slate-700">ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಆವೃತ್ತಿ (Version) *</label>
+                <select id="cand-version-select" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm font-semibold bg-white">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div class="space-y-1">
+                <label class="block text-xs font-semibold text-slate-700">ಗುರುತಿಸಿದ ಪ್ರಶ್ನೆಗಳು</label>
+                <div class="text-xs font-bold text-brand-800 bg-brand-50 px-3 py-2 rounded-lg border border-brand-200 flex justify-between">
+                  <span>ಗುರುತಿಸಿದ್ದು: <b id="cand-marked-count">0</b></span>
+                  <span>ಖಾಲಿ: <b id="cand-unmarked-count">0</b></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rapid String Input for OMR responses -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-700">ಕ್ಷಿಪ್ರ OMR ಅಕ್ಷರ ಎಂಟ್ರಿ (Quick String):</label>
+                <button type="button" onclick="clearCandidateOmrGrid()" class="text-[11px] text-rose-600 hover:underline">ಮರುಹೊಂದಿಸಿ (Reset)</button>
+              </div>
+              <input type="text" id="cand-quick-string" placeholder="ಉದಾ: ABCDABCD... ಅಥವಾ ಖಾಲಿಗೆ - ಹಾಕಿ" 
+                     oninput="syncCandidateOmrFromString(this.value)"
+                     class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-mono uppercase tracking-widest">
+              <p class="text-[10px] text-slate-500">ಗಮನಿಸಿ: ಕೆಳಗಿರುವ ಬಬಲ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿದರೂ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ದಾಖಲಾಗುತ್ತದೆ.</p>
+            </div>
+
+            <!-- OMR Bubble Clicker Grid -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-2">OMR ಬಬಲ್ ಆಯ್ಕೆ (OMR Sheet):</label>
+              <div id="candidate-omr-bubbles-grid" class="border border-slate-200 rounded-xl p-3 bg-slate-50 max-h-72 overflow-y-auto space-y-2">
+                <!-- Dynamic Bubble Rows -->
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              ಅಭ್ಯರ್ಥಿಯನ್ನು ಸೇರಿಸಿ (Add Candidate)
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Candidates List & Bulk CSV Import -->
+        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4 mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 text-brand-600"></i>
+                ದಾಖಲಾದ ಅಭ್ಯರ್ಥಿಗಳ ಪಟ್ಟಿ (<span id="cand-total-badge">0</span>)
+              </h2>
+              <p class="text-xs text-slate-500">ಒಟ್ಟಿಗೆ ಎಕ್ಸೆಲ್/CSV ಮೂಲಕವೂ ಸೇರಿಸಬಹುದು.</p>
+            </div>
+            
+            <!-- Bulk Upload & Download Template -->
+            <div class="flex items-center gap-2">
+              <button onclick="downloadCandidateTemplate()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-1">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                ಮಾದರಿ Excel (Template)
+              </button>
+              <label class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer flex items-center gap-1">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                CSV/Excel ಅಪ್‌ಲೋಡ್
+                <input type="file" id="bulk-csv-input" accept=".csv, .xlsx, .xls" class="hidden" onchange="handleBulkCandidateUpload(event)">
+              </label>
+            </div>
+          </div>
+
+          <!-- Candidates Table -->
+          <div class="overflow-x-auto flex-grow max-h-[480px]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-100 text-slate-700 sticky top-0 z-10 border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5 font-bold">ರೋಲ್ ನಂ</th>
+                  <th class="p-2.5 font-bold">ಹೆಸರು</th>
+                  <th class="p-2.5 font-bold">ಆವೃತ್ತಿ</th>
+                  <th class="p-2.5 font-bold">ಗುರುತಿಸಿದ ಉತ್ತರಗಳು</th>
+                  <th class="p-2.5 font-bold text-center">ಕ್ರಮ (Action)</th>
+                </tr>
+              </thead>
+              <tbody id="candidates-table-body" class="divide-y divide-slate-100 text-slate-700">
+                <tr>
+                  <td colspan="5" class="text-center py-10 text-slate-400">
+                    ಯಾವುದೇ ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಇನ್ನೂ ದಾಖಲಿಸಿಲ್ಲ. ಎಡಭಾಗದಲ್ಲಿ ಎಂಟ್ರಿ ಮಾಡಿ ಅಥವಾ CSV ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Bottom Action -->
+          <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
+            <button onclick="clearAllCandidates()" class="text-xs text-rose-600 hover:underline">
+              ಎಲ್ಲಾ ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಅಳಿಸಿ (Clear All)
+            </button>
+            <button onclick="switchTab('tab-results')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow flex items-center gap-2 text-sm">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+              ಫಲಿತಾಂಶ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ (Evaluate & Show Results)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: DYNAMIC RESULT SHEET & RANK LIST -->
+    <!-- ========================================== -->
+    <div id="tab-results" class="tab-content hidden space-y-6">
+      
+      <!-- Statistics Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="p-3 bg-blue-100 text-brand-700 rounded-xl">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ಒಟ್ಟು ಅಭ್ಯರ್ಥಿಗಳು</div>
+            <div id="stat-total-candidates" class="text-xl font-black text-slate-900">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+            <i data-lucide="trophy" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ಅತ್ಯಧಿಕ ಅಂಕ (Highest)</div>
+            <div id="stat-highest-score" class="text-xl font-black text-emerald-700">0.00</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="p-3 bg-amber-100 text-amber-700 rounded-xl">
+            <i data-lucide="percent" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ಸರಾಸರಿ ಅಂಕ (Average)</div>
+            <div id="stat-avg-score" class="text-xl font-black text-amber-700">0.00</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="p-3 bg-purple-100 text-purple-700 rounded-xl">
+            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ನೆಗೆಟಿವ್ ಕಡಿತ ವ್ಯವಸ್ಥೆ</div>
+            <div id="stat-negative-info" class="text-sm font-bold text-slate-900">1/4 (-0.25)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Result Table Card -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        
+        <!-- Controls Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="table" class="w-6 h-6 text-brand-600"></i>
+              ಅಂತಿಮ ಮೆರಿಟ್ ಪಟ್ಟಿ (Dynamic Rank & Result Sheet)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">ಸ್ವಯಂಚಾಲಿತ ಮೌಲ್ಯಮಾಪನ ಮತ್ತು ನೆಗೆಟಿವ್ ಅಂಕಗಳ ಲೆಕ್ಕಾಚಾರದೊಂದಿಗೆ ರಾಂಕಿಂಗ್ ಪಟ್ಟಿ.</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+              <input type="text" id="result-search-input" oninput="filterResultsTable()" placeholder="ರೋಲ್ ನಂ / ಹೆಸರು ಹುಡುಕಿ..." 
+                     class="pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-300 w-44 sm:w-56 focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <!-- Filter by Version -->
+            <select id="result-version-filter" onchange="filterResultsTable()" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 font-semibold text-slate-700">
+              <option value="ALL">ಎಲ್ಲಾ ಆವೃತ್ತಿಗಳು (All Versions)</option>
+            </select>
+
+            <!-- Export Buttons -->
+            <button onclick="exportResultsToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-1.5">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+              Excel ಡೌನ್‌ಲೋಡ್
+            </button>
+            <button onclick="printResultsTable()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-1.5">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              ಪ್ರಿಂಟ್ (Print)
+            </button>
+            <button onclick="syncToGoogleSheet()" class="bg-brand-700 hover:bg-brand-800 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-1.5">
+              <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+              ಗೂಗಲ್ ಶೀಟ್‌ಗೆ ಸೇವ್ ಮಾಡಿ
+            </button>
+          </div>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="overflow-x-auto print-area" id="print-result-section">
+          <div class="hidden print:block text-center pb-4 mb-4 border-b border-slate-800">
+            <h1 class="text-2xl font-bold" id="print-exam-title">ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ ಪಟ್ಟಿ</h1>
+            <p class="text-sm" id="print-exam-subtitle">ಅಂತಿಮ ಮೆರಿಟ್ ಪಟ್ಟಿ</p>
+          </div>
+
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead class="bg-slate-100 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 text-center w-14">ರಾಂಕ್</th>
+                <th class="p-3">ರೋಲ್ ನಂ</th>
+                <th class="p-3">ಅಭ್ಯರ್ಥಿಯ ಹೆಸರು</th>
+                <th class="p-3 text-center">ಆವೃತ್ತಿ</th>
+                <th class="p-3 text-center">ಪ್ರಯತ್ನಿಸಿದ್ದು</th>
+                <th class="p-3 text-center text-emerald-700">ಸರಿ (Correct)</th>
+                <th class="p-3 text-center text-rose-600">ತಪ್ಪು (Wrong)</th>
+                <th class="p-3 text-center text-slate-500">ಖಾಲಿ (Blank)</th>
+                <th class="p-3 text-center text-rose-600">ನೆಗೆಟಿವ್ ಕಡಿತ</th>
+                <th class="p-3 text-center font-black text-brand-900 bg-blue-50/50">ಅಂತಿಮ ಅಂಕ</th>
+                <th class="p-3 text-center">ಶೇಕಡಾವಾರು (%)</th>
+                <th class="p-3 text-center no-print">ವಿವರಣೆ</th>
+              </tr>
+            </thead>
+            <tbody id="results-table-body" class="divide-y divide-slate-100 font-medium">
+              <tr>
+                <td colspan="12" class="text-center py-12 text-slate-400">
+                  ಫಲಿತಾಂಶ ಸಿದ್ಧಪಡಿಸಲು ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಮತ್ತು ಕೀ ಉತ್ತರಗಳನ್ನು ದಾಖಲಿಸಿ.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: DETAILED CANDIDATE SCORECARD -->
+    <!-- ========================================== -->
+    <div id="tab-scorecard" class="tab-content hidden space-y-6">
+      
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 no-print">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="file-text" class="w-5 h-5 text-brand-600"></i>
+              ಅಭ್ಯರ್ಥಿಯ ವಿವರವಾದ ಸ್ಕೋರ್‌ಕಾರ್ಡ್ (Candidate Scorecard)
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">ಅಭ್ಯರ್ಥಿಯ ಹೆಸರನ್ನು ಆರಿಸಿ ಅವರ ಪ್ರಶ್ನೆವಾರು ಮೌಲ್ಯಮಾಪನ ನೋಡಿ ಮತ್ತು ಪ್ರಿಂಟ್ ಮಾಡಿ.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <select id="scorecard-candidate-select" onchange="renderSelectedCandidateScorecard()" class="px-4 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white">
+              <option value="">-- ಅಭ್ಯರ್ಥಿಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ --</option>
+            </select>
+            <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              ಸ್ಕೋರ್‌ಕಾರ್ಡ್ ಪ್ರಿಂಟ್ (Print A4)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Printable Scorecard Area -->
+      <div id="scorecard-printable-area" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6 print-area">
+        <div class="text-center py-12 text-slate-400">
+          ದಯವಿಟ್ಟು ಸ್ಕೋರ್‌ಕಾರ್ಡ್ ನೋಡಲು ಮೇಲಿನಿಂದ ಅಭ್ಯರ್ಥಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: GOOGLE SHEETS SYNC & CONFIGURATION -->
+    <!-- ========================================== -->
+    <div id="tab-sync" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        
+        <div class="border-b border-slate-200 pb-4 mb-6">
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="cloud" class="w-6 h-6 text-brand-600"></i>
+            ಗೂಗಲ್ ಶೀಟ್ ಬ್ಯಾಕೆಂಡ್ ಸಂಪರ್ಕ (Google Sheets Integration)
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">
+            ನಿಮ್ಮ ಗೂಗಲ್ ಶೀಟ್‌ನೊಂದಿಗೆ ಡೇಟಾವನ್ನು ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಸಿಂಕ್ ಮಾಡಿ ಶಾಶ್ವತವಾಗಿ ಕ್ಲೌಡ್‌ನಲ್ಲಿ ಶೇಖರಿಸಿ.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <!-- Connection Settings -->
+          <div class="lg:col-span-5 space-y-5">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+              <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <i data-lucide="link" class="w-4 h-4 text-brand-600"></i>
+                ಗೂಗಲ್ ಶೀಟ್ ವಿವರಗಳು (Sheet Details)
+              </h3>
+              
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">ನಿಮ್ಮ ಗೂಗಲ್ ಶೀಟ್ URL:</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" readonly value="https://docs.google.com/spreadsheets/d/1-NAZdSlS8QKTGFMPLwmHfToy07Jh2H5cfewgx7u3CDw/edit" 
+                         class="w-full text-xs bg-white px-3 py-2 border border-slate-300 rounded-lg text-slate-600 font-mono">
+                  <a href="https://docs.google.com/spreadsheets/d/1-NAZdSlS8QKTGFMPLwmHfToy07Jh2H5cfewgx7u3CDw/edit" target="_blank" 
+                     class="p-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-700 transition" title="Open Google Sheet">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                  Google Apps Script Web App URL *
+                </label>
+                <input type="url" id="gas-webapp-url" placeholder="https://script.google.com/macros/s/.../exec"
+                       class="w-full text-xs px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 font-mono">
+                <p class="text-[11px] text-slate-500 mt-1">ಬಲಗಡೆ ನೀಡಿರುವ ಹಂತಗಳನ್ನು ಅನುಸರಿಸಿ ಪಡೆದ ವೆಬ್ ಆ್ಯಪ್ ಲಿಂಕ್ ಅನ್ನು ಇಲ್ಲಿ ಹಾಕಿ.</p>
+              </div>
+
+              <div class="pt-2 flex flex-col gap-2">
+                <button onclick="saveAndTestGasUrl()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  URL ಉಳಿಸಿ & ಸಂಪರ್ಕ ಪರೀಕ್ಷಿಸಿ (Test Connection)
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="syncToGoogleSheet()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                    <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+                    ಡೇಟಾ ಶೀಟ್‌ಗೆ ಕಳುಹಿಸಿ
+                  </button>
+                  <button onclick="fetchFromGoogleSheet()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                    <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i>
+                    ಶೀಟ್‌ನಿಂದ ಡೇಟಾ ಪಡೆಯಿರಿ
+                  </button>
+                </div>
+              </div>
+
+              <!-- Connection Status Alert -->
+              <div id="gas-status-msg" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+            </div>
+          </div>
+
+          <!-- Step-by-Step Instructions -->
+          <div class="lg:col-span-7 bg-blue-50/50 rounded-2xl border border-blue-200 p-5 space-y-4 text-xs text-slate-700">
+            <h3 class="text-sm font-bold text-brand-900 flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-4 h-4 text-brand-700"></i>
+              ಗೂಗಲ್ ಶೀಟ್ Web App URL ಪಡೆಯುವುದು ಹೇಗೆ? (ಸುಲಭ 5 ಹಂತಗಳು)
+            </h3>
+
+            <ol class="space-y-3 list-decimal list-inside leading-relaxed text-slate-700">
+              <li>
+                ನಿಮ್ಮ <a href="https://docs.google.com/spreadsheets/d/1-NAZdSlS8QKTGFMPLwmHfToy07Jh2H5cfewgx7u3CDw/edit" target="_blank" class="text-brand-700 font-bold underline">ಗೂಗಲ್ ಶೀಟ್</a> ತೆರೆಯಿರಿ.
+              </li>
+              <li>
+                ಮೇಲಿನ ಮೆನುವಿನಲ್ಲಿ <b>Extensions (ವಿಸ್ತರಣೆಗಳು)</b> &rarr; <b>Apps Script</b> ಕ್ಲಿಕ್ ಮಾಡಿ.
+              </li>
+              <li>
+                ಅಲ್ಲಿ ಕಾಣಿಸುವ ಕೋಡ್ ತೆಗೆದು, ಈ ಪ್ರಾಜೆಕ್ಟ್‌ನಲ್ಲಿರುವ <b class="bg-blue-100 px-1 py-0.5 rounded font-mono">google_apps_script.js</b> ಫೈಲ್‌ನ ಸಂಪೂರ್ಣ ಕೋಡ್ ಅನ್ನು ಕಾಪಿ ಮಾಡಿ ಪೇಸ್ಟ್ ಮಾಡಿ ಮತ್ತು Save (Ctrl+S) ಮಾಡಿ.
+              </li>
+              <li>
+                ಮೇಲಿನ <b>Deploy</b> ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ &rarr; <b>New deployment</b> ಆಯ್ಕೆ ಮಾಡಿ:
+                <ul class="list-disc list-inside pl-4 mt-1 space-y-0.5 text-slate-600">
+                  <li>Select type: <b>Web app</b></li>
+                  <li>Execute as: <b>Me</b></li>
+                  <li>Who has access: <b>Anyone (ಯಾರಾದರೂ)</b></li>
+                </ul>
+              </li>
+              <li>
+                <b>Deploy</b> ಕ್ಲಿಕ್ ಮಾಡಿ, ಅಲ್ಲಿ ಬರುವ <b>Web app URL</b> ಅನ್ನು ಕಾಪಿ ಮಾಡಿ ಎಡಭಾಗದಲ್ಲಿರುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ <b>"URL ಉಳಿಸಿ"</b> ಕ್ಲಿಕ್ ಮಾಡಿ!
+              </li>
+            </ol>
+
+            <div class="bg-white p-3 rounded-xl border border-blue-200 text-blue-900 flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-brand-600 mt-0.5 flex-shrink-0"></i>
+              <p>
+                <b>ಗಮನಿಸಿ:</b> ನೀವು ಸದ್ಯಕ್ಕೆ ಗೂಗಲ್ ಶೀಟ್ ಲಿಂಕ್ ಮಾಡದಿದ್ದರೂ ಸಹ ಸಾಫ್ಟ್‌ವೇರ್ ಸಂಪೂರ್ಣವಾಗಿ ನಿಮ್ಮ ಕಂಪ್ಯೂಟರ್‌ನ ಬ್ರೌಸರ್‌ನಲ್ಲಿಯೇ (Local Storage) ಯಾವುದೇ ಅಡೆತಡೆಯಿಲ್ಲದೆ ರನ್ ಆಗುತ್ತದೆ!
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Quick Bulk Paste Modal -->
+  <div id="quick-paste-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i data-lucide="clipboard-paste" class="w-5 h-5 text-brand-600"></i>
+          ಕೀ ಉತ್ತರಗಳನ್ನು ಒಟ್ಟಿಗೆ ಪೇಸ್ಟ್ ಮಾಡಿ (Bulk Key Paste)
+        </h3>
+        <button onclick="toggleQuickPasteModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-600">
+        ಉದಾಹರಣೆಗೆ: <code class="bg-slate-100 px-1 py-0.5 rounded text-brand-700">ABCDAABBCC...</code> ಅಥವಾ ಸ್ಪೇಸ್ ನೀಡಿ <code class="bg-slate-100 px-1 py-0.5 rounded text-brand-700">A B C D A B...</code> ಪೇಸ್ಟ್ ಮಾಡಿ:
+      </p>
+
+      <textarea id="bulk-paste-text" rows="5" placeholder="ABCDABCDABCD..." 
+                class="w-full p-3 border border-slate-300 rounded-xl text-sm font-mono tracking-widest uppercase focus:ring-2 focus:ring-brand-500"></textarea>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="toggleQuickPasteModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">
+          ರದ್ದುಮಾಡಿ (Cancel)
+        </button>
+        <button onclick="applyBulkKeyPaste()" class="px-5 py-2 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow">
+          ಕೀ ಉತ್ತರಗಳನ್ನು ಅನ್ವಯಿಸಿ (Apply)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none text-sm">
+    <i id="toast-icon" data-lucide="info" class="w-5 h-5 text-brand-400"></i>
+    <span id="toast-message">ಸಂದೇಶ</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© 2026 ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ ಸಾಫ್ಟ್‌ವೇರ್ - Exam Result Evaluation System</p>
+      <p class="flex items-center gap-1">
+        Google Sheets Backend Ready • Offline Capable
+      </p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript Logic -->
+  <script>
+/**
+ * Exam Result Evaluation Software - Core Logic
+ */
+
+// Application State
+const AppState = {
+  exam: {
+    id: 'exam_' + Date.now(),
+    name: '',
+    totalQuestions: 100,
+    marksPerCorrect: 1.0,
+    hasNegative: true,
+    negativeRatio: 0.25
+  },
+  versions: ['A', 'B', 'C', 'D'],
+  activeVersion: 'A',
+  keyAnswers: {
+    'A': {},
+    'B': {},
+    'C': {},
+    'D': {}
+  },
+  candidates: [],
+  results: [],
+  gasUrl: '',
+  candidateOmrDraft: {} // Temporary answers during single entry
+};
+
+// Storage Keys
+const STORAGE_KEY = 'EXAM_RESULT_SOFTWARE_DATA_V1';
+const GAS_URL_KEY = 'EXAM_RESULT_GAS_URL';
+
+// Initialize on Load
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage();
+  const totalQInput = document.getElementById('exam-total-q');
+  if (totalQInput && totalQInput.value) {
+    AppState.exam.totalQuestions = parseInt(totalQInput.value) || 100;
+  }
+  initLucide();
+  renderVersionTabs();
+  renderKeyAnswersGrid();
+  updateVersionSelects();
+  renderCandidateOmrBubbles();
+  evaluateResults();
+  updateBadges();
+
+  // Load saved GAS URL if available
+  const savedUrl = localStorage.getItem(GAS_URL_KEY);
+  if (savedUrl) {
+    AppState.gasUrl = savedUrl;
+    const urlInput = document.getElementById('gas-webapp-url');
+    if (urlInput) urlInput.value = savedUrl;
+    updateGsheetBadge(true);
+  }
+});
+
+function initLucide() {
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+// -------------------------------------------------------------
+// NAVIGATION & TABS
+// -------------------------------------------------------------
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('bg-brand-900', 'text-white', 'shadow');
+    btn.classList.add('text-blue-200');
+  });
+
+  const activeContent = document.getElementById(tabId);
+  if (activeContent) {
+    activeContent.classList.remove('hidden');
+  }
+
+  const activeBtn = document.getElementById('nav-' + tabId);
+  if (activeBtn) {
+    activeBtn.classList.add('bg-brand-900', 'text-white', 'shadow');
+    activeBtn.classList.remove('text-blue-200');
+  }
+
+  if (tabId === 'tab-results') {
+    evaluateResults();
+  } else if (tabId === 'tab-scorecard') {
+    populateScorecardCandidateDropdown();
+  }
+
+  initLucide();
+}
+
+// -------------------------------------------------------------
+// TOAST NOTIFICATIONS
+// -------------------------------------------------------------
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const msgEl = document.getElementById('toast-message');
+  const icon = document.getElementById('toast-icon');
+
+  if (!toast) return;
+
+  msgEl.innerText = message;
+  toast.className = `fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform text-sm ${
+    type === 'success' ? 'bg-emerald-800 text-white' : type === 'error' ? 'bg-rose-800 text-white' : 'bg-slate-900 text-white'
+  }`;
+
+  toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+
+  setTimeout(() => {
+    toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+  }, 3500);
+}
+
+// -------------------------------------------------------------
+// EXAM & KEY ANSWERS LOGIC
+// -------------------------------------------------------------
+function onExamNameChange() {
+  const val = document.getElementById('exam-name-input').value.trim();
+  AppState.exam.name = val;
+  updateBadges();
+  saveToLocalStorage();
+}
+
+function onTotalQuestionsChange() {
+  const input = document.getElementById('exam-total-q');
+  const val = parseInt(input.value);
+  if (!isNaN(val) && val > 0 && val <= 300) {
+    AppState.exam.totalQuestions = val;
+    renderKeyAnswersGrid();
+    renderCandidateOmrBubbles();
+    saveToLocalStorage();
+    evaluateResults();
+  }
+}
+
+function toggleNegativeOptions() {
+  const toggle = document.getElementById('negative-marking-toggle');
+  const label = document.getElementById('negative-toggle-label');
+  const ratioBox = document.getElementById('negative-ratio-container');
+
+  AppState.exam.hasNegative = toggle.checked;
+  if (toggle.checked) {
+    label.innerText = 'ಹೌದು (Yes)';
+    label.className = 'ml-2.5 text-sm font-semibold text-brand-900';
+    ratioBox.classList.remove('opacity-40', 'pointer-events-none');
+  } else {
+    label.innerText = 'ಇಲ್ಲ (No)';
+    label.className = 'ml-2.5 text-sm font-semibold text-slate-500';
+    ratioBox.classList.add('opacity-40', 'pointer-events-none');
+  }
+  evaluateResults();
+}
+
+function renderVersionTabs() {
+  const container = document.getElementById('version-tabs-list');
+  if (!container) return;
+
+  container.innerHTML = '';
+  AppState.versions.forEach(ver => {
+    const btn = document.createElement('button');
+    const isActive = AppState.activeVersion === ver;
+    btn.className = `px-3 py-1 text-xs font-bold rounded-lg transition ${
+      isActive ? 'bg-brand-700 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-200'
+    }`;
+    btn.innerText = `Set ${ver}`;
+    btn.onclick = () => {
+      AppState.activeVersion = ver;
+      renderVersionTabs();
+      renderKeyAnswersGrid();
+    };
+    container.appendChild(btn);
+  });
+
+  const badge = document.getElementById('active-version-badge');
+  if (badge) badge.innerText = `Version ${AppState.activeVersion}`;
+}
+
+function renderKeyAnswersGrid() {
+  const grid = document.getElementById('key-answers-grid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+  const currentKeys = AppState.keyAnswers[AppState.activeVersion] || {};
+  let filledCount = 0;
+
+  for (let q = 1; q <= total; q++) {
+    const qVal = currentKeys[q] || '';
+    if (qVal) filledCount++;
+
+    const card = document.createElement('div');
+    card.className = 'bg-white p-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col items-center gap-1.5';
+
+    const qNum = document.createElement('span');
+    qNum.className = 'text-[11px] font-bold text-slate-500';
+    qNum.innerText = `Q.${q}`;
+    card.appendChild(qNum);
+
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'flex items-center gap-1';
+
+    ['A', 'B', 'C', 'D'].forEach(opt => {
+      const bubble = document.createElement('button');
+      bubble.type = 'button';
+      bubble.className = `w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center transition border ${
+        qVal === opt
+          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm scale-105'
+          : 'bg-slate-50 text-slate-700 border-slate-300 hover:border-brand-500'
+      }`;
+      bubble.innerText = opt;
+      bubble.onclick = () => {
+        if (currentKeys[q] === opt) {
+          delete currentKeys[q];
+        } else {
+          currentKeys[q] = opt;
+        }
+        AppState.keyAnswers[AppState.activeVersion] = currentKeys;
+        renderKeyAnswersGrid();
+        saveToLocalStorage();
+        evaluateResults();
+      };
+      optionsDiv.appendChild(bubble);
+    });
+
+    card.appendChild(optionsDiv);
+    grid.appendChild(card);
+  }
+
+  const filledLabel = document.getElementById('key-filled-count');
+  if (filledLabel) {
+    filledLabel.innerText = `${filledCount}/${total} ಭರ್ತಿಯಾಗಿದೆ`;
+  }
+}
+
+function clearCurrentVersionKeys() {
+  if (confirm(`ನಿಜವಾಗಿಯೂ Version ${AppState.activeVersion} ನ ಕೀ ಉತ್ತರಗಳನ್ನು ತೆರವುಗೊಳಿಸಲು ಬಯಸುವಿರಾ?`)) {
+    AppState.keyAnswers[AppState.activeVersion] = {};
+    renderKeyAnswersGrid();
+    saveToLocalStorage();
+    evaluateResults();
+    showToast(`Version ${AppState.activeVersion} ಕೀ ಉತ್ತರಗಳನ್ನು ತೆರವುಗೊಳಿಸಲಾಗಿದೆ.`);
+  }
+}
+
+function toggleQuickPasteModal() {
+  const modal = document.getElementById('quick-paste-modal');
+  if (modal) {
+    modal.classList.toggle('hidden');
+    document.getElementById('bulk-paste-text').value = '';
+    initLucide();
+  }
+}
+
+function applyBulkKeyPaste() {
+  const text = document.getElementById('bulk-paste-text').value;
+  if (!text.trim()) {
+    showToast('ದಯವಿಟ್ಟು ಕೀ ಉತ್ತರಗಳನ್ನು ನಮೂದಿಸಿ.', 'error');
+    return;
+  }
+
+  // Extract all letters A, B, C, D (case insensitive)
+  const letters = text.toUpperCase().replace(/[^ABCD]/g, '').split('');
+  let total = parseInt(document.getElementById('exam-total-q')?.value) || parseInt(AppState.exam.totalQuestions) || 20;
+
+  if (letters.length === 0) {
+    showToast('ಮಾನ್ಯವಾದ A, B, C, D ಉತ್ತರಗಳು ಪತ್ತೆಯಾಗಿಲ್ಲ.', 'error');
+    return;
+  }
+
+  // If user pasted more keys than current total, automatically expand total questions
+  if (letters.length > total) {
+    total = letters.length;
+    AppState.exam.totalQuestions = total;
+    const qInput = document.getElementById('exam-total-q');
+    if (qInput) qInput.value = total;
+  }
+
+  const currentKeys = AppState.keyAnswers[AppState.activeVersion] || {};
+  for (let i = 0; i < Math.min(letters.length, total); i++) {
+    currentKeys[i + 1] = letters[i];
+  }
+
+  AppState.keyAnswers[AppState.activeVersion] = currentKeys;
+  toggleQuickPasteModal();
+  renderKeyAnswersGrid();
+  renderCandidateOmrBubbles();
+  saveToLocalStorage();
+  evaluateResults();
+  showToast(`Version ${AppState.activeVersion} ಗೆ ${Math.min(letters.length, total)} ಕೀ ಉತ್ತರಗಳನ್ನು ಅನ್ವಯಿಸಲಾಗಿದೆ!`);
+}
+
+function saveExamAndKeys() {
+  const nameInput = document.getElementById('exam-name-input');
+  const totalQInput = document.getElementById('exam-total-q');
+  const marksInput = document.getElementById('marks-per-correct');
+  const negToggle = document.getElementById('negative-marking-toggle');
+  const negSelect = document.getElementById('negative-ratio-select');
+
+  if (!nameInput.value.trim()) {
+    showToast('ದಯವಿಟ್ಟು ಪರೀಕ್ಷೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.', 'error');
+    nameInput.focus();
+    return;
+  }
+
+  const totalQ = parseInt(totalQInput.value) || 20;
+  if (totalQ < 1 || totalQ > 250) {
+    showToast('ಪ್ರಶ್ನೆಗಳ ಸಂಖ್ಯೆ 1 ರಿಂದ 250 ರ ನಡುವೆ ಇರಬೇಕು.', 'error');
+    return;
+  }
+
+  AppState.exam.name = nameInput.value.trim();
+  AppState.exam.totalQuestions = totalQ;
+  AppState.exam.marksPerCorrect = parseFloat(marksInput.value) || 1.0;
+  AppState.exam.hasNegative = negToggle.checked;
+  AppState.exam.negativeRatio = parseFloat(negSelect.value) || 0.25;
+
+  saveToLocalStorage();
+  updateBadges();
+  renderKeyAnswersGrid();
+  renderCandidateOmrBubbles();
+  evaluateResults();
+
+  showToast('ಪರೀಕ್ಷೆಯ ವಿವರಗಳು ಮತ್ತು ಕೀ ಉತ್ತರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!');
+  // Automatically navigate to Candidates Tab
+  switchTab('tab-candidates');
+}
+
+// -------------------------------------------------------------
+// CANDIDATE ENTRY & OMR
+// -------------------------------------------------------------
+function updateVersionSelects() {
+  const candSelect = document.getElementById('cand-version-select');
+  const filterSelect = document.getElementById('result-version-filter');
+
+  if (candSelect) {
+    candSelect.innerHTML = '';
+    AppState.versions.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.innerText = `Version ${v}`;
+      candSelect.appendChild(opt);
+    });
+  }
+
+  if (filterSelect) {
+    filterSelect.innerHTML = '<option value="ALL">ಎಲ್ಲಾ ಆವೃತ್ತಿಗಳು (All Versions)</option>';
+    AppState.versions.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.innerText = `Version ${v}`;
+      filterSelect.appendChild(opt);
+    });
+  }
+}
+
+function renderCandidateOmrBubbles() {
+  const container = document.getElementById('candidate-omr-bubbles-grid');
+  if (!container) return;
+
+  container.innerHTML = '';
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+
+  for (let q = 1; q <= total; q++) {
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs';
+
+    const qNum = document.createElement('span');
+    qNum.className = 'font-bold text-slate-600 w-10';
+    qNum.innerText = `Q.${q}`;
+    row.appendChild(qNum);
+
+    const bubblesDiv = document.createElement('div');
+    bubblesDiv.className = 'flex items-center gap-1.5';
+
+    ['A', 'B', 'C', 'D'].forEach(opt => {
+      const bubble = document.createElement('button');
+      bubble.type = 'button';
+      const isSelected = AppState.candidateOmrDraft[q] === opt;
+      bubble.className = `omr-bubble text-xs ${isSelected ? 'active' : ''}`;
+      bubble.innerText = opt;
+      bubble.onclick = () => {
+        if (AppState.candidateOmrDraft[q] === opt) {
+          delete AppState.candidateOmrDraft[q];
+        } else {
+          AppState.candidateOmrDraft[q] = opt;
+        }
+        updateCandidateDraftCounts();
+        renderCandidateOmrBubbles();
+        syncStringFromCandidateDraft();
+      };
+      bubblesDiv.appendChild(bubble);
+    });
+
+    row.appendChild(bubblesDiv);
+    container.appendChild(row);
+  }
+
+  updateCandidateDraftCounts();
+}
+
+function updateCandidateDraftCounts() {
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+  const marked = Object.keys(AppState.candidateOmrDraft).length;
+  const unmarked = Math.max(0, total - marked);
+
+  const markedEl = document.getElementById('cand-marked-count');
+  const unmarkedEl = document.getElementById('cand-unmarked-count');
+
+  if (markedEl) markedEl.innerText = marked;
+  if (unmarkedEl) unmarkedEl.innerText = unmarked;
+}
+
+function syncStringFromCandidateDraft() {
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+  let str = '';
+  for (let q = 1; q <= total; q++) {
+    str += AppState.candidateOmrDraft[q] || '-';
+  }
+  const input = document.getElementById('cand-quick-string');
+  if (input) input.value = str;
+}
+
+function syncCandidateOmrFromString(val) {
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+  AppState.candidateOmrDraft = {};
+
+  const cleanChars = val.toUpperCase().split('');
+  cleanChars.forEach((ch, idx) => {
+    if (idx < total && ['A', 'B', 'C', 'D'].includes(ch)) {
+      AppState.candidateOmrDraft[idx + 1] = ch;
+    }
+  });
+
+  renderCandidateOmrBubbles();
+}
+
+function clearCandidateOmrGrid() {
+  AppState.candidateOmrDraft = {};
+  const strInput = document.getElementById('cand-quick-string');
+  if (strInput) strInput.value = '';
+  renderCandidateOmrBubbles();
+}
+
+function handleCandidateSubmit(e) {
+  e.preventDefault();
+  const roll = document.getElementById('cand-roll').value.trim();
+  const name = document.getElementById('cand-name').value.trim();
+  const version = document.getElementById('cand-version-select').value;
+
+  if (!roll || !name) {
+    showToast('ರೋಲ್ ನಂಬರ್ ಮತ್ತು ಹೆಸರು ಕಡ್ಡಾಯ.', 'error');
+    return;
+  }
+
+  // Check duplicate roll number
+  const existingIdx = AppState.candidates.findIndex(c => c.rollNo.toLowerCase() === roll.toLowerCase());
+  if (existingIdx !== -1) {
+    if (!confirm(`ರೋಲ್ ನಂ "${roll}" ಈಗಾಗಲೇ ದಾಖಲಾಗಿದೆ. ಬದಲಾಯಿಸಬೇಕೆ?`)) {
+      return;
+    }
+  }
+
+  const candidate = {
+    id: 'cand_' + Date.now(),
+    rollNo: roll,
+    name: name,
+    version: version,
+    responses: { ...AppState.candidateOmrDraft }
+  };
+
+  if (existingIdx !== -1) {
+    AppState.candidates[existingIdx] = candidate;
+    showToast(`ಅಭ್ಯರ್ಥಿ ${name} ವಿವರ ನವೀಕರಿಸಲಾಗಿದೆ.`);
+  } else {
+    AppState.candidates.push(candidate);
+    showToast(`ಅಭ್ಯರ್ಥಿ ${name} ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ!`);
+  }
+
+  // Reset form
+  document.getElementById('cand-roll').value = '';
+  document.getElementById('cand-name').value = '';
+  clearCandidateOmrGrid();
+  document.getElementById('cand-roll').focus();
+
+  saveToLocalStorage();
+  renderCandidatesTable();
+  evaluateResults();
+  updateBadges();
+}
+
+function renderCandidatesTable() {
+  const tbody = document.getElementById('candidates-table-body');
+  const badge = document.getElementById('cand-total-badge');
+  if (badge) badge.innerText = AppState.candidates.length;
+
+  if (!tbody) return;
+
+  if (AppState.candidates.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-10 text-slate-400">
+          ಯಾವುದೇ ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಇನ್ನೂ ದಾಖಲಿಸಿಲ್ಲ. ಎಡಭಾಗದಲ್ಲಿ ಎಂಟ್ರಿ ಮಾಡಿ ಅಥವಾ CSV ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  AppState.candidates.forEach((cand, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+
+    const markedCount = Object.keys(cand.responses || {}).length;
+
+    tr.innerHTML = `
+      <td class="p-2.5 font-bold text-slate-900">${cand.rollNo}</td>
+      <td class="p-2.5 font-semibold text-slate-800">${cand.name}</td>
+      <td class="p-2.5">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-brand-800">Set ${cand.version}</span>
+      </td>
+      <td class="p-2.5 text-slate-600">
+        <span class="font-bold text-slate-800">${markedCount}</span>/${AppState.exam.totalQuestions}
+      </td>
+      <td class="p-2.5 text-center">
+        <div class="flex items-center justify-center gap-1.5">
+          <button onclick="editCandidate(${idx})" class="p-1 text-blue-600 hover:bg-blue-50 rounded" title="Edit">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="deleteCandidate(${idx})" class="p-1 text-rose-600 hover:bg-rose-50 rounded" title="Delete">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  initLucide();
+}
+
+function editCandidate(idx) {
+  const cand = AppState.candidates[idx];
+  if (!cand) return;
+
+  document.getElementById('cand-roll').value = cand.rollNo;
+  document.getElementById('cand-name').value = cand.name;
+  document.getElementById('cand-version-select').value = cand.version;
+
+  AppState.candidateOmrDraft = { ...cand.responses };
+  renderCandidateOmrBubbles();
+  syncStringFromCandidateDraft();
+
+  showToast(`ಅಭ್ಯರ್ಥಿ ${cand.name} ಎಡಿಟ್ ಮಾಡಲು ಸಿದ್ಧ.`);
+  document.getElementById('cand-roll').focus();
+}
+
+function deleteCandidate(idx) {
+  const cand = AppState.candidates[idx];
+  if (confirm(`ನಿಜವಾಗಿಯೂ ಅಭ್ಯರ್ಥಿ "${cand.name}" (Roll: ${cand.rollNo}) ರನ್ನು ಅಳಿಸಲು ಬಯಸುವಿರಾ?`)) {
+    AppState.candidates.splice(idx, 1);
+    saveToLocalStorage();
+    renderCandidatesTable();
+    evaluateResults();
+    updateBadges();
+    showToast('ಅಭ್ಯರ್ಥಿಯನ್ನು ಅಳಿಸಲಾಗಿದೆ.');
+  }
+}
+
+function clearAllCandidates() {
+  if (confirm('ಎಲ್ಲಾ ಅಭ್ಯರ್ಥಿಗಳ ಡೇಟಾವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಅಳಿಸಲು ಬಯಸುವಿರಾ?')) {
+    AppState.candidates = [];
+    AppState.results = [];
+    saveToLocalStorage();
+    renderCandidatesTable();
+    evaluateResults();
+    updateBadges();
+    showToast('ಎಲ್ಲಾ ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ.');
+  }
+}
+
+// -------------------------------------------------------------
+// BULK CSV / EXCEL IMPORT & TEMPLATE
+// -------------------------------------------------------------
+function downloadCandidateTemplate() {
+  const total = parseInt(AppState.exam.totalQuestions) || 20;
+  // Generate sample answers
+  const sampleAnswersA = Array(total).fill('A').join('');
+  const sampleAnswersB = Array(total).fill(0).map((_, i) => ['A', 'B', 'C', 'D'][i % 4]).join('');
+
+  const rows = [
+    ['Roll_No', 'Candidate_Name', 'Version', 'Answers'],
+    ['101', 'ಮಂಜುನಾಥ್ ಕೆ', 'A', sampleAnswersA],
+    ['102', 'ಪ್ರಿಯಾ ಶರ್ಮಾ', 'B', sampleAnswersB],
+    ['103', 'ಸುರೇಶ್ ನಾಯಕ್', 'A', sampleAnswersB]
+  ];
+
+  let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + rows.map(e => e.join(",")).join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `candidates_template_${total}Q.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('ಮಾದರಿ CSV ಟೆಂಪ್ಲೇಟ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!');
+}
+
+function handleBulkCandidateUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+      if (rows.length < 2) {
+        showToast('ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಫೈಲ್‌ನಲ್ಲಿ ಯಾವುದೇ ಡೇಟಾ ಇಲ್ಲ.', 'error');
+        return;
+      }
+
+      // Check headers
+      const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
+      const rollIdx = headers.findIndex(h => h.includes('roll'));
+      const nameIdx = headers.findIndex(h => h.includes('name'));
+      const verIdx = headers.findIndex(h => h.includes('ver'));
+      const ansIdx = headers.findIndex(h => h.includes('ans') || h.includes('response') || h.includes('key'));
+
+      if (rollIdx === -1 || nameIdx === -1) {
+        showToast('ದಯವಿಟ್ಟು Roll_No ಮತ್ತು Name ಕಾಲಮ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.', 'error');
+        return;
+      }
+
+      let count = 0;
+      const total = parseInt(AppState.exam.totalQuestions) || 20;
+
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.length === 0) continue;
+
+        const roll = String(row[rollIdx] || '').trim();
+        const name = String(row[nameIdx] || '').trim();
+        let version = String(verIdx !== -1 ? row[verIdx] || 'A' : 'A').trim().toUpperCase();
+        if (!AppState.versions.includes(version)) version = 'A';
+
+        const rawAns = String(ansIdx !== -1 ? row[ansIdx] || '' : '').toUpperCase();
+        const responses = {};
+
+        // Parse answers
+        const cleanChars = rawAns.replace(/[^ABCD-]/g, '').split('');
+        cleanChars.forEach((ch, idx) => {
+          if (idx < total && ['A', 'B', 'C', 'D'].includes(ch)) {
+            responses[idx + 1] = ch;
+          }
+        });
+
+        if (roll && name) {
+          // Check if exists
+          const exIdx = AppState.candidates.findIndex(c => c.rollNo.toLowerCase() === roll.toLowerCase());
+          const candObj = {
+            id: 'cand_' + Date.now() + '_' + i,
+            rollNo: roll,
+            name: name,
+            version: version,
+            responses: responses
+          };
+
+          if (exIdx !== -1) {
+            AppState.candidates[exIdx] = candObj;
+          } else {
+            AppState.candidates.push(candObj);
+          }
+          count++;
+        }
+      }
+
+      saveToLocalStorage();
+      renderCandidatesTable();
+      evaluateResults();
+      updateBadges();
+      showToast(`${count} ಅಭ್ಯರ್ಥಿಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಆಮದು ಮಾಡಿಕೊಳ್ಳಲಾಗಿದೆ!`);
+      e.target.value = '';
+    } catch (err) {
+      console.error(err);
+      showToast('ಫೈಲ್ ಓದುವಾಗ ದೋಷ ಸಂಭವಿಸಿದೆ: ' + err.message, 'error');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// -------------------------------------------------------------
+// DYNAMIC EVALUATION ENGINE
+// -------------------------------------------------------------
+function evaluateResults() {
+  const totalQ = parseInt(AppState.exam.totalQuestions) || 20;
+  const marksPerCorrect = parseFloat(AppState.exam.marksPerCorrect) || 1.0;
+  const hasNegative = AppState.exam.hasNegative;
+  const negativeRatio = parseFloat(AppState.exam.negativeRatio) || 0.25;
+
+  const results = [];
+
+  AppState.candidates.forEach(cand => {
+    const versionKeys = AppState.keyAnswers[cand.version] || {};
+    const responses = cand.responses || {};
+
+    let correct = 0;
+    let wrong = 0;
+    let blank = 0;
+    let attempted = 0;
+
+    for (let q = 1; q <= totalQ; q++) {
+      const studentAns = responses[q];
+      const officialKey = versionKeys[q];
+
+      if (!studentAns || studentAns === '' || studentAns === '-') {
+        blank++;
+      } else {
+        attempted++;
+        if (officialKey && studentAns === officialKey) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      }
+    }
+
+    const positiveMarks = correct * marksPerCorrect;
+    const negativeDeduction = hasNegative ? Number((wrong * negativeRatio * marksPerCorrect).toFixed(3)) : 0;
+    const finalScore = Number((positiveMarks - negativeDeduction).toFixed(2));
+    const maxMarks = totalQ * marksPerCorrect;
+    const percentage = Number(((finalScore / maxMarks) * 100).toFixed(2));
+
+    results.push({
+      id: cand.id,
+      rollNo: cand.rollNo,
+      name: cand.name,
+      version: cand.version,
+      examName: AppState.exam.name || 'Exam',
+      totalQuestions: totalQ,
+      attempted: attempted,
+      correct: correct,
+      wrong: wrong,
+      blank: blank,
+      positiveMarks: positiveMarks,
+      negativeDeduction: negativeDeduction,
+      finalScore: finalScore,
+      percentage: percentage,
+      responses: responses
+    });
+  });
+
+  // Sort by final score DESC, then correct DESC, then rollNo ASC
+  results.sort((a, b) => {
+    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+    if (b.correct !== a.correct) return b.correct - a.correct;
+    return a.rollNo.localeCompare(b.rollNo);
+  });
+
+  // Assign Ranks
+  results.forEach((r, idx) => {
+    r.rank = idx + 1;
+  });
+
+  AppState.results = results;
+  saveToLocalStorage();
+  renderResultsTable();
+  updateStatisticsCards();
+}
+
+// -------------------------------------------------------------
+// RESULTS TABLE & STATISTICS
+// -------------------------------------------------------------
+function renderResultsTable() {
+  const tbody = document.getElementById('results-table-body');
+  if (!tbody) return;
+
+  const searchQuery = (document.getElementById('result-search-input')?.value || '').toLowerCase().trim();
+  const versionFilter = document.getElementById('result-version-filter')?.value || 'ALL';
+
+  let filtered = AppState.results.filter(r => {
+    const matchSearch = !searchQuery || r.rollNo.toLowerCase().includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
+    const matchVer = versionFilter === 'ALL' || r.version === versionFilter;
+    return matchSearch && matchVer;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="12" class="text-center py-10 text-slate-400">
+          ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  filtered.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-blue-50/40 transition border-b border-slate-100';
+
+    // Rank Styling
+    let rankBadge = `<span class="font-bold text-slate-700">${r.rank}</span>`;
+    if (r.rank === 1) {
+      rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-400 text-amber-950 font-black shadow-sm" title="Rank 1 🥇">1</span>`;
+    } else if (r.rank === 2) {
+      rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-300 text-slate-900 font-black" title="Rank 2 🥈">2</span>`;
+    } else if (r.rank === 3) {
+      rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700 text-white font-black" title="Rank 3 🥉">3</span>`;
+    }
+
+    tr.innerHTML = `
+      <td class="p-3 text-center">${rankBadge}</td>
+      <td class="p-3 font-bold text-slate-900">${r.rollNo}</td>
+      <td class="p-3 font-semibold text-slate-800">${r.name}</td>
+      <td class="p-3 text-center">
+        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-brand-800">Set ${r.version}</span>
+      </td>
+      <td class="p-3 text-center text-slate-600 font-semibold">${r.attempted}</td>
+      <td class="p-3 text-center font-bold text-emerald-600 bg-emerald-50/50">${r.correct}</td>
+      <td class="p-3 text-center font-bold text-rose-600 bg-rose-50/50">${r.wrong}</td>
+      <td class="p-3 text-center text-slate-400">${r.blank}</td>
+      <td class="p-3 text-center text-rose-600 font-semibold">
+        ${r.negativeDeduction > 0 ? `-${r.negativeDeduction}` : '0'}
+      </td>
+      <td class="p-3 text-center font-black text-brand-900 bg-blue-50/60 text-base">
+        ${r.finalScore}
+      </td>
+      <td class="p-3 text-center font-bold text-slate-700">
+        ${r.percentage}%
+      </td>
+      <td class="p-3 text-center no-print">
+        <button onclick="viewCandidateScorecard('${r.id}')" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-2.5 py-1.5 rounded-lg border border-brand-200 transition">
+          ಸ್ಕೋರ್‌ಕಾರ್ಡ್
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterResultsTable() {
+  renderResultsTable();
+}
+
+function updateStatisticsCards() {
+  const total = AppState.results.length;
+  const totalEl = document.getElementById('stat-total-candidates');
+  const highEl = document.getElementById('stat-highest-score');
+  const avgEl = document.getElementById('stat-avg-score');
+  const negEl = document.getElementById('stat-negative-info');
+
+  if (totalEl) totalEl.innerText = total;
+
+  if (total > 0) {
+    const highest = AppState.results[0].finalScore;
+    const sum = AppState.results.reduce((acc, r) => acc + r.finalScore, 0);
+    const avg = (sum / total).toFixed(2);
+
+    if (highEl) highEl.innerText = highest.toFixed(2);
+    if (avgEl) avgEl.innerText = avg;
+  } else {
+    if (highEl) highEl.innerText = '0.00';
+    if (avgEl) avgEl.innerText = '0.00';
+  }
+
+  if (negEl) {
+    if (AppState.exam.hasNegative) {
+      negEl.innerHTML = `<span class="text-rose-600 font-bold">1/4 (-0.25 ಅಂಕ)</span>`;
+    } else {
+      negEl.innerHTML = `<span class="text-emerald-600 font-bold">ಯಾವುದೇ ಕಡಿತವಿಲ್ಲ</span>`;
+    }
+  }
+
+  // Update print title
+  const printTitle = document.getElementById('print-exam-title');
+  const printSub = document.getElementById('print-exam-subtitle');
+  if (printTitle) printTitle.innerText = (AppState.exam.name || 'ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ') + ' - ಮೆರಿಟ್ ಪಟ್ಟಿ';
+  if (printSub) printSub.innerText = `ಒಟ್ಟು ಪ್ರಶ್ನೆಗಳು: ${AppState.exam.totalQuestions} | ನೆಗೆಟಿವ್ ಕಡಿತ: ${AppState.exam.hasNegative ? '1/4' : 'ಇಲ್ಲ'}`;
+}
+
+function printResultsTable() {
+  window.print();
+}
+
+function exportResultsToExcel() {
+  if (AppState.results.length === 0) {
+    showToast('ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು ಯಾವುದೇ ಫಲಿತಾಂಶ ಲಭ್ಯವಿಲ್ಲ.', 'error');
+    return;
+  }
+
+  const exportData = AppState.results.map(r => ({
+    'ರಾಂಕ್ (Rank)': r.rank,
+    'ರೋಲ್ ನಂ (Roll No)': r.rollNo,
+    'ಅಭ್ಯರ್ಥಿಯ ಹೆಸರು (Name)': r.name,
+    'ಆವೃತ್ತಿ (Version)': r.version,
+    'ಒಟ್ಟು ಪ್ರಶ್ನೆಗಳು (Total Qs)': r.totalQuestions,
+    'ಪ್ರಯತ್ನಿಸಿದ್ದು (Attempted)': r.attempted,
+    'ಸರಿ (Correct)': r.correct,
+    'ತಪ್ಪು (Wrong)': r.wrong,
+    'ಖಾಲಿ (Blank)': r.blank,
+    'ನೆಗೆಟಿವ್ ಕಡಿತ (Negative Marks)': r.negativeDeduction,
+    'ಅಂತಿಮ ಅಂಕಗಳು (Total Score)': r.finalScore,
+    'ಶೇಕಡಾವಾರು (%)': r.percentage + '%'
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Results');
+
+  const fileName = `${AppState.exam.name || 'Exam'}_Results_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(workbook, fileName);
+  showToast('Excel ಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!');
+}
+
+// -------------------------------------------------------------
+// DETAILED CANDIDATE SCORECARD
+// -------------------------------------------------------------
+function populateScorecardCandidateDropdown() {
+  const select = document.getElementById('scorecard-candidate-select');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">-- ಅಭ್ಯರ್ಥಿಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ --</option>';
+  AppState.results.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    opt.innerText = `Rank ${r.rank}: ${r.rollNo} - ${r.name} (${r.finalScore} ಅಂಕಗಳು)`;
+    select.appendChild(opt);
+  });
+}
+
+function viewCandidateScorecard(candId) {
+  switchTab('tab-scorecard');
+  populateScorecardCandidateDropdown();
+  const select = document.getElementById('scorecard-candidate-select');
+  if (select) {
+    select.value = candId;
+    renderSelectedCandidateScorecard();
+  }
+}
+
+function renderSelectedCandidateScorecard() {
+  const select = document.getElementById('scorecard-candidate-select');
+  const container = document.getElementById('scorecard-printable-area');
+  if (!select || !container) return;
+
+  const candId = select.value;
+  if (!candId) {
+    container.innerHTML = `<div class="text-center py-12 text-slate-400">ದಯವಿಟ್ಟು ಸ್ಕೋರ್‌ಕಾರ್ಡ್ ನೋಡಲು ಮೇಲಿನಿಂದ ಅಭ್ಯರ್ಥಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.</div>`;
+    return;
+  }
+
+  const result = AppState.results.find(r => r.id === candId);
+  if (!result) return;
+
+  const versionKeys = AppState.keyAnswers[result.version] || {};
+  const totalQ = parseInt(AppState.exam.totalQuestions) || 20;
+
+  let questionsRows = '';
+  for (let q = 1; q <= totalQ; q++) {
+    const key = versionKeys[q] || '-';
+    const ans = result.responses[q] || '-';
+
+    let statusHtml = '';
+    let markHtml = '';
+
+    if (ans === '-' || !ans) {
+      statusHtml = '<span class="text-slate-400 font-semibold">⚪ ಬಿಟ್ಟಿದೆ (Blank)</span>';
+      markHtml = '<span class="text-slate-400">0.00</span>';
+    } else if (key !== '-' && ans === key) {
+      statusHtml = '<span class="text-emerald-700 font-bold">✅ ಸರಿ (Correct)</span>';
+      markHtml = `<span class="text-emerald-700 font-bold">+${AppState.exam.marksPerCorrect}</span>`;
+    } else {
+      statusHtml = '<span class="text-rose-600 font-bold">❌ ತಪ್ಪು (Wrong)</span>';
+      const negVal = AppState.exam.hasNegative ? `-${AppState.exam.negativeRatio}` : '0.00';
+      markHtml = `<span class="text-rose-600 font-bold">${negVal}</span>`;
+    }
+
+    questionsRows += `
+      <tr class="border-b border-slate-100 hover:bg-slate-50 text-xs">
+        <td class="p-2 font-bold text-center text-slate-600">Q.${q}</td>
+        <td class="p-2 text-center font-bold text-emerald-800 bg-emerald-50/50">${key}</td>
+        <td class="p-2 text-center font-bold text-slate-800">${ans}</td>
+        <td class="p-2 text-center">${statusHtml}</td>
+        <td class="p-2 text-center font-semibold">${markHtml}</td>
+      </tr>
+    `;
+  }
+
+  container.innerHTML = `
+    <!-- Scorecard Header -->
+    <div class="border-b-2 border-brand-900 pb-5">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <span class="bg-brand-900 text-white text-[11px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+            ಅಧಿಕೃತ ಫಲಿತಾಂಶ ಪತ್ರ (Official Scorecard)
+          </span>
+          <h2 class="text-2xl font-black text-slate-900 mt-2">${AppState.exam.name || 'ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ'}</h2>
+          <p class="text-xs text-slate-600 mt-0.5">ಮೌಲ್ಯಮಾಪನ ದಿನಾಂಕ: ${new Date().toLocaleDateString('kn-IN')}</p>
+        </div>
+        
+        <!-- Big Score Pill -->
+        <div class="bg-gradient-to-br from-brand-900 to-blue-800 text-white p-4 rounded-2xl shadow text-center sm:text-right min-w-[140px]">
+          <div class="text-[11px] uppercase tracking-wider text-blue-200">ಅಂತಿಮ ಅಂಕಗಳು</div>
+          <div class="text-3xl font-black">${result.finalScore}</div>
+          <div class="text-xs text-blue-200 mt-0.5">ಶೇಕಡಾ: ${result.percentage}%</div>
+        </div>
+      </div>
+
+      <!-- Candidate Details Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+        <div>
+          <span class="text-slate-500 block">ಅಭ್ಯರ್ಥಿಯ ಹೆಸರು:</span>
+          <span class="text-sm font-bold text-slate-900">${result.name}</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block">ರೋಲ್ ನಂಬರ್:</span>
+          <span class="text-sm font-bold text-slate-900">${result.rollNo}</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block">ಪ್ರಶ್ನೆಪತ್ರಿಕೆ ಆವೃತ್ತಿ:</span>
+          <span class="text-sm font-bold text-brand-700">Set ${result.version}</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block">ಒಟ್ಟು ರಾಂಕ್ (Rank):</span>
+          <span class="text-sm font-black text-emerald-700">#${result.rank} of ${AppState.results.length}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+        <div class="text-[11px] text-slate-500">ಒಟ್ಟು ಪ್ರಶ್ನೆಗಳು</div>
+        <div class="text-lg font-bold text-slate-800">${result.totalQuestions}</div>
+      </div>
+      <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
+        <div class="text-[11px] text-brand-700">ಪ್ರಯತ್ನಿಸಿದ್ದು</div>
+        <div class="text-lg font-bold text-brand-900">${result.attempted}</div>
+      </div>
+      <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+        <div class="text-[11px] text-emerald-700">ಸರಿ ಉತ್ತರಗಳು (+1)</div>
+        <div class="text-lg font-bold text-emerald-800">${result.correct}</div>
+      </div>
+      <div class="p-3 bg-rose-50 rounded-xl border border-rose-200">
+        <div class="text-[11px] text-rose-700">ತಪ್ಪು ಉತ್ತರಗಳು (${AppState.exam.hasNegative ? '-0.25' : '0'})</div>
+        <div class="text-lg font-bold text-rose-800">${result.wrong}</div>
+      </div>
+      <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+        <div class="text-[11px] text-amber-700">ನೆಗೆಟಿವ್ ಕಡಿತ</div>
+        <div class="text-lg font-bold text-amber-900">-${result.negativeDeduction}</div>
+      </div>
+    </div>
+
+    <!-- Detailed Question Comparison Matrix -->
+    <div>
+      <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+        <i data-lucide="check-square" class="w-4 h-4 text-brand-600"></i>
+        ಪ್ರಶ್ನೆವಾರು ಸಮಗ್ರ ವಿಶ್ಲೇಷಣೆ (Question-by-Question Analysis)
+      </h3>
+      <div class="overflow-x-auto max-h-96 overflow-y-auto border border-slate-200 rounded-xl">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-100 text-slate-700 text-xs uppercase font-bold sticky top-0 border-b border-slate-200">
+            <tr>
+              <th class="p-2 text-center">ಪ್ರಶ್ನೆ ನಂ</th>
+              <th class="p-2 text-center text-emerald-800">ಕೀ ಉತ್ತರ (Key)</th>
+              <th class="p-2 text-center">ಅಭ್ಯರ್ಥಿಯ ಉತ್ತರ (OMR)</th>
+              <th class="p-2 text-center">ಸ್ಥಿತಿ (Status)</th>
+              <th class="p-2 text-center">ಗಳಿಸಿದ ಅಂಕ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            ${questionsRows}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Signatures & Verification -->
+    <div class="mt-8 pt-6 border-t border-slate-300 flex justify-between items-end text-xs text-slate-600">
+      <div>
+        <p>ಗಮನಿಸಿ: ಈ ಫಲಿತಾಂಶವು ಕಂಪ್ಯೂಟರ್ ಆಧಾರಿತ ಮೌಲ್ಯಮಾಪನವಾಗಿದೆ.</p>
+        <p class="text-[10px] text-slate-400">Exam Result Software System v1.0</p>
+      </div>
+      <div class="text-right space-y-8">
+        <div></div>
+        <div class="border-t border-slate-400 pt-1 font-bold">ಪರೀಕ್ಷಾ ನಿಯಂತ್ರಕರು / ಪ್ರಾಂಶುಪಾಲರು</div>
+      </div>
+    </div>
+  `;
+
+  initLucide();
+}
+
+// -------------------------------------------------------------
+// GOOGLE SHEETS INTEGRATION
+// -------------------------------------------------------------
+function updateGsheetBadge(connected) {
+  const badge = document.getElementById('badge-gsheet-status');
+  if (!badge) return;
+
+  if (connected) {
+    badge.className = 'bg-emerald-950/50 border border-emerald-700/60 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-emerald-300 cursor-pointer';
+    badge.innerHTML = `<i data-lucide="cloud-check" class="w-4 h-4 text-emerald-400"></i><span>ಶೀಟ್ ಸಿಂಕ್: ಸಕ್ರಿಯ (Online)</span>`;
+  } else {
+    badge.className = 'bg-amber-950/50 border border-amber-700/60 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-amber-300 cursor-pointer';
+    badge.innerHTML = `<i data-lucide="cloud-off" class="w-4 h-4 text-amber-400"></i><span>ಶೀಟ್ ಸಿಂಕ್: ಸ್ಥಳೀಯ (Offline)</span>`;
+  }
+  initLucide();
+}
+
+function saveAndTestGasUrl() {
+  const urlInput = document.getElementById('gas-webapp-url');
+  const url = (urlInput?.value || '').trim();
+  const statusMsg = document.getElementById('gas-status-msg');
+
+  if (!url) {
+    showToast('ದಯವಿಟ್ಟು Web App URL ನಮೂದಿಸಿ.', 'error');
+    return;
+  }
+
+  if (!url.startsWith('https://script.google.com')) {
+    showToast('ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ Google Apps Script Web App URL ಹಾಕಿ.', 'error');
+    return;
+  }
+
+  AppState.gasUrl = url;
+  localStorage.setItem(GAS_URL_KEY, url);
+
+  statusMsg.classList.remove('hidden');
+  statusMsg.className = 'p-3 rounded-xl text-xs font-medium bg-blue-50 text-brand-800 border border-blue-200';
+  statusMsg.innerText = 'ಸಂಪರ್ಕ ಪರೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ... ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ.';
+
+  fetch(`${url}?action=getAll`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        statusMsg.className = 'p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200';
+        statusMsg.innerText = '✅ ಗೂಗಲ್ ಶೀಟ್‌ನೊಂದಿಗೆ ಸಂಪರ್ಕ ಯಶಸ್ವಿಯಾಗಿದೆ!';
+        updateGsheetBadge(true);
+        showToast('ಗೂಗಲ್ ಶೀಟ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ!');
+      } else {
+        statusMsg.className = 'p-3 rounded-xl text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200';
+        statusMsg.innerText = '⚠️ ಸಂಪರ್ಕಗೊಂಡಿದೆ ಆದರೆ ಪ್ರತಿಕ್ರಿಯೆ: ' + (data.message || 'Unknown');
+        updateGsheetBadge(true);
+      }
+    })
+    .catch(err => {
+      console.warn('CORS or Connection notice:', err);
+      // In many web app deployments without full CORS redirect, POST still works cleanly
+      statusMsg.className = 'p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200';
+      statusMsg.innerText = '✅ URL ಉಳಿಸಲಾಗಿದೆ! ನೀವು ಈಗ ಡೇಟಾ ಸಿಂಕ್ ಮಾಡಬಹುದು.';
+      updateGsheetBadge(true);
+      showToast('URL ಉಳಿಸಲಾಗಿದೆ!');
+    });
+}
+
+function syncToGoogleSheet() {
+  if (!AppState.gasUrl) {
+    showToast('ಮೊದಲು ಗೂಗಲ್ ಶೀಟ್ Web App URL ಉಳಿಸಿ.', 'error');
+    switchTab('tab-sync');
+    return;
+  }
+
+  evaluateResults();
+
+  const payload = {
+    action: 'syncAll',
+    payload: {
+      exam: AppState.exam,
+      keyAnswers: Object.keys(AppState.keyAnswers).map(ver => ({
+        examId: AppState.exam.id,
+        version: ver,
+        totalQuestions: AppState.exam.totalQuestions,
+        keys: AppState.keyAnswers[ver]
+      })),
+      candidates: AppState.candidates.map(c => ({
+        id: c.id,
+        rollNo: c.rollNo,
+        name: c.name,
+        examId: AppState.exam.id,
+        version: c.version,
+        responses: c.responses
+      })),
+      results: AppState.results
+    }
+  };
+
+  showToast('ಗೂಗಲ್ ಶೀಟ್‌ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...');
+
+  fetch(AppState.gasUrl, {
+    method: 'POST',
+    mode: 'no-cors', // Standard Apps Script submission
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+    .then(() => {
+      showToast('✅ ಗೂಗಲ್ ಶೀಟ್‌ಗೆ ಯಶಸ್ವಿಯಾಗಿ ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ!');
+      if (window.confetti) {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showToast('ಸಿಂಕ್ ಮಾಡುವಲ್ಲಿ ದೋಷ: ' + err.message, 'error');
+    });
+}
+
+function fetchFromGoogleSheet() {
+  if (!AppState.gasUrl) {
+    showToast('ಮೊದಲು ಗೂಗಲ್ ಶೀಟ್ Web App URL ಕಾನ್ಫಿಗರ್ ಮಾಡಿ.', 'error');
+    switchTab('tab-sync');
+    return;
+  }
+
+  showToast('ಗೂಗಲ್ ಶೀಟ್‌ನಿಂದ ಡೇಟಾ ತರಲಾಗುತ್ತಿದೆ...');
+
+  fetch(`${AppState.gasUrl}?action=getAll`)
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === 'success' && res.data) {
+        // Parse candidates if any
+        if (res.data.candidates && res.data.candidates.length > 0) {
+          AppState.candidates = res.data.candidates.map(c => ({
+            id: c.Candidate_ID || ('cand_' + Date.now()),
+            rollNo: String(c.Roll_No || ''),
+            name: c.Candidate_Name || '',
+            version: c.Version || 'A',
+            responses: c.Responses_JSON ? JSON.parse(c.Responses_JSON) : {}
+          }));
+        }
+
+        saveToLocalStorage();
+        renderCandidatesTable();
+        evaluateResults();
+        updateBadges();
+        showToast('ಗೂಗಲ್ ಶೀಟ್‌ನಿಂದ ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!');
+      } else {
+        showToast('ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ: ' + (res.message || 'Empty data'), 'error');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showToast('ಡೇಟಾ ತರುವಾಗ ದೋಷ: ' + err.message, 'error');
+    });
+}
+
+// -------------------------------------------------------------
+// LOCAL STORAGE PERSISTENCE
+// -------------------------------------------------------------
+function saveToLocalStorage() {
+  try {
+    const dataToSave = {
+      exam: AppState.exam,
+      versions: AppState.versions,
+      keyAnswers: AppState.keyAnswers,
+      candidates: AppState.candidates
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+  } catch (e) {
+    console.error('Failed to save to local storage', e);
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+
+    if (parsed.exam) {
+      AppState.exam = { ...AppState.exam, ...parsed.exam };
+      const nameInput = document.getElementById('exam-name-input');
+      const totalQInput = document.getElementById('exam-total-q');
+      const marksInput = document.getElementById('marks-per-correct');
+      const negToggle = document.getElementById('negative-marking-toggle');
+      const negSelect = document.getElementById('negative-ratio-select');
+
+      if (nameInput) nameInput.value = AppState.exam.name || '';
+      if (totalQInput) totalQInput.value = AppState.exam.totalQuestions || 20;
+      if (marksInput) marksInput.value = AppState.exam.marksPerCorrect || 1.0;
+      if (negToggle) {
+        negToggle.checked = AppState.exam.hasNegative;
+        toggleNegativeOptions();
+      }
+      if (negSelect && AppState.exam.negativeRatio) {
+        negSelect.value = String(AppState.exam.negativeRatio);
+      }
+    }
+
+    if (parsed.keyAnswers) AppState.keyAnswers = parsed.keyAnswers;
+    if (parsed.candidates) AppState.candidates = parsed.candidates;
+
+    renderCandidatesTable();
+  } catch (e) {
+    console.error('Failed to load local storage', e);
+  }
+}
+
+function updateBadges() {
+  const examBadge = document.getElementById('badge-exam-name');
+  const candBadge = document.getElementById('badge-candidates-count');
+
+  if (examBadge) examBadge.innerText = AppState.exam.name || 'ದಾಖಲಿಸಿಲ್ಲ';
+  if (candBadge) candBadge.innerText = AppState.candidates.length;
+}
+
+// -------------------------------------------------------------
+// SAMPLE DEMO DATA GENERATOR
+// -------------------------------------------------------------
+function loadSampleData() {
+  AppState.exam = {
+    id: 'exam_demo_' + Date.now(),
+    name: 'KPSC Mock Exam 2026',
+    totalQuestions: 20,
+    marksPerCorrect: 1.0,
+    hasNegative: true,
+    negativeRatio: 0.25
+  };
+
+  // Populate UI inputs
+  document.getElementById('exam-name-input').value = AppState.exam.name;
+  document.getElementById('exam-total-q').value = 20;
+  document.getElementById('marks-per-correct').value = 1.0;
+  document.getElementById('negative-marking-toggle').checked = true;
+  document.getElementById('negative-ratio-select').value = '0.25';
+  toggleNegativeOptions();
+
+  // 20 Demo keys for Version A & B
+  const demoKeysA = ['A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D'];
+  const demoKeysB = ['D','C','B','A','D','C','B','A','D','C','B','A','D','C','B','A','D','C','B','A'];
+
+  AppState.keyAnswers['A'] = {};
+  demoKeysA.forEach((k, i) => AppState.keyAnswers['A'][i + 1] = k);
+
+  AppState.keyAnswers['B'] = {};
+  demoKeysB.forEach((k, i) => AppState.keyAnswers['B'][i + 1] = k);
+
+  AppState.keyAnswers['C'] = { ...AppState.keyAnswers['A'] };
+  AppState.keyAnswers['D'] = { ...AppState.keyAnswers['B'] };
+
+  // 6 Sample Candidates
+  AppState.candidates = [
+    {
+      id: 'demo_1',
+      rollNo: '202601',
+      name: 'ರಾಘವೇಂದ್ರ ಶರ್ಮಾ',
+      version: 'A',
+      responses: { 1:'A', 2:'B', 3:'C', 4:'D', 5:'A', 6:'B', 7:'C', 8:'D', 9:'A', 10:'B', 11:'C', 12:'D', 13:'A', 14:'B', 15:'C', 16:'D', 17:'A', 18:'B', 19:'C', 20:'D' } // 20/20 correct
+    },
+    {
+      id: 'demo_2',
+      rollNo: '202602',
+      name: 'ಅನಿತಾ ಕುಮಾರಿ',
+      version: 'A',
+      responses: { 1:'A', 2:'B', 3:'C', 4:'D', 5:'A', 6:'B', 7:'C', 8:'D', 9:'A', 10:'B', 11:'C', 12:'D', 13:'A', 14:'B', 15:'C', 16:'A', 17:'B', 18:'C', 19:'D', 20:'A' } // 15 correct, 5 wrong
+    },
+    {
+      id: 'demo_3',
+      rollNo: '202603',
+      name: 'ಪ್ರಶಾಂತ್ ಹೆಗಡೆ',
+      version: 'B',
+      responses: { 1:'D', 2:'C', 3:'B', 4:'A', 5:'D', 6:'C', 7:'B', 8:'A', 9:'D', 10:'C', 11:'B', 12:'A', 13:'D', 14:'C', 15:'B', 16:'A', 17:'D', 18:'C' } // 18 correct, 2 blank
+    },
+    {
+      id: 'demo_4',
+      rollNo: '202604',
+      name: 'ದಿವ್ಯಾ ಬಿ.ಆರ್.',
+      version: 'B',
+      responses: { 1:'D', 2:'C', 3:'B', 4:'A', 5:'D', 6:'A', 7:'A', 8:'A', 9:'D', 10:'C', 11:'B', 12:'A', 13:'B', 14:'B' } // 10 correct, 4 wrong, 6 blank
+    },
+    {
+      id: 'demo_5',
+      rollNo: '202605',
+      name: 'ಸಂತೋಷ್ ಪಾಟೀಲ್',
+      version: 'A',
+      responses: { 1:'B', 2:'A', 3:'D', 4:'C', 5:'B', 6:'A', 7:'D', 8:'C', 9:'B', 10:'A', 11:'C', 12:'D' } // 2 correct, 10 wrong, 8 blank
+    }
+  ];
+
+  saveToLocalStorage();
+  renderVersionTabs();
+  renderKeyAnswersGrid();
+  renderCandidatesTable();
+  evaluateResults();
+  updateBadges();
+
+  showToast('ಮಾದರಿ ಪರೀಕ್ಷೆ & ಅಭ್ಯರ್ಥಿಗಳ ಡೇಟಾ ಲೋಡ್ ಆಗಿದೆ! ಫಲಿತಾಂಶ ಶೀಟ್ ನೋಡಿ.');
+  if (window.confetti) {
+    confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+  }
+}
+
+  </script>
+</body>
+</html>

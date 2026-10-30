@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ಮತದಾರರ ಪಟ್ಟಿ ನಿರ್ವಹಣೆ (Voter List) - BLO Smart Portal V5.0</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="portal-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="portal-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fa-solid fa-vote-yea"></i></div>
+        <div class="sidebar-title">
+          <h2>BLO ಪೋರ್ಟಲ್</h2>
+          <p>53 - ರಾಯಚೂರು ಗ್ರಾಮಾಂತರ</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> <span>ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ (Analytics)</span></a>
+        <a href="voterlist.html" class="active"><i class="fa-solid fa-users-gear"></i> <span>ಮತದಾರರ ಪಟ್ಟಿ (Voter List)</span></a>
+        <a href="admin.html"><i class="fa-solid fa-user-shield" style="color:#10b981;"></i> <span style="font-weight:800; color:#10b981;">ಅಡ್ಮಿನ್ (Live Users)</span></a>
+        <a href="index.html"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Excel & PDF ಅಪ್‌ಲೋಡ್</span></a>
+        <a href="reports.html"><i class="fa-solid fa-file-contract"></i> <span>ವರದಿಗಳ ಹಬ್ (Report ASDD)</span></a>
+        <a href="sir.html"><i class="fa-solid fa-sitemap"></i> <span>SIR 2002 Progeny</span></a>
+        <a href="notes.html"><i class="fa-solid fa-clipboard-list"></i> <span>BLO ನೋಟ್ಸ್ & To-Do</span></a>
+      </nav>
+      <div class="sidebar-footer">BLO Personal Portal V5.0</div>
+    </aside>
+
+    <!-- Main Body Area -->
+    <div class="portal-body">
+
+      <!-- Header Bar -->
+      <header class="portal-header">
+        <div class="header-left-brand">
+          <span class="badge badge-primary" id="headerPartBadge">ಭಾಗ 87</span>
+          <h1>ಚುನಾವಣಾ ಮತದಾರರ ಪಟ್ಟಿ ನಿರ್ವಹಣೆ (Voter List Workspace)</h1>
+        </div>
+        <div class="header-controls">
+          <a href="admin.html" class="btn btn-sm btn-success" style="font-weight:800; background:#10b981; color:#fff; border:none; padding:0.4rem 0.75rem; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;" title="Open Admin Live User Portal">
+            <i class="fa-solid fa-user-shield"></i> 👑 ಅಡ್ಮಿನ್ (Admin)
+          </a>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="headerPartSelect" style="font-size:0.82rem; color:var(--text-muted); white-space:nowrap;">
+              <i class="fa-solid fa-building-flag"></i> ಬೂತ್ ಭಾಗ:
+            </label>
+            <select id="headerPartSelect" class="form-control" onchange="switchPartNumber(this.value)" style="width:auto; font-weight:700;">
+              <option value="87">ಭಾಗ 87 (ಮಚೇಡಬೂಲ)</option>
+              <option value="88">ಭಾಗ 88</option>
+              <option value="89">ಭಾಗ 89</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-outline" style="font-weight:700; color:var(--primary); border-color:var(--primary);" onclick="openGlobalSearchModal()" title="Press Ctrl + K to search anywhere">
+            <i class="fa-solid fa-magnifying-glass"></i> ಶೋಧಿಸಿ <kbd style="background:#0f172a; color:#fff; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.7rem;">Ctrl+K</kbd>
+          </button>
+          <button class="btn btn-sm" style="font-weight:800; background:#fbbf24; color:#0f172a; border:none; padding:0.4rem 0.75rem; border-radius:8px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="openBloProfileSettingsModal()" title="Click to open BLO Profile, School Name & Password Settings">
+            <i class="fa-solid fa-gear"></i> ⚙️ ಸೆಟ್ಟಿಂಗ್ಸ್ (Settings)
+          </button>
+          <span class="badge badge-outline" id="firebaseStatusBadge" style="cursor:pointer;" onclick="openFirebaseSetupModal()" title="Click to setup Firebase Cloud Database">
+            <i class="fa-solid fa-database"></i> Local Database Mode
+          </span>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">
+            <i class="fa-solid fa-power-off"></i> ನಿರ್ಗಮನ
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="portal-content">
+
+        <!-- Hero Action Banner -->
+        <div class="page-hero">
+          <div>
+            <h2><i class="fa-solid fa-users-gear"></i> ಬೂತ್ ಮತದಾರರ ಪೂರ್ಣ ವಿವರಗಳು (Voter List)</h2>
+            <p>BLO ಅಧಿಕಾರಿ: <strong id="headerBloName">BLO ಅಧಿಕಾರಿ</strong> <button class="btn btn-sm btn-outline" style="padding:0.1rem 0.35rem; font-size:0.7rem; color:var(--primary);" onclick="updateBloNameInteractive()" title="Edit BLO Officer Name"><i class="fa-solid fa-pen"></i> ತಿದ್ದುಪಡಿ</button> | ಬೂತ್ ಕೇಂದ್ರ: ವಿಭಾಗ 1-ಮಚೇಡಬೂಲ ನಂ. 1 ಮತ್ತು 2</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; z-index:1;">
+            <button class="btn btn-success" onclick="openAddVoterModal()"><i class="fa-solid fa-user-plus"></i> + ಹೊಸ ಮತದಾರ ಸೇರಿಸಿ</button>
+            <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-file-excel"></i> Excel / PDF ಅಪ್‌ಲೋಡ್</a>
+            <button class="btn btn-secondary" onclick="exportVotersCSV()"><i class="fa-solid fa-file-csv"></i> CSV ರಫ್ತು</button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="toolbar-card" style="flex-direction:column; align-items:stretch; gap:0.85rem;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem; width:100%;">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="searchVoterNameInput" class="form-control" placeholder="ಮತದಾರರ ಹೆಸರು (Voter Name)..." oninput="currentPage=1; renderVoterList();">
+            </div>
+
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-users"></i>
+              <input type="text" id="searchRelNameInput" class="form-control" placeholder="ಸಂಬಂಧಿಯ ಹೆಸರು (Relative Name)..." oninput="currentPage=1; renderVoterList();">
+            </div>
+
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-id-card"></i>
+              <input type="text" id="searchEpicHouseInput" class="form-control" placeholder="EPIC / ಮನೆ ನಂ / ಮೊಬೈಲ್..." oninput="currentPage=1; renderVoterList();">
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.75rem; align-items:center; justify-content:space-between; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:0.75rem;">
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+              <select id="statusFilter" class="form-control" onchange="filterByStatus(this.value)">
+                <option value="all">ಎಲ್ಲಾ ಸ್ಥಿತಿಗಳು (All Status)</option>
+                <option value="Unverified">ಪರಿಶೀಲಿಸದವರು (Unverified)</option>
+                <option value="Verified">ಖಚಿತಪಟ್ಟರು (Verified)</option>
+                <option value="Absent">ಗೈರುಹಾಜರಿ (Absent)</option>
+                <option value="Shifted">ಸ್ಥಳಾಂತರ (Shifted)</option>
+                <option value="Death">ಮೃತರಾದವರು (Death)</option>
+                <option value="Double">ಡಬಲ್ (Double / Duplicate)</option>
+              </select>
+
+              <select id="houseFilter" class="form-control" onchange="activeHouseFilter=this.value; currentPage=1; renderVoterList();">
+                <option value="all">ಎಲ್ಲಾ ಮನೆಗಳು (All Houses)</option>
+              </select>
+            </div>
+
+            <div style="display:flex; gap:0.25rem; background:var(--bg-body); padding:0.25rem; border-radius:var(--radius-md); border:1px solid var(--border);">
+              <button class="btn btn-sm btn-primary" id="btnPdfBoxView" onclick="switchView('pdfbox')"><i class="fa-solid fa-table-cells-large"></i> PDF Box</button>
+              <button class="btn btn-sm btn-outline" id="btnTableView" onclick="switchView('table')"><i class="fa-solid fa-list-check"></i> Table</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PDF Box View Container -->
+        <div id="pdfBoxViewContainer" class="voter-cards-grid"></div>
+
+        <!-- Table View Container -->
+        <div id="tableViewContainer" class="voters-table-wrap" style="display:none;"></div>
+
+        <!-- Empty State Container -->
+        <div id="emptyStateContainer" class="empty-state" style="display:none;">
+          <i class="fa-solid fa-folder-open"></i>
+          <h3>ಯಾವುದೇ ಮತದಾರರ ವಿವರಗಳು ಸಿಗಲಿಲ್ಲ!</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+            ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬೂತ್‌ನ Excel (.xlsm, .xlsx, .csv) ಅಥವಾ ECI PDF ಫೈಲ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.
+          </p>
+          <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ</a>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div id="paginationBar" class="pagination-bar"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Voter Edit Modal -->
+  <div class="modal-overlay" id="voterModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalVoterTitle"><i class="fa-solid fa-user-pen"></i> ಮತದಾರರ ವಿವರಗಳ ತಿದ್ದುಪಡಿ</h3>
+        <button class="btn btn-sm btn-outline" style="color:#fff;" onclick="closeVoterModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಅನುಕ್ರಮ ಸಂಖ್ಯೆ (Sl. No.):</label>
+            <input type="number" id="modalSlNoInput" class="form-control" style="font-weight:800; color:var(--primary);">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">EPIC ಸಂಖ್ಯೆ:</label>
+            <input type="text" id="modalEpicInput" class="form-control" style="font-weight:700;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮತದಾರರ ಹೆಸರು (English):</label>
+            <input type="text" id="modalNameEnInput" class="form-control" oninput="autoConvertEditVoterName(this.value)">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮತದಾರರ ಹೆಸರು (ಕನ್ನಡ):</label>
+            <input type="text" id="modalNameInput" class="form-control" style="font-weight:700;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧದ ಪ್ರಕಾರ (Rel Type):</label>
+            <select id="modalRelTypeSelect" class="form-control">
+              <option value="Father">Father (ತಂದೆ)</option>
+              <option value="Husband">Husband (ಗಂಡ)</option>
+              <option value="Mother">Mother (ತಾಯಿ)</option>
+              <option value="Other">Other (ಇತರ)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧಿ ಹೆಸರು (English):</label>
+            <input type="text" id="modalRelNameEnInput" class="form-control" oninput="autoConvertEditRelName(this.value)">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧಿ ಹೆಸರು (ಕನ್ನಡ):</label>
+            <input type="text" id="modalRelNameInput" class="form-control">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮನೆ ಸಂಖ್ಯೆ:</label>
+            <input type="text" id="modalHouseNoInput" class="form-control">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ವಯಸ್ಸು:</label>
+            <input type="number" id="modalAgeInput" class="form-control">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಲಿಂಗ:</label>
+            <select id="modalGenderSelect" class="form-control">
+              <option value="M">M (ಗಂಡು)</option>
+              <option value="F">F (ಸ್ತ್ರೀ)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮೊಬೈಲ್ ನಂಬರ್:</label>
+            <input type="text" id="modalMobileInput" class="form-control" placeholder="9876543210">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಪರಿಶೀಲನಾ ಸ್ಥಿತಿ (Status):</label>
+            <select id="modalStatusSelect" class="form-control">
+              <option value="Verified">Verified (ಖಚಿತಪಟ್ಟರು)</option>
+              <option value="Unverified">Unverified (ಅಪರಿಶೀಲಿತ)</option>
+              <option value="Absent">Absent (ಗೈರುಹಾಜರಿ)</option>
+              <option value="Shifted">Shifted (ಸ್ಥಳಾಂತರ)</option>
+              <option value="Death">Death (ಮೃತರು)</option>
+              <option value="Duplicate">Duplicate (ದ್ವಿಪ್ರತಿ)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeVoterModal()">ರದ್ದು ಮಾಡಿ</button>
+        <button class="btn btn-success btn-sm" onclick="saveVoterModalChanges()"><i class="fa-solid fa-floppy-disk"></i> ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Voter Modal -->
+  <div class="modal-overlay" id="addVoterModal">
+    <div class="modal-card">
+      <div class="modal-header" style="background:#0284c7;">
+        <h3><i class="fa-solid fa-user-plus"></i> ಹೊಸ ಮತದಾರರನ್ನು ಸೇರಿಸಿ</h3>
+        <button class="btn btn-sm btn-outline" style="color:#fff;" onclick="closeAddVoterModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಅನುಕ್ರಮ ಸಂಖ್ಯೆ (Sl. No.): *</label>
+            <input type="number" id="addVoterSlNoInput" class="form-control" placeholder="ಉದಾ: 23" style="font-weight:800; color:var(--primary);">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">EPIC ಸಂಖ್ಯೆ:</label>
+            <input type="text" id="addVoterEpicInput" class="form-control" placeholder="ಉದಾ: YFO1234567" style="font-weight:700;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮತದಾರರ ಹೆಸರು (English):</label>
+            <input type="text" id="addVoterNameEnInput" class="form-control" placeholder="Type in English..." oninput="autoConvertAddVoterName(this.value)">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮತದಾರರ ಹೆಸರು (ಕನ್ನಡ): *</label>
+            <input type="text" id="addVoterNameInput" class="form-control" placeholder="ಮತದಾರರ ಹೆಸರು" style="font-weight:700;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧದ ಪ್ರಕಾರ (Relation):</label>
+            <select id="addVoterRelTypeSelect" class="form-control">
+              <option value="Father">Father (ತಂದೆ)</option>
+              <option value="Husband">Husband (ಗಂಡ)</option>
+              <option value="Mother">Mother (ತಾಯಿ)</option>
+              <option value="Other">Other (ಇತರ)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧಿ ಹೆಸರು (English):</label>
+            <input type="text" id="addVoterRelNameEnInput" class="form-control" placeholder="Type in English..." oninput="autoConvertAddRelName(this.value)">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಸಂಬಂಧಿ ಹೆಸರು (ಕನ್ನಡ):</label>
+            <input type="text" id="addVoterRelNameInput" class="form-control" placeholder="ಸಂಬಂಧಿ ಹೆಸರು">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮನೆ ನಂ (House No):</label>
+            <input type="text" id="addVoterHouseNoInput" class="form-control" placeholder="12-A">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ವಯಸ್ಸು (Age):</label>
+            <input type="number" id="addVoterAgeInput" class="form-control" placeholder="25">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಲಿಂಗ (Gender):</label>
+            <select id="addVoterGenderSelect" class="form-control">
+              <option value="M">M (ಗಂಡು)</option>
+              <option value="F">F (ಸ್ತ್ರೀ)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಮೊಬೈಲ್ ನಂಬರ್:</label>
+            <input type="text" id="addVoterMobileInput" class="form-control" placeholder="9876543210">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-muted); display:block;">ಪರಿಶೀಲನಾ ಸ್ಥಿತಿ (Status):</label>
+            <select id="addVoterStatusSelect" class="form-control">
+              <option value="Verified">Verified (ಖಚಿತಪಟ್ಟರು)</option>
+              <option value="Unverified">Unverified (ಅಪರಿಶೀಲಿತ)</option>
+              <option value="Absent">Absent (ಗೈರುಹಾಜರಿ)</option>
+              <option value="Shifted">Shifted (ಸ್ಥಳಾಂತರ)</option>
+              <option value="Death">Death (ಮೃತರು)</option>
+              <option value="Duplicate">Duplicate (ದ್ವಿಪ್ರತಿ)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeAddVoterModal()">ರದ್ದು ಮಾಡಿ</button>
+        <button class="btn btn-success btn-sm" onclick="saveNewVoterSpecificSlNo()"><i class="fa-solid fa-check"></i> ಮತದಾರರನ್ನು ಸೇರಿಸಿ (Save Voter)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-db.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script src="global-features.js"></script>
+  <script>
+    async function loadPageData(partNo) {
+      if (typeof initFirebaseEngine === 'function') {
+        initFirebaseEngine();
+      }
+      voters = await getVotersForPart(partNo);
+
+      // Subscribe to Realtime Firebase Cloud Updates
+      if (typeof subscribeToVotersFirebase === 'function') {
+        subscribeToVotersFirebase(partNo, async (cloudList) => {
+          voters = cloudList;
+          windowVoterMemoryCache[partNo] = cloudList;
+          populateHouseFilterOptions();
+          renderVoterList();
+        });
+      }
+
+      populateHouseFilterOptions();
+      renderVoterList();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadPageData(currentPartNo);
+    });
+  </script>
+</body>
+</html>
